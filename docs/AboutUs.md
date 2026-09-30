@@ -38,7 +38,7 @@ You can reach us at the email `e1526255[at]comp.nus.edu.sg`
 [[github](https://github.com/preyjwal)]
 
 * Role: Developer
-* Responsibilities: Documentation, Storage Component
+* Responsibilities: Documentation, Storage
 
 ### Jean Doe
 
