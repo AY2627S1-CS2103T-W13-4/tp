@@ -46,7 +46,8 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 
 [[github](http://github.com/kaih4n)]
 
-* Role: Integration
+* Role: Developer
+* Responsibilities: Integration, UI
 
 ### James Doe
 
