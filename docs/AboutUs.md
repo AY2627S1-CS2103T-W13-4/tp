@@ -22,7 +22,7 @@ You can reach us at the email `e1526255[at]comp.nus.edu.sg`
 
 ### Choo Hon Yien
 
-<img src="images/johndoe.png" width="200px">
+<img src="images/honyien.png" width="200px">
 
 [[github](http://github.com/HONYIEN)]
 
