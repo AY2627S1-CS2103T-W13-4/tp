@@ -18,7 +18,7 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 [[github](https://github.com/bibikowlf)]
 
 * Role: Developer
-* Responsibilities: Deliverables, logic component
+* Responsibilities: Deliverables, Logic
 
 ### Jane Doe
 
