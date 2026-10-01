@@ -345,7 +345,7 @@ Use case ends.
 **MSS**
 
 1. User requests to view the client list.
-2. PingBook displays the clients, with recently or frequently contacted clients at the top.
+2. PingBook displays the clients, with recently contacted clients at the top.
 
 Use case ends.
 
