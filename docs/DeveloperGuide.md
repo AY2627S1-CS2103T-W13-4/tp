@@ -296,32 +296,199 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 ### Use cases
 
-(For all use cases below, the **System** is the `AddressBook` and the **Actor** is the `user`, unless specified otherwise)
+(For all use cases below, the **System** is the `PingBook` and the **Actor** is the `user`, unless specified otherwise)
 
-**Use case: Delete a person**
+**Use case: UC1 - View clients**
 
 **MSS**
 
-1.  User requests to list persons
-2.  AddressBook shows a list of persons
-3.  User requests to delete a specific person in the list
-4.  AddressBook deletes the person
+1.  User requests to view clients.
+2.  PingBook shows a list of clients.
+
+    Use case ends.
+
+**Use case: UC2 - Add client**
+
+**MSS**
+
+1.  User provides name, phone number, and email for a new client.
+2.  PingBook adds the new client.
 
     Use case ends.
 
 **Extensions**
 
-* 2a. The list is empty.
+* 1a. There is a missing field.
+
+    * 1a1. PingBook shows an error message.
+  
+      Use case ends.
+
+**Use case: UC3 - Delete client**
+
+**MSS**
+
+1.  User requests to delete a client.
+2.  PingBook asks the user for confirmation.
+3.  User confirms to delete.
+4.  PingBook deletes the client.
+
+    Use case ends.
+
+**Extensions**
+
+* 1a. The client does not exist.
+
+    * 1a1. PingBook shows an error message.
+
+      Use case ends.
+
+* 3a. The user does not confirm.
 
   Use case ends.
 
-* 3a. The given index is invalid.
+**Use case: UC4 - View meetings**
 
-    * 3a1. AddressBook shows an error message.
+**MSS**
 
-      Use case resumes at step 2.
+1.  User requests to view meetings.
+2.  PingBook shows a list of meetings.
 
-*{More to be added}*
+    Use case ends.
+
+**Use case: UC5 - Add meeting**
+
+**MSS**
+
+1.  User provides name, starting time, and ending time for a new meeting.
+2.  PingBook adds the new meeting.
+
+    Use case ends.
+
+**Extensions**
+
+* 1a. There is a missing field.
+
+    * 1a1. PingBook shows an error message.
+
+      Use case ends.
+
+* 1b. Starting or ending time is invalid.
+
+    * 1b1. PingBook shows an error message.
+
+      Use case ends.
+
+* 1c. Starting time is after the ending time.
+
+    * 1c1. PingBook shows an error message.
+
+      Use case ends.
+
+**Use case: UC6 - Delete meeting**
+
+**MSS**
+
+1.  User requests to delete a meeting.
+2.  PingBook asks the user for confirmation.
+3.  User confirms to delete.
+4.  PingBook deletes the meeting.
+
+    Use case ends.
+
+**Extensions**
+
+* 1a. The meeting does not exist.
+
+    * 1a1. PingBook shows an error message.
+
+      Use case ends.
+
+* 3a. The user does not confirm.
+
+  Use case ends.
+
+**Use case: UC7 - Tag client**
+
+**MSS**
+
+1.  User requests to add a tag to a client.
+2.  PingBook adds a tag to the client.
+
+    Use case ends.
+
+**Extensions**
+
+* 1a. The client does not exist.
+
+    * 1a1. PingBook shows an error message.
+
+      Use case ends.
+
+* 1b. Tag is not provided or empty.
+
+    * 1b1. PingBook shows an error message.
+
+      Use case ends.
+
+**Use case: UC8 - Pin client**
+
+**MSS**
+
+1.  User requests to pin a client.
+2.  PingBook pins the client.
+
+    Use case ends.
+
+**Extensions**
+
+* 1a. The client does not exist.
+
+    * 1a1. PingBook shows an error message.
+
+      Use case ends.
+
+**Use case: UC9 - Sort clients based on a criterion**
+
+**MSS**
+
+1.  User requests to sort a client based on a criterion.
+2.  PingBook displays a list of clients sorted based on the criterion.
+
+    Use case ends.
+
+**Extensions**
+
+* 1a. Criterion is not provided, empty, or not defined by PingBook.
+
+    * 1a1. PingBook shows an error message.
+
+      Use case ends.
+
+**Use case: UC10 - Edit client**
+
+**MSS**
+
+1.  User requests to edit a client.
+2.  PingBook displays the client to be edited.
+3.  User requests to edit the fields. 
+4.  PingBook edits the fields.
+
+    Use case ends.
+
+**Extensions**
+
+* 1a. The client does not exist.
+
+    * 1a1. PingBook shows an error message.
+
+      Use case ends.
+
+* 3a. The fields requested for edit are invalid or empty.
+
+    * 3a1. PingBook shows an error message.
+
+      Use case ends.
 
 ### Non-Functional Requirements
 
