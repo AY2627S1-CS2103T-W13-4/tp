@@ -328,7 +328,8 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 1.  User provides name, phone number, and email for a new client.
 2.  PingBook adds the new client.
 
-    Use case ends.
+Use case ends.
+
 
 **Extensions**
 
@@ -359,7 +360,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 * 3a. The user does not confirm.
 
-  Use case ends.
+     Use case ends.
 
 **Use case: UC4 - View meetings**
 
@@ -503,6 +504,230 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
     * 3a1. PingBook shows an error message.
 
       Use case ends.
+
+**Use case: UC11 - Tag client**
+
+**MSS**
+
+1. User selects a client.
+2. User provides a tag for the client.
+3. PingBook adds the tag to the client.
+
+Use case ends.
+
+**Use case: UC12 - Add contact details**
+
+**MSS**
+
+1. User selects a client.
+2. User provides an email address or phone number for the client.
+3. PingBook adds the contact detail to the client.
+
+Use case ends.
+
+**Extensions**
+
+* 2a. The contact detail is invalid.
+
+* 2a1. PingBook shows an error message.
+
+Use case ends.
+
+* 2b. The contact detail already exists for the client.
+
+* 2b1. PingBook shows an error message.
+
+Use case ends.
+
+**Use case: UC13 - View prioritised client list**
+
+**MSS**
+
+1. User requests to view the client list.
+2. PingBook displays the clients, with recently contacted clients at the top.
+
+Use case ends.
+
+**Extensions**
+
+* 2a. A client has no contact history.
+
+* 2a1. PingBook places the client according to the available information.
+
+Use case ends.
+
+**Use case: UC14 - View user guide**
+
+**MSS**
+
+1. User requests to view the user guide.
+2. PingBook displays a guide containing the basic commands.
+3. User reads the guide.
+
+Use case ends.
+
+**Extensions**
+
+* 1a. The user guide is unavailable.
+
+* 1a1. PingBook shows an error message.
+
+Use case ends.
+
+**Use case: UC15 - Create command alias**
+
+**MSS**
+
+1. User provides an existing command and a new alias.
+2. PingBook creates the alias for the command.
+3. User can use the alias to execute the command.
+
+Use case ends.
+
+**Extensions**
+
+* 1a. The command does not exist.
+
+* 1a1. PingBook shows an error message.
+
+Use case ends.
+
+* 1b. The alias is already in use.
+
+* 1b1. PingBook shows an error message.
+
+Use case ends.
+
+**Use case: UC16 - View coworker's meetings**
+
+**MSS**
+
+1. User provides the name of a coworker.
+2. PingBook displays the coworker's scheduled meetings.
+3. User views the coworker's schedule.
+
+Use case ends.
+
+**Extensions**
+
+* 1a. The coworker does not exist.
+
+* 1a1. PingBook shows an error message.
+
+Use case ends.
+
+* 2a. The coworker has no scheduled meetings.
+
+* 2a1. PingBook informs the user that the coworker has no scheduled meetings.
+
+Use case ends.
+
+**Use case: UC17 - Detect meeting overlap**
+
+**MSS**
+
+1. User provides the details of a new meeting.
+2. PingBook checks the new meeting against existing meetings.
+3. PingBook detects that there is no overlap.
+4. PingBook adds the new meeting.
+
+Use case ends.
+
+**Extensions**
+
+* 3a. The new meeting overlaps with an existing meeting.
+
+* 3a1. PingBook shows a warning about the scheduling conflict.
+
+* 3a2. User provides a different meeting time.
+
+* 3a3. PingBook checks the new meeting against existing meetings again.
+
+Use case resumes at step 3.
+
+**Use case: UC18 - Receive meeting alert**
+
+**MSS**
+
+1. User has an upcoming meeting.
+2. PingBook detects that the meeting is approaching.
+3. PingBook displays an alert containing the meeting details.
+4. User views the alert.
+
+Use case ends.
+
+**Extensions**
+
+* 1a. There are no upcoming meetings.
+
+* 1a1. PingBook does not display an alert.
+
+Use case ends.
+
+**Use case: UC19 - Prioritise task**
+
+**MSS**
+
+1. User selects a task.
+2. User provides an importance level or tag for the task.
+3. PingBook assigns the importance level or tag to the task.
+4. PingBook displays the task with its assigned priority.
+
+Use case ends.
+
+**Extensions**
+
+* 2a. The importance level or tag is invalid.
+
+* 2a1. PingBook shows an error message.
+
+Use case ends.
+
+**Use case: UC20 - Record meeting outcome**
+
+**MSS**
+
+1. User selects a completed meeting.
+2. User provides the outcome of the meeting.
+3. User provides any decisions or follow-up actions.
+4. PingBook saves the meeting outcome.
+
+Use case ends.
+
+**Extensions**
+
+* 2a. The meeting outcome is empty.
+
+* 2a1. PingBook shows an error message.
+
+Use case ends.
+
+**Use case: UC21 - View client meeting history**
+
+**MSS**
+
+1. User selects a client.
+2. User requests to view the client's meeting history.
+3. PingBook displays the client's meetings in chronological order.
+4. User views the meeting history.
+
+Use case ends.
+
+**Extensions**
+
+* 1a. The client does not exist.
+
+* 1a1. PingBook shows an error message.
+
+Use case ends.
+
+* 3a. The client has no meeting history.
+
+* 3a1. PingBook informs the user that there are no previous meetings with the client.
+
+Use case ends.
+
+
 
 ### Non-Functional Requirements
 
