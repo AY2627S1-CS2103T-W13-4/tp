@@ -276,27 +276,234 @@ _{Explain here how the data archiving feature will be implemented}_
 * prefers typing to mouse interactions
 * is reasonably comfortable using CLI apps
 
-**Value proposition**: Manage contacts faster than with a typical mouse-driven GUI application.
+**Value proposition**: Secretaries have to juggle multiple contacts at once. These contacts are usually scattered across spreadsheets, notebooks, and memory. The app gives them a fast, reliable place to find the right contact in seconds.
+
+**Persona**: Bob is a secretary at a fast-paced firm, supporting multiple department heads and sales leads. He is responsible for continuous schedule adjustments, external client contacts, and managing internal team members across projects. His client contact information and meeting schedules are scattered across messy spreadsheets and notebooks. Locating specific contact details or finding free calendar slots is inefficient and prone to error. As he is comfortable typing basic commands on a laptop, he wants a command-line interface application where all the information is stored.
 
 
 ### User stories
 
 Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unlikely to have) - `*`
 
-| Priority | As a …                                    | I want to …                 | So that I can…                                                        |
-|----------|--------------------------------------------|------------------------------|------------------------------------------------------------------------|
-| `* * *`  | new user                                   | see usage instructions       | refer to instructions when I forget how to use the App                 |
-| `* * *`  | user                                       | add a new person             |                                                                        |
-| `* * *`  | user                                       | delete a person              | remove entries that I no longer need                                   |
-| `* * *`  | user                                       | find a person by name        | locate details of persons without having to go through the entire list |
-| `* *`    | user                                       | hide private contact details | minimize chance of someone else seeing them by accident                |
-| `*`      | user with many persons in the address book | sort persons by name         | locate a person easily                                                 |
-
-*{More to be added}*
+| Priority | As a …          | I want to …                                              | So that I can…                                                |
+|----------|-----------------|----------------------------------------------------------|---------------------------------------------------------------|
+| `* * *`  | secretary       | view a list of clients                                   | keep track of clients                                         |
+| `* * *`  | secretary       | add clients with their email, mobile number, and name    | record clients' information                                   |
+| `* * *`  | secretary       | delete clients                                           | keep the list free of information that is no longer useful    |
+| `* * *`  | secretary       | delete meetings                                          | remove canceled meetings                                      |
+| `* * *`  | secretary       | add meetings with their time, place, and attendees       | record meetings                                               |
+| `* * *`  | secretary       | view a list of meetings                                  | focus entirely on immediate priorities                        |
+| `* * *`  | first-time user | see a help guide containing all commands                 | know how to use the app                                       |
+| `* * *`  | first-time user | see a client's meeting history                           | know when we last met                                         |
+| `* * *`  | first-time user | add command aliases                                      | type frequently used commands quickly                         |
+| `* * *`  | first-time user | record meeting outcomes after a meeting                  | remember what happened during the meeting                     |
+| `* * *`  | first-time user | search for a client by name, company, or number          | find the clients I want                                       |
+| `* * *`  | first-time user | receive a warning when meeting schedules overlap         | know if meeting schedules clash                               |
+| `* *`    | secretary       | add tags to clients                                      | filter or search for groups of clients easily                 |
+| `* *`    | secretary       | mark clients as favorite or pinned                       | easily access important clients                               |
+| `* *`    | secretary       | view recently or frequently contacted clients            | easily find clients I am likely looking for                   |
+| `* *`    | secretary       | edit client information                                  | keep client details up to date                                |
+| `* *`    | secretary       | view when I am free                                      | know when to schedule a meeting                               |
+| `* *`    | secretary       | add multiple emails and mobile numbers for each client   | track clients with multiple contact details                   |
+| `* *`    | secretary       | view tasks for the day                                   | focus on immediate priorities                                 |
+| `* *`    | secretary       | add recurring tasks                                      | avoid adding the same task every time                         |
 
 ### Use cases
 
-(For all use cases below, the **System** is the `AddressBook` and the **Actor** is the `user`, unless specified otherwise)
+(For all use cases below, the **System** is the `PingBook` and the **Actor** is the `user`, unless specified otherwise)
+
+**Use case: UC1 - View clients**
+
+**MSS**
+
+1.  User requests to view clients.
+2.  PingBook shows a list of clients.
+
+    Use case ends.
+
+**Use case: UC2 - Add client**
+
+**MSS**
+
+1.  User provides name, phone number, and email for a new client.
+2.  PingBook adds the new client.
+
+Use case ends.
+
+
+**Extensions**
+
+* 1a. There is a missing field.
+
+    * 1a1. PingBook shows an error message.
+  
+      Use case ends.
+
+**Use case: UC3 - Delete client**
+
+**MSS**
+
+1.  User requests to delete a client.
+2.  PingBook asks the user for confirmation.
+3.  User confirms to delete.
+4.  PingBook deletes the client.
+
+    Use case ends.
+
+**Extensions**
+
+* 1a. The client does not exist.
+
+    * 1a1. PingBook shows an error message.
+
+      Use case ends.
+
+* 3a. The user does not confirm.
+
+     Use case ends.
+
+**Use case: UC4 - View meetings**
+
+**MSS**
+
+1.  User requests to view meetings.
+2.  PingBook shows a list of meetings.
+
+    Use case ends.
+
+**Use case: UC5 - Add meeting**
+
+**MSS**
+
+1.  User provides name, starting time, and ending time for a new meeting.
+2.  PingBook adds the new meeting.
+
+    Use case ends.
+
+**Extensions**
+
+* 1a. There is a missing field.
+
+    * 1a1. PingBook shows an error message.
+
+      Use case ends.
+
+* 1b. Starting or ending time is invalid.
+
+    * 1b1. PingBook shows an error message.
+
+      Use case ends.
+
+* 1c. Starting time is after the ending time.
+
+    * 1c1. PingBook shows an error message.
+
+      Use case ends.
+
+**Use case: UC6 - Delete meeting**
+
+**MSS**
+
+1.  User requests to delete a meeting.
+2.  PingBook asks the user for confirmation.
+3.  User confirms to delete.
+4.  PingBook deletes the meeting.
+
+    Use case ends.
+
+**Extensions**
+
+* 1a. The meeting does not exist.
+
+    * 1a1. PingBook shows an error message.
+
+      Use case ends.
+
+* 3a. The user does not confirm.
+
+  Use case ends.
+
+**Use case: UC7 - Tag client**
+
+**MSS**
+
+1.  User requests to add a tag to a client.
+2.  PingBook adds a tag to the client.
+
+    Use case ends.
+
+**Extensions**
+
+* 1a. The client does not exist.
+
+    * 1a1. PingBook shows an error message.
+
+      Use case ends.
+
+* 1b. Tag is not provided or empty.
+
+    * 1b1. PingBook shows an error message.
+
+      Use case ends.
+
+**Use case: UC8 - Pin client**
+
+**MSS**
+
+1.  User requests to pin a client.
+2.  PingBook pins the client.
+
+    Use case ends.
+
+**Extensions**
+
+* 1a. The client does not exist.
+
+    * 1a1. PingBook shows an error message.
+
+      Use case ends.
+
+**Use case: UC9 - Sort clients based on a criterion**
+
+**MSS**
+
+1.  User requests to sort a client based on a criterion.
+2.  PingBook displays a list of clients sorted based on the criterion.
+
+    Use case ends.
+
+**Extensions**
+
+* 1a. Criterion is not provided, empty, or not defined by PingBook.
+
+    * 1a1. PingBook shows an error message.
+
+      Use case ends.
+
+**Use case: UC10 - Edit client**
+
+**MSS**
+
+1.  User requests to edit a client.
+2.  PingBook displays the client to be edited.
+3.  User requests to edit the fields. 
+4.  PingBook edits the fields.
+
+    Use case ends.
+
+**Extensions**
+
+* 1a. The client does not exist.
+
+    * 1a1. PingBook shows an error message.
+
+      Use case ends.
+
+* 3a. The fields requested for edit are invalid or empty.
+
+    * 3a1. PingBook shows an error message.
+
+      Use case ends.
 
 **Use case: UC11 - Tag client**
 
@@ -305,14 +512,6 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 1. User selects a client.
 2. User provides a tag for the client.
 3. PingBook adds the tag to the client.
-
-Use case ends.
-
-**Extensions**
-
-* 2a. The tag is empty.
-
-* 2a1. PingBook shows an error message.
 
 Use case ends.
 
@@ -529,6 +728,7 @@ Use case ends.
 Use case ends.
 
 
+
 ### Non-Functional Requirements
 
 1.  Should work on any _mainstream OS_ as long as it has Java `25` or above installed.
@@ -539,8 +739,8 @@ Use case ends.
 
 ### Glossary
 
-* **Mainstream OS**: Windows, Linux, Unix, or macOS
-* **Private contact detail**: A contact detail that is not meant to be shared with others
+* **Client**: A person whose contact information and meeting records are managed by the application
+* **Command alias**: A user-defined alternative name or abbreviation for an application command
 
 --------------------------------------------------------------------------------------------------------------------
 
