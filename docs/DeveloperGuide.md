@@ -298,10 +298,6 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 (For all use cases below, the **System** is the `PingBook` and the **Actor** is the `user`, unless specified otherwise)
 
-Mark clients as pinned
-Most recent/frequently contacted
-edit client information
-
 **Use case: UC1 - View clients**
 
 **MSS**
@@ -457,7 +453,7 @@ edit client information
 **MSS**
 
 1.  User requests to sort a client based on a criterion.
-2.  PingBook displays a list of clients sorted based on that criterion.
+2.  PingBook displays a list of clients sorted based on the criterion.
 
     Use case ends.
 
