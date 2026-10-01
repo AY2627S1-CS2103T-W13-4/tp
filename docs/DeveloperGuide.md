@@ -740,7 +740,6 @@ with commands completing within 1 second under typical usage.
 6.  All functions should remain usable at a screen resolution of 1280 × 720 with 150% scaling. At 1920 × 1080 with 100% or 125% scaling, controls and information should not overlap or be cut off.
 7.  Command results, validation errors, and meeting status should be communicated in text, so users do not have to rely on colours or icons alone to understand them.
 
-*{More to be added}*
 
 ### Glossary
 
