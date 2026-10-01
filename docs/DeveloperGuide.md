@@ -347,8 +347,8 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 ### Glossary
 
-* **Mainstream OS**: Windows, Linux, Unix, or macOS
-* **Private contact detail**: A contact detail that is not meant to be shared with others
+* **Client**: A person whose contact information and meeting records are managed by the application
+* **Command alias**: A user-defined alternative name or abbreviation for an application command
 
 --------------------------------------------------------------------------------------------------------------------
 
