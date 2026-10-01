@@ -325,9 +325,15 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 ### Non-Functional Requirements
 
-1.  Should work on any _mainstream OS_ as long as it has Java `25` or above installed.
-2.  Should be able to hold up to 1000 persons without noticeable sluggishness in performance for typical usage.
+1.  PingBook should run on Windows, macOS, and Linux with Java 25 installed, from a single JAR file without an installer or an internet connection.
+2.  PingBook should support at least 1000 clients and 1000 meetings,
+with commands completing within 1 second under typical usage.
 3.  A user with above average typing speed for regular English text (i.e. not code, not system admin commands) should be able to accomplish most of the tasks faster using commands than using the mouse.
+4.  Client and meeting data should be saved automatically after each successful change and remain intact after PingBook is closed and reopened. If saving fails, the app should inform the user rather than report that the change was saved.
+5.  Client and meeting data should be stored in a human-editable text file. Valid changes made to that file while PingBook is closed should be loaded when the app next starts.
+6.  Client contact details and meeting information should remain on the user's computer. PingBook should not transmit them to a remote server or require an online account.
+7.  All functions should remain usable at a screen resolution of 1280 × 720 with 150% scaling. At 1920 × 1080 with 100% or 125% scaling, controls and information should not overlap or be cut off.
+8.  Command results, validation errors, and meeting status should be communicated in text, so users do not have to rely on colours or icons alone to understand them.
 
 *{More to be added}*
 
