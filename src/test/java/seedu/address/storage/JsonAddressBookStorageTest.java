@@ -18,9 +18,13 @@ import org.junit.jupiter.api.io.TempDir;
 import seedu.address.commons.exceptions.DataLoadingException;
 import seedu.address.model.AddressBook;
 import seedu.address.model.ReadOnlyAddressBook;
+import seedu.address.model.person.Person;
+import seedu.address.testutil.PersonBuilder;
 
 public class JsonAddressBookStorageTest {
     private static final Path TEST_DATA_FOLDER = Paths.get("src", "test", "data", "JsonAddressBookStorageTest");
+    private static final Path LEGACY_DATA_FILE = Paths.get("src", "test", "data",
+            "JsonSerializableAddressBookTest", "typicalPersonsAddressBook.json");
 
     @TempDir
     public Path testFolder;
@@ -43,6 +47,13 @@ public class JsonAddressBookStorageTest {
     @Test
     public void read_missingFile_emptyResult() throws Exception {
         assertFalse(readAddressBook("NonExistentFile.json").isPresent());
+    }
+
+    @Test
+    public void readAddressBook_missingRemarkField_usesEmptyRemarks() throws Exception {
+        JsonAddressBookStorage storage = new JsonAddressBookStorage(LEGACY_DATA_FILE);
+        ReadOnlyAddressBook readBack = storage.readAddressBook().orElseThrow();
+        assertEquals(getTypicalAddressBook(), new AddressBook(readBack));
     }
 
     @Test
@@ -84,6 +95,19 @@ public class JsonAddressBookStorageTest {
         readBack = jsonAddressBookStorage.readAddressBook().get(); // file path not specified
         assertEquals(original, new AddressBook(readBack));
 
+    }
+
+    @Test
+    public void readAndSaveAddressBook_personWithRemark_preservesRemark() throws Exception {
+        Path filePath = testFolder.resolve("RemarkAddressBook.json");
+        JsonAddressBookStorage storage = new JsonAddressBookStorage(filePath);
+        Person person = new PersonBuilder().withRemark("Likes baseball").build();
+        AddressBook original = new AddressBook();
+        original.addPerson(person);
+
+        storage.saveAddressBook(original);
+        ReadOnlyAddressBook readBack = storage.readAddressBook().orElseThrow();
+        assertEquals(original, new AddressBook(readBack));
     }
 
     @Test

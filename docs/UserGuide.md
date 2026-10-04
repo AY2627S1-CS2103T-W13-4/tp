@@ -113,6 +113,20 @@ Examples:
 *  `edit 1 p/91234567 e/johndoe@example.com` Edits the phone number and email address of the 1st person to be `91234567` and `johndoe@example.com` respectively.
 *  `edit 2 n/Betsy Crower t/` Edits the name of the 2nd person to be `Betsy Crower` and clears all existing tags.
 
+### Adding or changing a remark: `remark`
+
+Adds a note to a person in the currently displayed list, or replaces that person's existing note.
+
+Format: `remark INDEX r/REMARK`
+
+* `INDEX` is the positive index shown beside the person in the current list.
+* `r/REMARK` sets the remark. Existing text is replaced, not appended.
+* `r/` with no text clears the remark. The `r/` prefix is required.
+
+Examples:
+* `remark 2 r/Likes baseball` sets the second person's remark to `Likes baseball`.
+* `remark 2 r/` removes the second person's remark.
+
 ### Locating persons by name: `find`
 
 Finds persons whose names contain any of the given keywords.
@@ -201,4 +215,5 @@ Action     | Format, Examples
 **Edit**   | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]... `<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com`
 **Find**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
 **List**   | `list`
+**Remark** | `remark INDEX r/REMARK`<br> e.g., `remark 2 r/Likes baseball`; use `remark 2 r/` to clear it
 **Help**   | `help`
