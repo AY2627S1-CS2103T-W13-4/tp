@@ -14,6 +14,9 @@ public class Meeting {
     private final LocalTime startTime;
     private final LocalTime endTime;
 
+    /**
+     * Creates a meeting with the given name, date, start time and end time.
+     */
     public Meeting(String name, LocalDate date, LocalTime startTime, LocalTime endTime) {
         this.name = name;
         this.date = date;
