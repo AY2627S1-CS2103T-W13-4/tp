@@ -1,8 +1,11 @@
 package seedu.address.model.meeting;
 
+import static java.util.Objects.requireNonNull;
+
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.util.Objects;
 
 /**
@@ -10,8 +13,11 @@ import java.util.Objects;
  */
 public class MeetingTime {
 
+    public static final String MESSAGE_CONSTRAINTS = "Invalid time. Please use HHMM in 24-hour format.";
+
     private static final DateTimeFormatter FORMATTER =
-            DateTimeFormatter.ofPattern("HHmm");
+            DateTimeFormatter.ofPattern("HHmm")
+                .withResolverStyle(ResolverStyle.STRICT);
 
     private final LocalTime time;
 
@@ -19,17 +25,30 @@ public class MeetingTime {
      * Creates a meeting time from the given time string.
      *
      * @param time The time in HHMM format.
+     * @throws IllegalArgumentException if the time is not valid.
      */
     public MeetingTime(String time) {
-        try {
-            if (!time.trim().matches("\\d{4}")) {
-                throw new IllegalArgumentException();
-            }
+        requireNonNull(time);
+        if (!isValidTime(time)) {
+            throw new IllegalArgumentException(MESSAGE_CONSTRAINTS);
+        }
+        this.time = LocalTime.parse(time.trim(), FORMATTER);
+    }
 
-            this.time = LocalTime.parse(time.trim(), FORMATTER);
-        } catch (DateTimeParseException | IllegalArgumentException e) {
-            throw new IllegalArgumentException(
-                    "Invalid time. Please use HHMM in 24-hour format.");
+    /**
+     * Returns true if the given string is a valid time in HHMM 24-hour format.
+     */
+    public static boolean isValidTime(String test) {
+        requireNonNull(test);
+        String trimmed = test.trim();
+        if (!trimmed.matches("\\d{4}")) {
+            return false;
+        }
+        try {
+            LocalTime.parse(trimmed, FORMATTER);
+            return true;
+        } catch (DateTimeParseException e) {
+            return false;
         }
     }
 

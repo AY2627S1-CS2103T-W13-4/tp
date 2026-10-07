@@ -1,5 +1,7 @@
 package seedu.address.model.meeting;
 
+import static java.util.Objects.requireNonNull;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -11,6 +13,8 @@ import java.util.Objects;
  */
 public class MeetingDate {
 
+    public static final String MESSAGE_CONSTRAINTS = "Invalid date. Please use DD/MM/YYYY.";
+
     private static final DateTimeFormatter FORMATTER =
             DateTimeFormatter.ofPattern("dd/MM/uuuu")
                     .withResolverStyle(ResolverStyle.STRICT);
@@ -21,12 +25,26 @@ public class MeetingDate {
      * Creates a meeting date from the given date string.
      *
      * @param date The date in DD/MM/YYYY format.
+     * @throws IllegalArgumentException if the date is not valid.
      */
     public MeetingDate(String date) {
+        requireNonNull(date);
+        if (!isValidDate(date)) {
+            throw new IllegalArgumentException(MESSAGE_CONSTRAINTS);
+        }
+        this.date = LocalDate.parse(date.trim(), FORMATTER);
+    }
+
+    /**
+     * Returns true if the given string is a valid calendar date in DD/MM/YYYY format.
+     */
+    public static boolean isValidDate(String test) {
+        requireNonNull(test);
         try {
-            this.date = LocalDate.parse(date.trim(), FORMATTER);
+            LocalDate.parse(test.trim(), FORMATTER);
+            return true;
         } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException("Invalid date. Please use DD/MM/YYYY.");
+            return false;
         }
     }
 
