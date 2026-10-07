@@ -79,6 +79,24 @@ public class MeetingList implements Iterable<Meeting> {
     }
 
     @Override
+    public boolean equals(Object other) {
+        if (other == this) {
+            return true;
+        }
+
+        if (!(other instanceof MeetingList otherMeetingList)) {
+            return false;
+        }
+
+        return internalList.equals(otherMeetingList.internalList);
+    }
+
+    @Override
+    public int hashCode() {
+        return internalList.hashCode();
+    }
+
+    @Override
     public Iterator<Meeting> iterator() {
         return internalList.iterator();
     }
