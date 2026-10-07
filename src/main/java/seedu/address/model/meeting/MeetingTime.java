@@ -5,6 +5,7 @@ import static java.util.Objects.requireNonNull;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.util.Objects;
 
 /**
@@ -15,7 +16,8 @@ public class MeetingTime {
     public static final String MESSAGE_CONSTRAINTS = "Invalid time. Please use HHMM in 24-hour format.";
 
     private static final DateTimeFormatter FORMATTER =
-            DateTimeFormatter.ofPattern("HHmm");
+            DateTimeFormatter.ofPattern("HHmm")
+                .withResolverStyle(ResolverStyle.STRICT);
 
     private final LocalTime time;
 
