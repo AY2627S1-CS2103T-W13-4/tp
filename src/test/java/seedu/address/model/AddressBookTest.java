@@ -105,7 +105,7 @@ public class AddressBookTest {
 
         @Override
         public ObservableList<Meeting> getMeetingList() {
-            throw new AssertionError("This method should not be called.");
+            return FXCollections.observableArrayList();
         }
     }
 
