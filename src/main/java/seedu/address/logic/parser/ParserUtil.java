@@ -129,6 +129,7 @@ public class ParserUtil {
      * Parses a {@code String meetingName} into a {@code MeetingName}.
      * Leading and trailing whitespaces will be trimmed.
      *
+     * @param meetingName The meeting name to parse.
      * @throws ParseException if the given {@code meetingName} is invalid.
      */
     public static MeetingName parseMeetingName(String meetingName) throws ParseException {
@@ -144,6 +145,7 @@ public class ParserUtil {
      * Parses a {@code String meetingDate} into a {@code MeetingDate}.
      * Leading and trailing whitespaces will be trimmed.
      *
+     * @param meetingDate The meeting date to parse.
      * @throws ParseException if the given {@code meetingDate} is invalid.
      */
     public static MeetingDate parseMeetingDate(String meetingDate) throws ParseException {
@@ -159,6 +161,7 @@ public class ParserUtil {
      * Parses a {@code String meetingTime} into a {@code MeetingTime}.
      * Leading and trailing whitespaces will be trimmed.
      *
+     * @param meetingTime The meeting time to parse.
      * @throws ParseException if the given {@code meetingTime} is invalid.
      */
     public static MeetingTime parseMeetingTime(String meetingTime) throws ParseException {

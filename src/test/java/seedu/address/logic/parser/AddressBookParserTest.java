@@ -50,7 +50,7 @@ public class AddressBookParserTest {
                 new MeetingName("Project Review"), new MeetingDate("08/10/2026"),
                 new MeetingTime("1400"), new MeetingTime("1500"));
         AddMeetingCommand command = (AddMeetingCommand) parser.parseCommand(
-                AddMeetingCommand.COMMAND_WORD + " n/Project Review d/08/10/2026 s/1400 e/1500");
+                AddMeetingCommand.COMMAND_WORD + " n/Project Review d/08/10/2026 st/1400 et/1500");
         assertEquals(new AddMeetingCommand(meeting), command);
     }
 
