@@ -33,6 +33,9 @@ public class CommandResultTest {
 
         // different exit value -> returns false
         assertFalse(commandResult.equals(new CommandResult("feedback", false, true)));
+
+        // different displayed list -> returns false
+        assertFalse(commandResult.equals(new CommandResult("feedback", true)));
     }
 
     @Test
@@ -57,7 +60,18 @@ public class CommandResultTest {
         CommandResult commandResult = new CommandResult("feedback");
         String expected = CommandResult.class.getCanonicalName() + "{feedbackToUser="
                 + commandResult.getFeedbackToUser() + ", showHelp=" + commandResult.isShowHelp()
-                + ", exit=" + commandResult.isExit() + "}";
+                + ", exit=" + commandResult.isExit() + ", showMeetings=" + commandResult.isShowMeetings() + "}";
         assertEquals(expected, commandResult.toString());
+    }
+
+    @Test
+    public void constructor_meetingResult_selectsMeetingList() {
+        CommandResult result = new CommandResult("Listed all meetings.", true);
+        assertTrue(result.isShowMeetings());
+        assertFalse(result.isShowHelp());
+        assertFalse(result.isExit());
+        assertFalse(new CommandResult("Listed all persons.").isShowMeetings());
+        assertEquals(result, new CommandResult("Listed all meetings.", true));
+        assertEquals(result.hashCode(), new CommandResult("Listed all meetings.", true).hashCode());
     }
 }

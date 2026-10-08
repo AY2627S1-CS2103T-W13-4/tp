@@ -22,6 +22,7 @@ import seedu.address.logic.commands.ExitCommand;
 import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.commands.HelpCommand;
 import seedu.address.logic.commands.ListCommand;
+import seedu.address.logic.commands.ListMeetingCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.meeting.Meeting;
 import seedu.address.model.meeting.MeetingDate;
@@ -106,6 +107,26 @@ public class AddressBookParserTest {
     public void parseCommand_unrecognisedInput_throwsParseException() {
         assertThrows(ParseException.class, String.format(MESSAGE_INVALID_COMMAND_FORMAT, HelpCommand.MESSAGE_USAGE), ()
             -> parser.parseCommand(""));
+    }
+
+    @Test
+    public void parseCommand_listMeeting_success() throws Exception {
+        assertTrue(parser.parseCommand("listm") instanceof ListMeetingCommand);
+        assertTrue(parser.parseCommand(" \tlistm \t ") instanceof ListMeetingCommand);
+    }
+
+    @Test
+    public void parseCommand_listMeetingWithArguments_throwsParseException() {
+        String message = String.format(MESSAGE_INVALID_COMMAND_FORMAT, ListMeetingCommand.MESSAGE_USAGE);
+        assertThrows(ParseException.class, message, () -> parser.parseCommand("listm --all"));
+        assertThrows(ParseException.class, message, () -> parser.parseCommand("listm 1"));
+    }
+
+    @Test
+    public void parseCommand_listMeetingWrongCase_suggestsCorrectCommand() {
+        String message = ListMeetingCommand.MESSAGE_UNKNOWN_COMMAND;
+        assertThrows(ParseException.class, message, () -> parser.parseCommand("Listm"));
+        assertThrows(ParseException.class, message, () -> parser.parseCommand("LISTM"));
     }
 
     @Test
