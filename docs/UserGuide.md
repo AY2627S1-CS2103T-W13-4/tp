@@ -91,6 +91,24 @@ Examples:
 * `add n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01`
 * `add n/Betsy Crowe t/friend e/betsycrowe@example.com a/Newgate Prison p/1234567 t/criminal`
 
+### Listing all meetings: `listm`
+
+Shows all saved meetings in the Meetings panel, with numbered rows containing the name, date and start/end times.
+
+Format: `listm`
+
+* Takes no parameters or flags. Leading and trailing whitespace is ignored; `listm 1` and `listm --all` are rejected.
+* The command is case-sensitive. `Listm` and `LISTM` show `Unknown command. Did you mean "listm"?`.
+* Ongoing and upcoming meetings appear first, ordered by date and start time.
+  Finished meetings follow, also ordered from earliest to latest.
+* A meeting is finished when its end time on its date is at or before the current local time on your computer.
+  Run `listm` again to refresh this grouping as time passes.
+* Equal start times are ordered by end time, then name. Sorting does not change the order of records in the data file.
+* An empty list displays `No meetings to display.`. Successful execution reports `Listed all meetings.`.
+* Duplicate meetings are prevented by the shared model and rejected when loading data. Duplicates have the same
+  name (ignoring case and repeated spaces), date, start time and end time; `listm` does not delete stored records.
+* Use `list` to return to the contacts panel. `help` and invalid commands keep the currently selected panel.
+
 ### Listing all persons: `list`
 
 Shows a list of all persons in the address book.
@@ -201,4 +219,5 @@ Action     | Format, Examples
 **Edit**   | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]... `<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com`
 **Find**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
 **List**   | `list`
+**List meetings** | `listm`
 **Help**   | `help`
