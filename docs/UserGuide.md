@@ -108,6 +108,9 @@ Format: `listm`
 * Duplicate meetings are prevented by the shared model and rejected when loading data. Duplicates have the same
   name (ignoring case and repeated spaces), date, start time and end time; `listm` does not delete stored records.
 * Use `list` to return to the contacts panel. `help` and invalid commands keep the currently selected panel.
+* Contact commands `delete INDEX` and `edit INDEX ...` are rejected while the Meetings panel is active.
+  Run `list` to display contacts before editing or deleting them. You can also use `find KEYWORD` to display
+  matching contacts and then use the indices in those results.
 
 ### Listing all persons: `list`
 
@@ -122,6 +125,7 @@ Edits an existing person in the address book.
 Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [t/TAG]... `
 
 * Edits the person at the specified `INDEX`. The index refers to the index number shown in the displayed person list. The index **must be a positive integer** 1, 2, 3, ...
+* The contacts panel must be active. If you are viewing meetings, run `list` or `find KEYWORD` first.
 * At least one of the optional fields must be provided.
 * Existing values will be updated to the input values.
 * When editing tags, all of the person's existing tags are removed; adding tags is not cumulative.
@@ -156,6 +160,7 @@ Format: `delete INDEX`
 
 * Deletes the person at the specified `INDEX`.
 * The index refers to the index number shown in the displayed person list.
+* The contacts panel must be active. If you are viewing meetings, run `list` or `find KEYWORD` first.
 * The index **must be a positive integer** 1, 2, 3, ...
 
 Examples:
