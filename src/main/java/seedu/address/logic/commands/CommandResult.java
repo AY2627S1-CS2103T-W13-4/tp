@@ -19,13 +19,28 @@ public class CommandResult {
     /** The application should exit. */
     private final boolean exit;
 
+    /** The meeting list should be displayed instead of the person list. */
+    private final boolean showMeetings;
+
     /**
      * Constructs a {@code CommandResult} with the specified fields.
      */
     public CommandResult(String feedbackToUser, boolean showHelp, boolean exit) {
+        this(feedbackToUser, showHelp, exit, false);
+    }
+
+    private CommandResult(String feedbackToUser, boolean showHelp, boolean exit, boolean showMeetings) {
         this.feedbackToUser = requireNonNull(feedbackToUser);
         this.showHelp = showHelp;
         this.exit = exit;
+        this.showMeetings = showMeetings;
+    }
+
+    /**
+     * Constructs a result that selects the meeting list when {@code showMeetings} is true.
+     */
+    public CommandResult(String feedbackToUser, boolean showMeetings) {
+        this(feedbackToUser, false, false, showMeetings);
     }
 
     /**
@@ -48,6 +63,10 @@ public class CommandResult {
         return exit;
     }
 
+    public boolean isShowMeetings() {
+        return showMeetings;
+    }
+
     @Override
     public boolean equals(Object other) {
         if (other == this) {
@@ -61,12 +80,13 @@ public class CommandResult {
 
         return feedbackToUser.equals(otherCommandResult.feedbackToUser)
                 && showHelp == otherCommandResult.showHelp
-                && exit == otherCommandResult.exit;
+                && exit == otherCommandResult.exit
+                && showMeetings == otherCommandResult.showMeetings;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(feedbackToUser, showHelp, exit);
+        return Objects.hash(feedbackToUser, showHelp, exit, showMeetings);
     }
 
     @Override
@@ -75,6 +95,7 @@ public class CommandResult {
                 .add("feedbackToUser", feedbackToUser)
                 .add("showHelp", showHelp)
                 .add("exit", exit)
+                .add("showMeetings", showMeetings)
                 .toString();
     }
 

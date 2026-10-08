@@ -1,6 +1,7 @@
 package seedu.address.logic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX;
 import static seedu.address.logic.Messages.MESSAGE_UNKNOWN_COMMAND;
 import static seedu.address.logic.commands.CommandTestUtil.ADDRESS_DESC_AMY;
@@ -13,6 +14,7 @@ import static seedu.address.testutil.TypicalPersons.AMY;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.Path;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,6 +29,10 @@ import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.ReadOnlyAddressBook;
 import seedu.address.model.UserPrefs;
+import seedu.address.model.meeting.Meeting;
+import seedu.address.model.meeting.MeetingDate;
+import seedu.address.model.meeting.MeetingName;
+import seedu.address.model.meeting.MeetingTime;
 import seedu.address.model.person.Person;
 import seedu.address.storage.JsonAddressBookStorage;
 import seedu.address.storage.JsonUserPrefsStorage;
@@ -85,6 +91,24 @@ public class LogicManagerTest {
     @Test
     public void getFilteredPersonList_modifyList_throwsUnsupportedOperationException() {
         assertThrows(UnsupportedOperationException.class, () -> logic.getFilteredPersonList().remove(0));
+    }
+
+    @Test
+    public void execute_listMeeting_sortsViewAndPreservesStoredOrder() throws Exception {
+        Meeting later = new Meeting(new MeetingName("Later"), new MeetingDate("09/10/2099"),
+                new MeetingTime("1500"), new MeetingTime("1600"));
+        Meeting earlier = new Meeting(new MeetingName("Earlier"), new MeetingDate("08/10/2099"),
+                new MeetingTime("1500"), new MeetingTime("1600"));
+        model.addMeeting(later);
+        model.addMeeting(earlier);
+
+        CommandResult result = logic.execute("  listm  ");
+
+        assertTrue(result.isShowMeetings());
+        assertEquals(List.of(earlier, later), logic.getMeetingList());
+        assertThrows(UnsupportedOperationException.class, () -> logic.getMeetingList().remove(0));
+        JsonAddressBookStorage storage = new JsonAddressBookStorage(temporaryFolder.resolve("addressBook.json"));
+        assertEquals(List.of(later, earlier), storage.readAddressBook().orElseThrow().getMeetingList());
     }
 
     /**

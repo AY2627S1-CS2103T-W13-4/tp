@@ -1,5 +1,6 @@
 package seedu.address.model;
 
+import java.time.LocalDateTime;
 import java.util.function.Predicate;
 
 import javafx.collections.ObservableList;
@@ -87,7 +88,20 @@ public interface Model {
      */
     void deleteMeeting(Meeting meeting);
 
-    /** Returns an unmodifiable view of the meeting list. */
+    /** Returns an unmodifiable view of the meeting list in its displayed order. */
     ObservableList<Meeting> getMeetingList();
+
+    /**
+     * Orders meetings with unfinished meetings first, then finished meetings, using {@code currentTime}.
+     * A meeting is finished when its end time on its date is at or before {@code currentTime}.
+     * Ongoing meetings belong to the unfinished group.
+     * Each group is ordered by date and start time, then by end time and case-insensitive name to break ties.
+     * Changes only the displayed order, leaving the stored meeting order unchanged.
+     * The time used for grouping is refreshed on each call; it does not advance automatically.
+     *
+     * @param currentTime The local date and time used to determine which meetings have finished.
+     * @throws NullPointerException If {@code currentTime} is null.
+     */
+    void updateMeetingListOrder(LocalDateTime currentTime);
 
 }

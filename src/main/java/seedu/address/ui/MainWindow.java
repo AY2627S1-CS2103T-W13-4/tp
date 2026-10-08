@@ -34,6 +34,7 @@ public class MainWindow extends UiPart<Stage> {
 
     // Independent Ui parts residing in this Ui container
     private PersonListPanel personListPanel;
+    private MeetingListPanel meetingListPanel;
     private ResultDisplay resultDisplay;
     private HelpWindow helpWindow;
 
@@ -116,6 +117,7 @@ public class MainWindow extends UiPart<Stage> {
     void fillInnerParts() {
         personListPanel = new PersonListPanel(logic.getFilteredPersonList());
         personListPanelPlaceholder.getChildren().add(personListPanel.getRoot());
+        meetingListPanel = new MeetingListPanel(logic.getMeetingList());
 
         resultDisplay = new ResultDisplay();
         resultDisplayPlaceholder.getChildren().add(resultDisplay.getRoot());
@@ -184,6 +186,11 @@ public class MainWindow extends UiPart<Stage> {
 
             if (commandResult.isShowHelp()) {
                 handleHelp();
+            } else if (!commandResult.isExit()) {
+                personListPanelPlaceholder.getChildren().setAll(
+                        commandResult.isShowMeetings()
+                                ? meetingListPanel.getRoot()
+                                : personListPanel.getRoot());
             }
 
             if (commandResult.isExit()) {
