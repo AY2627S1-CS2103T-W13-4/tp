@@ -1,42 +1,45 @@
 package seedu.address.model.meeting;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
+
 import java.util.Objects;
 
 /**
  * Represents a meeting in PingBook.
+ * Guarantees: details are present and not null, field values are validated, immutable.
  */
 public class Meeting {
 
-    private final String name;
-    private final LocalDate date;
-    private final LocalTime startTime;
-    private final LocalTime endTime;
+    private final MeetingName name;
+    private final MeetingDate date;
+    private final MeetingTime startTime;
+    private final MeetingTime endTime;
 
     /**
      * Creates a meeting with the given name, date, start time and end time.
+     * Every field must be present and not null.
      */
-    public Meeting(String name, LocalDate date, LocalTime startTime, LocalTime endTime) {
+    public Meeting(MeetingName name, MeetingDate date, MeetingTime startTime, MeetingTime endTime) {
+        requireAllNonNull(name, date, startTime, endTime);
         this.name = name;
         this.date = date;
         this.startTime = startTime;
         this.endTime = endTime;
     }
 
-    public String getName() {
+    public MeetingName getName() {
         return name;
     }
 
-    public LocalDate getDate() {
+    public MeetingDate getDate() {
         return date;
     }
 
-    public LocalTime getStartTime() {
+    public MeetingTime getStartTime() {
         return startTime;
     }
 
-    public LocalTime getEndTime() {
+    public MeetingTime getEndTime() {
         return endTime;
     }
 

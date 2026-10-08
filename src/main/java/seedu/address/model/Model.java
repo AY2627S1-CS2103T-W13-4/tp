@@ -4,6 +4,7 @@ import java.util.function.Predicate;
 
 import javafx.collections.ObservableList;
 import seedu.address.commons.core.GuiSettings;
+import seedu.address.model.meeting.Meeting;
 import seedu.address.model.person.Person;
 
 /**
@@ -68,4 +69,25 @@ public interface Model {
      * @throws NullPointerException if {@code predicate} is null.
      */
     void updateFilteredPersonList(Predicate<Person> predicate);
+
+    /**
+     * Returns true if the given meeting exists in the address book.
+     */
+    boolean hasMeeting(Meeting meeting);
+
+    /**
+     * Adds the given meeting.
+     * {@code meeting} must not already exist in the address book.
+     */
+    void addMeeting(Meeting meeting);
+
+    /**
+     * Deletes the given meeting.
+     * The meeting must exist in the address book.
+     */
+    void deleteMeeting(Meeting meeting);
+
+    /** Returns an unmodifiable view of the meeting list. */
+    ObservableList<Meeting> getMeetingList();
+
 }
