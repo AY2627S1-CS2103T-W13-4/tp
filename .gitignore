@@ -1,6 +1,7 @@
 # Gradle build files
 /.gradle/
 /build/
+/bin/
 src/main/resources/docs/
 
 # IDEA files
@@ -11,6 +12,7 @@ src/main/resources/docs/
 # Storage/log files
 /data/
 /preferences.json
+/*.log
 /*.log.*
 hs_err_pid[0-9]*.log
 
@@ -30,4 +32,11 @@ CLAUDE.md
 # Temp files
 _temp/
 docs/_markbind/logs/
+
+# VS Code files
+/.vscode/
+
+# Eclipse files
+/eclipse-java-formatter.xml
+
 /bin/

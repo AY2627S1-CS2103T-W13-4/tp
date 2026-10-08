@@ -27,7 +27,7 @@ The first version of PingBook will support:
 | Add a client   | `addc n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [t/TAG]...` |
 | Delete a client | `deletec CLIENT_INDEX`                                   |
 | List clients   | `listc`                                                   |
-| Add a meeting  | `addm n/NAME d/DATE s/START_TIME e/END_TIME`              |
+| Add a meeting  | `addm n/NAME d/DATE st/START_TIME et/END_TIME`            |
 | Delete a meeting | `deletem MEETING_INDEX`                                 |
 | List meetings  | `listm`                                                   |
 
