@@ -20,7 +20,7 @@ public class DeleteMeetingCommand extends Command {
     public static final String MESSAGE_DELETE_MEETING_SUCCESS = "Deleted meeting: %1$s";
 
     public static final String MESSAGE_NOT_IMPLEMENTED_YET =
-            "Remark command not implemented yet";
+            "Delete meeting command not implemented yet";
 
     private final Index targetIndex;
 
