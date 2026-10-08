@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.commands.AddCommand;
+import seedu.address.logic.commands.AddMeetingCommand;
 import seedu.address.logic.commands.ClearCommand;
 import seedu.address.logic.commands.DeleteCommand;
 import seedu.address.logic.commands.EditCommand;
@@ -22,6 +23,10 @@ import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.commands.HelpCommand;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.meeting.Meeting;
+import seedu.address.model.meeting.MeetingDate;
+import seedu.address.model.meeting.MeetingName;
+import seedu.address.model.meeting.MeetingTime;
 import seedu.address.model.person.NameContainsKeywordsPredicate;
 import seedu.address.model.person.Person;
 import seedu.address.testutil.EditPersonDescriptorBuilder;
@@ -37,6 +42,16 @@ public class AddressBookParserTest {
         Person person = new PersonBuilder().build();
         AddCommand command = (AddCommand) parser.parseCommand(PersonUtil.getAddCommand(person));
         assertEquals(new AddCommand(person), command);
+    }
+
+    @Test
+    public void parseCommand_addMeeting() throws Exception {
+        Meeting meeting = new Meeting(
+                new MeetingName("Project Review"), new MeetingDate("08/10/2026"),
+                new MeetingTime("1400"), new MeetingTime("1500"));
+        AddMeetingCommand command = (AddMeetingCommand) parser.parseCommand(
+                AddMeetingCommand.COMMAND_WORD + " n/Project Review d/08/10/2026 s/1400 e/1500");
+        assertEquals(new AddMeetingCommand(meeting), command);
     }
 
     @Test
