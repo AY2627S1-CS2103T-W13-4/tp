@@ -15,7 +15,7 @@ public class MeetingName {
 
     private static final String VALIDATION_REGEX = "[A-Za-z' -]+";
 
-    private final String name;
+    public final String name;
 
     /**
      * Creates a meeting name. Leading/trailing spaces are removed and
