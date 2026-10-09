@@ -28,7 +28,7 @@ import seedu.address.logic.commands.DeleteClientCommand;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.commands.HelpCommand;
-import seedu.address.logic.commands.ListCommand;
+import seedu.address.logic.commands.ListClientCommand;
 import seedu.address.logic.commands.ListMeetingCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -99,7 +99,7 @@ public class LogicManagerMeetingViewTest {
         logic.execute(ListMeetingCommand.COMMAND_WORD);
         assertContactCommandRejected(DeleteClientCommand.COMMAND_WORD + " 1");
 
-        CommandResult result = logic.execute(ListCommand.COMMAND_WORD);
+        CommandResult result = logic.execute(ListClientCommand.COMMAND_WORD);
         assertFalse(result.isShowMeetings());
         assertEquals(List.of(AMY, BOB), model.getFilteredPersonList());
         logic.execute(DeleteClientCommand.COMMAND_WORD + " 1");
@@ -153,18 +153,18 @@ public class LogicManagerMeetingViewTest {
         logic.execute(ListMeetingCommand.COMMAND_WORD);
         addressBookStorage.failNextSave = true;
 
-        assertThrows(CommandException.class, SAVE_ERROR, () -> logic.execute(ListCommand.COMMAND_WORD));
+        assertThrows(CommandException.class, SAVE_ERROR, () -> logic.execute(ListClientCommand.COMMAND_WORD));
         assertContactCommandRejected(DeleteClientCommand.COMMAND_WORD + " 1");
         assertContactCommandRejected(EditCommand.COMMAND_WORD + " 1 p/87654321");
 
-        logic.execute(ListCommand.COMMAND_WORD);
+        logic.execute(ListClientCommand.COMMAND_WORD);
         logic.execute(DeleteClientCommand.COMMAND_WORD + " 1");
         assertEquals(List.of(BOB), model.getAddressBook().getPersonList());
     }
 
     @Test
     public void execute_failedListMeetingSave_keepsContactsAccessible() throws Exception {
-        logic.execute(ListCommand.COMMAND_WORD);
+        logic.execute(ListClientCommand.COMMAND_WORD);
         addressBookStorage.failNextSave = true;
 
         assertThrows(CommandException.class, SAVE_ERROR, () -> logic.execute(ListMeetingCommand.COMMAND_WORD));
