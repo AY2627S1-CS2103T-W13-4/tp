@@ -22,7 +22,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import seedu.address.logic.commands.AddCommand;
+import seedu.address.logic.commands.AddClientCommand;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.DeleteCommand;
 import seedu.address.logic.commands.EditCommand;
@@ -141,9 +141,10 @@ public class LogicManagerMeetingViewTest {
         assertThrows(ParseException.class, MESSAGE_UNKNOWN_COMMAND, () -> logic.execute("unknown"));
         assertContactCommandRejected(DeleteCommand.COMMAND_WORD + " 1");
 
-        String duplicateAdd = AddCommand.COMMAND_WORD + NAME_DESC_AMY + PHONE_DESC_AMY
+        String duplicateAdd = AddClientCommand.COMMAND_WORD + NAME_DESC_AMY + PHONE_DESC_AMY
                 + EMAIL_DESC_AMY + ADDRESS_DESC_AMY;
-        assertThrows(CommandException.class, AddCommand.MESSAGE_DUPLICATE_PERSON, () -> logic.execute(duplicateAdd));
+        assertThrows(CommandException.class,
+                AddClientCommand.MESSAGE_DUPLICATE_PERSON, () -> logic.execute(duplicateAdd));
         assertContactCommandRejected(EditCommand.COMMAND_WORD + " 1 p/87654321");
     }
 
