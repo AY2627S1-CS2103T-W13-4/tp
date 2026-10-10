@@ -42,7 +42,7 @@ public class DeleteMeetingCommand extends Command {
 
         Meeting meetingToDelete = lastShownList.get(targetIndex.getZeroBased());
         model.deleteMeeting(meetingToDelete);
-        return new CommandResult(String.format(MESSAGE_DELETE_MEETING_SUCCESS, meetingToDelete));
+        return new CommandResult(String.format(MESSAGE_DELETE_MEETING_SUCCESS, meetingToDelete), true);
     }
 
     @Override

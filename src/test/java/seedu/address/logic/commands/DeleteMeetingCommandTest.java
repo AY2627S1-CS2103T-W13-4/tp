@@ -44,7 +44,7 @@ public class DeleteMeetingCommandTest {
         expectedModel.deleteMeeting(firstMeeting);
         String expectedMessage = String.format(DeleteMeetingCommand.MESSAGE_DELETE_MEETING_SUCCESS, firstMeeting);
 
-        assertCommandSuccess(command, model, expectedMessage, expectedModel);
+        assertCommandSuccess(command, model, new CommandResult(expectedMessage, true), expectedModel);
     }
 
     @Test
