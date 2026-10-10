@@ -178,6 +178,7 @@ Format: `deletem MEETING_INDEX`
 * The index refers to the index number shown in the displayed meeting list.
 * The index **must be a positive integer** 1, 2, 3, ...
 * Invalid index show `The index is invalid.`.
+* `deletem` can only be executed when the meeting list is shown. Run `listm` before attempting to delete meetings.
 
 Examples:
 * `deletem 2` deletes the 2nd meeting in the meeting list.

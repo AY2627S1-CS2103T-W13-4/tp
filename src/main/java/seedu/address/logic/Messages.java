@@ -17,7 +17,9 @@ public class Messages {
     public static final String MESSAGE_INVALID_PERSON_DISPLAYED_INDEX = "The person index provided is invalid.";
     public static final String MESSAGE_INVALID_MEETING_INDEX = "The index is invalid.";
     public static final String MESSAGE_CONTACT_LIST_NOT_VISIBLE =
-            "Cannot edit or delete contacts while viewing meetings. Run list to display contacts first.";
+            "Cannot edit or delete contacts while viewing meetings. Run listc to display contacts first.";
+    public static final String MESSAGE_MEETING_LIST_NOT_VISIBLE =
+            "Cannot delete meetings while viewing clients. Run listm to display meetings first.";
     public static final String MESSAGE_PERSONS_LISTED_OVERVIEW = "%1$d person(s) listed!";
     public static final String MESSAGE_DUPLICATE_FIELDS =
                 "Multiple values specified for the following single-valued field(s): ";
