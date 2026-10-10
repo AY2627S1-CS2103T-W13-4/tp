@@ -3,6 +3,7 @@ package seedu.address.logic.parser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static seedu.address.logic.Messages.MESSAGE_INVALID_MEETING_INDEX;
 import static seedu.address.logic.Messages.MESSAGE_UNKNOWN_COMMAND;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_PERSON;
@@ -12,10 +13,12 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.AddClientCommand;
 import seedu.address.logic.commands.AddMeetingCommand;
 import seedu.address.logic.commands.ClearCommand;
 import seedu.address.logic.commands.DeleteClientCommand;
+import seedu.address.logic.commands.DeleteMeetingCommand;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.EditCommand.EditPersonDescriptor;
 import seedu.address.logic.commands.ExitCommand;
@@ -66,6 +69,29 @@ public class AddressBookParserTest {
         DeleteClientCommand command = (DeleteClientCommand) parser.parseCommand(
                 DeleteClientCommand.COMMAND_WORD + " " + INDEX_FIRST_PERSON.getOneBased());
         assertEquals(new DeleteClientCommand(INDEX_FIRST_PERSON), command);
+    }
+
+    @Test
+    public void parseCommand_deleteMeeting() throws Exception {
+        Index index = Index.fromOneBased(1);
+        DeleteMeetingCommand command = (DeleteMeetingCommand) parser.parseCommand(
+                DeleteMeetingCommand.COMMAND_WORD + " " + index.getOneBased());
+        assertEquals(new DeleteMeetingCommand(index), command);
+        assertEquals(new DeleteMeetingCommand(index), parser.parseCommand(" \tdeletem \t1 \t"));
+    }
+
+    @Test
+    public void parseCommand_deleteMeetingInvalidArguments_throwsParseException() {
+        assertThrows(ParseException.class,
+                MESSAGE_INVALID_MEETING_INDEX, () -> parser.parseCommand("deletem"));
+        assertThrows(ParseException.class,
+                MESSAGE_INVALID_MEETING_INDEX, () -> parser.parseCommand("deletem 1 2"));
+    }
+
+    @Test
+    public void parseCommand_deleteMeetingWrongCase_throwsParseException() {
+        assertThrows(ParseException.class,
+                MESSAGE_UNKNOWN_COMMAND, () -> parser.parseCommand("DeleteM 1"));
     }
 
     @Test
