@@ -18,6 +18,10 @@ import seedu.address.model.meeting.MeetingDate;
 import seedu.address.model.meeting.MeetingName;
 import seedu.address.model.meeting.MeetingTime;
 
+/**
+ * Contains integration tests (interaction with the Model) and unit tests for
+ * {@code DeleteMeetingCommand}.
+ */
 public class DeleteMeetingCommandTest {
 
     private Model model;
