@@ -1,0 +1,14 @@
+{
+  "persons": [ ],
+  "meetings": [ {
+    "name": "Alice Pauline",
+    "date": "20/09/2026",
+    "startTime": "1430",
+    "endTime": "1530"
+  }, {
+    "name": "alice pauline",
+    "date": "20/09/2026",
+    "startTime": "1430",
+    "endTime": "1530"
+  } ]
+}
