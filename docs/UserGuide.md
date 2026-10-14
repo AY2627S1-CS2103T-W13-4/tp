@@ -167,6 +167,22 @@ Examples:
 * `list` followed by `delete 2` deletes the 2nd person in the address book.
 * `find Betsy` followed by `delete 1` deletes the 1st person in the results of the `find` command.
 
+### Deleting a meeting: `deletem`
+
+Deletes the specified meeting from the address book.
+
+Format: `deletem MEETING_INDEX`
+
+* Deletes the meeting at the specified `MEETING_INDEX`.
+* The command is case-sensitive. Only `deletem` in lowercase is accepted. `DeleteM` and other variations show `Unknown command.`.
+* The index refers to the index number shown in the displayed meeting list.
+* The index **must be a positive integer** 1, 2, 3, ...
+* Invalid index show `The index is invalid.`.
+* `deletem` can only be executed when the meeting list is shown. Run `listm` before attempting to delete meetings.
+
+Examples:
+* `deletem 2` deletes the 2nd meeting in the meeting list.
+
 ### Clearing all entries: `clear`
 
 Clears all entries from the address book.

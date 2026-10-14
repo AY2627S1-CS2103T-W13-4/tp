@@ -10,6 +10,7 @@ import seedu.address.commons.core.LogsCenter;
 import seedu.address.logic.commands.Command;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.DeleteClientCommand;
+import seedu.address.logic.commands.DeleteMeetingCommand;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.AddressBookParser;
@@ -54,6 +55,8 @@ public class LogicManager implements Logic {
         Command command = addressBookParser.parseCommand(commandText);
         if (showingMeetings && (command instanceof DeleteClientCommand || command instanceof EditCommand)) {
             throw new CommandException(Messages.MESSAGE_CONTACT_LIST_NOT_VISIBLE);
+        } else if (!showingMeetings && (command instanceof DeleteMeetingCommand)) {
+            throw new CommandException(Messages.MESSAGE_MEETING_LIST_NOT_VISIBLE);
         }
         commandResult = command.execute(model);
 

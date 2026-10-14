@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.Messages.MESSAGE_CONTACT_LIST_NOT_VISIBLE;
+import static seedu.address.logic.Messages.MESSAGE_MEETING_LIST_NOT_VISIBLE;
 import static seedu.address.logic.Messages.MESSAGE_UNKNOWN_COMMAND;
 import static seedu.address.logic.commands.CommandTestUtil.ADDRESS_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.EMAIL_DESC_AMY;
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.io.TempDir;
 import seedu.address.logic.commands.AddClientCommand;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.DeleteClientCommand;
+import seedu.address.logic.commands.DeleteMeetingCommand;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.commands.HelpCommand;
@@ -73,6 +75,13 @@ public class LogicManagerMeetingViewTest {
         logic.execute(ListMeetingCommand.COMMAND_WORD);
 
         assertContactCommandRejected("  " + DeleteClientCommand.COMMAND_WORD + " 1  ");
+    }
+
+    @Test
+    public void execute_deleteWhileShowingClients_rejectsWithoutChangingDataOrSaving() throws Exception {
+        logic.execute(ListClientCommand.COMMAND_WORD);
+
+        assertMeetingCommandRejected("  " + DeleteMeetingCommand.COMMAND_WORD + " 1  ");
     }
 
     @Test
@@ -198,6 +207,21 @@ public class LogicManagerMeetingViewTest {
 
         assertEquals(original, model.getAddressBook());
         assertEquals(originalFilteredPersons, model.getFilteredPersonList());
+        assertEquals(originalFile, Files.readString(addressBookStorage.getAddressBookFilePath()));
+        assertEquals(originalSaveAttempts, addressBookStorage.saveAttempts);
+    }
+
+    /**
+     * Confirms that a rejected meeting command changes neither the model nor the stored file.
+     */
+    private void assertMeetingCommandRejected(String commandText) throws Exception {
+        AddressBook original = new AddressBook(model.getAddressBook());
+        String originalFile = Files.readString(addressBookStorage.getAddressBookFilePath());
+        int originalSaveAttempts = addressBookStorage.saveAttempts;
+
+        assertThrows(CommandException.class, MESSAGE_MEETING_LIST_NOT_VISIBLE, () -> logic.execute(commandText));
+
+        assertEquals(original, model.getAddressBook());
         assertEquals(originalFile, Files.readString(addressBookStorage.getAddressBookFilePath()));
         assertEquals(originalSaveAttempts, addressBookStorage.saveAttempts);
     }
