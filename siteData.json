@@ -112,6 +112,7 @@
         "features": "Features",
         "viewing-help-help": "Viewing help: help",
         "adding-a-person-add": "Adding a person: add",
+        "adding-a-meeting-addm": "Adding a meeting: addm",
         "listing-all-meetings-listm": "Listing all meetings: listm",
         "listing-all-persons-list": "Listing all persons: list",
         "editing-a-person-edit": "Editing a person: edit",
