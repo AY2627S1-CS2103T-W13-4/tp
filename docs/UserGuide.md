@@ -78,7 +78,7 @@ Format: `help`
 
 ### Adding a person: `addc`
 
-Adds a person to the address book.
+Adds a person to PingBook.
 
 Format: `addc n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS [t/TAG]... `
 
@@ -93,7 +93,7 @@ Examples:
 
 ### Listing all persons: `listc`
 
-Shows a list of all persons in the address book.
+Shows a list of all persons in PingBook.
 
 Format: `listc`
 
@@ -154,7 +154,7 @@ Examples:
 
 ### Deleting a person: `deletec`
 
-Deletes the specified person from the address book.
+Deletes the specified person from PingBook.
 
 Format: `deletec INDEX`
 
@@ -164,7 +164,7 @@ Format: `deletec INDEX`
 * The index **must be a positive integer** 1, 2, 3, ...
 
 Examples:
-* `listc` followed by `deletec 2` deletes the 2nd person in the address book.
+* `listc` followed by `deletec 2` deletes the 2nd person in PingBook.
 * `find Betsy` followed by `deletec 1` deletes the 1st person in the results of the `find` command.
 
 ### Deleting a meeting: `deletem`
