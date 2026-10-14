@@ -17,7 +17,14 @@ public class Address {
      */
     public static final String VALIDATION_REGEX = "[^\\s].*";
 
+    /** Represents an address that was not provided. */
+    public static final Address EMPTY = new Address();
+
     public final String value;
+
+    private Address() {
+        value = "";
+    }
 
     /**
      * Constructs an {@code Address}.
@@ -35,6 +42,10 @@ public class Address {
      */
     public static boolean isValidAddress(String test) {
         return test.matches(VALIDATION_REGEX);
+    }
+
+    public boolean isEmpty() {
+        return value.isEmpty();
     }
 
     @Override

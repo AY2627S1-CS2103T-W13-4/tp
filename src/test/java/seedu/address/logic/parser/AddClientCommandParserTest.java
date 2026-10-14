@@ -138,6 +138,13 @@ public class AddClientCommandParserTest {
     }
 
     @Test
+    public void parse_addressOmitted_success() {
+        Person expected = new Person(BOB.getName(), BOB.getPhone(), BOB.getEmail(), Address.EMPTY, BOB.getTags());
+        assertParseSuccess(parser, NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB + TAG_DESC_FRIEND + TAG_DESC_HUSBAND,
+                new AddClientCommand(expected));
+    }
+
+    @Test
     public void parse_compulsoryFieldMissing_failure() {
         String expectedMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddClientCommand.MESSAGE_USAGE);
 
@@ -151,10 +158,6 @@ public class AddClientCommandParserTest {
 
         // missing email prefix
         assertParseFailure(parser, NAME_DESC_BOB + PHONE_DESC_BOB + VALID_EMAIL_BOB + ADDRESS_DESC_BOB,
-                expectedMessage);
-
-        // missing address prefix
-        assertParseFailure(parser, NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB + VALID_ADDRESS_BOB,
                 expectedMessage);
 
         // all prefixes missing
