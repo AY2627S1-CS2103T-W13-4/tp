@@ -9,10 +9,12 @@ import static seedu.address.testutil.TypicalPersons.ALICE;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import seedu.address.model.AddressBook;
 import seedu.address.model.ModelManager;
@@ -80,6 +82,59 @@ public class ListMeetingCommandTest {
         Clock twoPm = Clock.fixed(Instant.parse("2026-10-08T06:00:00Z"), NOON.getZone());
         new ListMeetingCommand(twoPm).execute(model);
         assertEquals(List.of(later, earlier), model.getMeetingList());
+    }
+
+    @Test
+    public void execute_timeAdvances_existingViewReceivesOrderUpdates() {
+        Meeting earlier = meeting("Earlier", "08/10/2026", "1300", "1400");
+        Meeting later = meeting("Later", "08/10/2026", "1500", "1600");
+        List.of(later, earlier).forEach(model::addMeeting);
+        AddressBook original = new AddressBook(model.getAddressBook());
+        ObservableList<Meeting> displayedMeetings = model.getMeetingList();
+        List<List<Meeting>> observedOrders = new ArrayList<>();
+        displayedMeetings.addListener((ListChangeListener<Meeting>) change ->
+                observedOrders.add(List.copyOf(change.getList())));
+        assertEquals(List.of(later, earlier), displayedMeetings);
+
+        command.execute(model);
+
+        assertEquals(List.of(earlier, later), displayedMeetings);
+        assertTrue(observedOrders.contains(List.of(earlier, later)));
+        observedOrders.clear();
+
+        Clock twoPm = Clock.fixed(Instant.parse("2026-10-08T06:00:00Z"), NOON.getZone());
+        new ListMeetingCommand(twoPm).execute(model);
+
+        assertEquals(List.of(later, earlier), displayedMeetings);
+        assertTrue(observedOrders.contains(List.of(later, earlier)));
+        assertEquals(original, model.getAddressBook());
+    }
+
+    @Test
+    public void execute_sameInstantDifferentZones_groupsUsingClockZone() {
+        Meeting morning = meeting("Morning", "08/10/2026", "0900", "1000");
+        Meeting afternoon = meeting("Afternoon", "08/10/2026", "1500", "1600");
+        List.of(afternoon, morning).forEach(model::addMeeting);
+        AddressBook original = new AddressBook(model.getAddressBook());
+
+        command.execute(model);
+        assertEquals(List.of(afternoon, morning), model.getMeetingList());
+
+        Clock utc = NOON.withZone(ZoneId.of("UTC"));
+        new ListMeetingCommand(utc).execute(model);
+        assertEquals(List.of(morning, afternoon), model.getMeetingList());
+        assertEquals(original, model.getAddressBook());
+    }
+
+    @Test
+    public void execute_equalDateAndTimes_ordersNamesIgnoringCase() {
+        Meeting beta = meeting("Beta", "08/10/2026", "1500", "1600");
+        Meeting alpha = meeting("alpha", "08/10/2026", "1500", "1600");
+        List.of(beta, alpha).forEach(model::addMeeting);
+
+        command.execute(model);
+
+        assertEquals(List.of(alpha, beta), model.getMeetingList());
     }
 
     @Test

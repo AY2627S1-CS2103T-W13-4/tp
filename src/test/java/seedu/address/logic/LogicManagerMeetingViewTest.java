@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.Messages.MESSAGE_CONTACT_LIST_NOT_VISIBLE;
+import static seedu.address.logic.Messages.MESSAGE_INVALID_MEETING_INDEX;
 import static seedu.address.logic.Messages.MESSAGE_MEETING_LIST_NOT_VISIBLE;
 import static seedu.address.logic.Messages.MESSAGE_UNKNOWN_COMMAND;
 import static seedu.address.logic.commands.CommandTestUtil.ADDRESS_DESC_AMY;
@@ -24,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import seedu.address.logic.commands.AddClientCommand;
+import seedu.address.logic.commands.AddMeetingCommand;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.DeleteClientCommand;
 import seedu.address.logic.commands.DeleteMeetingCommand;
@@ -75,6 +77,51 @@ public class LogicManagerMeetingViewTest {
         logic.execute(ListMeetingCommand.COMMAND_WORD);
 
         assertContactCommandRejected("  " + DeleteClientCommand.COMMAND_WORD + " 1  ");
+    }
+
+    @Test
+    public void execute_deleteAfterListMeeting_usesSortedDisplayIndex() throws Exception {
+        Meeting later = model.getMeetingList().get(0);
+        Meeting earlier = new Meeting(new MeetingName("Earlier meeting"), new MeetingDate("07/10/2099"),
+                new MeetingTime("1500"), new MeetingTime("1600"));
+        Meeting middle = new Meeting(new MeetingName("Middle meeting"), new MeetingDate("08/10/2099"),
+                new MeetingTime("1500"), new MeetingTime("1600"));
+        model.addMeeting(earlier);
+        model.addMeeting(middle);
+        assertEquals(List.of(later, earlier, middle), model.getAddressBook().getMeetingList());
+
+        logic.execute(ListMeetingCommand.COMMAND_WORD);
+        assertEquals(List.of(earlier, middle, later), logic.getMeetingList());
+
+        CommandResult result = logic.execute(DeleteMeetingCommand.COMMAND_WORD + " 1");
+
+        assertTrue(result.isShowMeetings());
+        assertEquals(String.format(DeleteMeetingCommand.MESSAGE_DELETE_MEETING_SUCCESS, earlier),
+                result.getFeedbackToUser());
+        assertEquals(List.of(middle, later), logic.getMeetingList());
+        assertEquals(List.of(later, middle), model.getAddressBook().getMeetingList());
+        assertEquals(model.getAddressBook(), addressBookStorage.readAddressBook().orElseThrow());
+    }
+
+    @Test
+    public void execute_deleteLastMeeting_keepsMeetingPanelAndContactGuard() throws Exception {
+        logic.execute(ListMeetingCommand.COMMAND_WORD);
+
+        CommandResult result = logic.execute(DeleteMeetingCommand.COMMAND_WORD + " 1");
+
+        assertTrue(result.isShowMeetings());
+        assertTrue(logic.getMeetingList().isEmpty());
+        assertTrue(model.getAddressBook().getMeetingList().isEmpty());
+        assertEquals(model.getAddressBook(), addressBookStorage.readAddressBook().orElseThrow());
+        int originalSaveAttempts = addressBookStorage.saveAttempts;
+        String originalFile = Files.readString(addressBookStorage.getAddressBookFilePath());
+
+        assertThrows(CommandException.class,
+                MESSAGE_INVALID_MEETING_INDEX, () -> logic.execute(DeleteMeetingCommand.COMMAND_WORD + " 1"));
+        assertEquals(originalSaveAttempts, addressBookStorage.saveAttempts);
+        assertEquals(originalFile, Files.readString(addressBookStorage.getAddressBookFilePath()));
+        assertContactCommandRejected(DeleteClientCommand.COMMAND_WORD + " 1");
+        assertContactCommandRejected(EditCommand.COMMAND_WORD + " 1 p/87654321");
     }
 
     @Test
@@ -192,6 +239,19 @@ public class LogicManagerMeetingViewTest {
 
         assertContactCommandRejected(DeleteClientCommand.COMMAND_WORD + " 1");
         assertContactCommandRejected(EditCommand.COMMAND_WORD + " 1 p/87654321");
+    }
+
+    @Test
+    public void execute_addMeetingWhileShowingMeetings_keepsMeetingsVisible() throws Exception {
+        logic.execute(ListMeetingCommand.COMMAND_WORD);
+
+        CommandResult result = logic.execute(AddMeetingCommand.COMMAND_WORD
+                + " n/Sprint planning d/10/10/2099 st/0900 et/1000");
+
+        assertTrue(result.isShowMeetings());
+        assertEquals(2, model.getAddressBook().getMeetingList().size());
+        assertEquals(model.getAddressBook(), addressBookStorage.readAddressBook().orElseThrow());
+        assertContactCommandRejected(DeleteClientCommand.COMMAND_WORD + " 1");
     }
 
     /**
