@@ -91,6 +91,23 @@ Examples:
 * `add n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01`
 * `add n/Betsy Crowe t/friend e/betsycrowe@example.com a/Newgate Prison p/1234567 t/criminal`
 
+### Adding a meeting: `addm`
+
+Adds a meeting to PingBook and displays the Meetings panel.
+
+Format: `addm n/NAME d/DATE st/START_TIME et/END_TIME`
+
+* All four fields are required, and each prefix can be used only once.
+* `NAME` can contain only letters, spaces, hyphens (`-`), and apostrophes (`'`). It must contain at least one letter.
+* `DATE` must be a valid calendar date in `DD/MM/YYYY` format.
+* `START_TIME` and `END_TIME` must each use the 24-hour `HHMM` format, from `0000` to `2359`.
+* A meeting is considered a duplicate if its name, date, start time, and end time are the same as those of an
+  existing meeting. Name comparison is case-insensitive, and repeated spaces in names are ignored.
+
+Examples:
+* `addm n/Project Review d/08/10/2026 st/1400 et/1500`
+* `addm d/14/10/2026 n/Client Check-in et/1030 st/0930`
+
 ### Listing all meetings: `listm`
 
 Shows all saved meetings in the Meetings panel, with numbered rows containing the name, date and start/end times.
