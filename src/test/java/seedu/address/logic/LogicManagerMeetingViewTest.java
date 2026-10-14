@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import seedu.address.logic.commands.AddClientCommand;
+import seedu.address.logic.commands.AddMeetingCommand;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.DeleteClientCommand;
 import seedu.address.logic.commands.DeleteMeetingCommand;
@@ -192,6 +193,19 @@ public class LogicManagerMeetingViewTest {
 
         assertContactCommandRejected(DeleteClientCommand.COMMAND_WORD + " 1");
         assertContactCommandRejected(EditCommand.COMMAND_WORD + " 1 p/87654321");
+    }
+
+    @Test
+    public void execute_addMeetingWhileShowingMeetings_keepsMeetingsVisible() throws Exception {
+        logic.execute(ListMeetingCommand.COMMAND_WORD);
+
+        CommandResult result = logic.execute(AddMeetingCommand.COMMAND_WORD
+                + " n/Sprint planning d/10/10/2099 st/0900 et/1000");
+
+        assertTrue(result.isShowMeetings());
+        assertEquals(2, model.getAddressBook().getMeetingList().size());
+        assertEquals(model.getAddressBook(), addressBookStorage.readAddressBook().orElseThrow());
+        assertContactCommandRejected(DeleteClientCommand.COMMAND_WORD + " 1");
     }
 
     /**
