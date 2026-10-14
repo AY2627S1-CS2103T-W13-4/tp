@@ -35,9 +35,10 @@ public class AddMeetingCommandTest {
         Model model = new ModelManager();
         Model expectedModel = new ModelManager();
         expectedModel.addMeeting(PROJECT_REVIEW);
+        CommandResult expectedResult = new CommandResult(
+                String.format(AddMeetingCommand.MESSAGE_SUCCESS, PROJECT_REVIEW), true);
 
-        assertCommandSuccess(new AddMeetingCommand(PROJECT_REVIEW), model,
-                String.format(AddMeetingCommand.MESSAGE_SUCCESS, PROJECT_REVIEW), expectedModel);
+        assertCommandSuccess(new AddMeetingCommand(PROJECT_REVIEW), model, expectedResult, expectedModel);
     }
 
     @Test
