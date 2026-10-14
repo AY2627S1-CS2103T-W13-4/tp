@@ -7,6 +7,9 @@ import static seedu.address.testutil.Assert.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
+/**
+ * Tests the {@code Meeting} class.
+ */
 public class MeetingTest {
 
     private static final MeetingName VALID_NAME = new MeetingName("Client Meeting");
@@ -14,44 +17,41 @@ public class MeetingTest {
     private static final MeetingTime VALID_START_TIME = new MeetingTime("0900");
     private static final MeetingTime VALID_END_TIME = new MeetingTime("1000");
 
+    /**
+     * Creates a meeting with valid details.
+     *
+     * @return a meeting with valid details
+     */
     private Meeting createMeeting() {
         return new Meeting(VALID_NAME, VALID_DATE, VALID_START_TIME, VALID_END_TIME);
     }
 
     @Test
     public void constructor_null_throwsNullPointerException() {
-        assertThrows(NullPointerException.class,
-                () -> new Meeting(null, VALID_DATE, VALID_START_TIME, VALID_END_TIME));
-        assertThrows(NullPointerException.class,
-                () -> new Meeting(VALID_NAME, null, VALID_START_TIME, VALID_END_TIME));
-        assertThrows(NullPointerException.class,
-                () -> new Meeting(VALID_NAME, VALID_DATE, null, VALID_END_TIME));
-        assertThrows(NullPointerException.class,
-                () -> new Meeting(VALID_NAME, VALID_DATE, VALID_START_TIME, null));
+        assertThrows(NullPointerException.class, () -> new Meeting(null, VALID_DATE, VALID_START_TIME, VALID_END_TIME));
+        assertThrows(NullPointerException.class, () -> new Meeting(VALID_NAME, null, VALID_START_TIME, VALID_END_TIME));
+        assertThrows(NullPointerException.class, () -> new Meeting(VALID_NAME, VALID_DATE, null, VALID_END_TIME));
+        assertThrows(NullPointerException.class, () -> new Meeting(VALID_NAME, VALID_DATE, VALID_START_TIME, null));
     }
 
     @Test
     public void getName_returnsName() {
-        Meeting meeting = createMeeting();
-        assertEquals(VALID_NAME, meeting.getName());
+        assertEquals(VALID_NAME, createMeeting().getName());
     }
 
     @Test
     public void getDate_returnsDate() {
-        Meeting meeting = createMeeting();
-        assertEquals(VALID_DATE, meeting.getDate());
+        assertEquals(VALID_DATE, createMeeting().getDate());
     }
 
     @Test
     public void getStartTime_returnsStartTime() {
-        Meeting meeting = createMeeting();
-        assertEquals(VALID_START_TIME, meeting.getStartTime());
+        assertEquals(VALID_START_TIME, createMeeting().getStartTime());
     }
 
     @Test
     public void getEndTime_returnsEndTime() {
-        Meeting meeting = createMeeting();
-        assertEquals(VALID_END_TIME, meeting.getEndTime());
+        assertEquals(VALID_END_TIME, createMeeting().getEndTime());
     }
 
     @Test
@@ -72,11 +72,13 @@ public class MeetingTest {
 
         // Different name -> returns false
         assertFalse(meeting.equals(new Meeting(
-                new MeetingName("Other Meeting"), VALID_DATE, VALID_START_TIME, VALID_END_TIME)));
+                new MeetingName("Other Meeting"), VALID_DATE,
+                VALID_START_TIME, VALID_END_TIME)));
 
         // Different date -> returns false
         assertFalse(meeting.equals(new Meeting(
-                VALID_NAME, new MeetingDate("16/10/2026"), VALID_START_TIME, VALID_END_TIME)));
+                VALID_NAME, new MeetingDate("16/10/2026"),
+                VALID_START_TIME, VALID_END_TIME)));
 
         // Different start time -> returns false
         assertFalse(meeting.equals(new Meeting(

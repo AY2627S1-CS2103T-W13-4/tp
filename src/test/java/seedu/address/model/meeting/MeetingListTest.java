@@ -119,8 +119,7 @@ public class MeetingListTest {
         MeetingList list = new MeetingList();
         Meeting meeting = createMeeting("Client Meeting", "15/10/2026", "0900", "1000");
 
-        assertThrows(DuplicateMeetingException.class,
-                () -> list.setMeetings(Arrays.asList(meeting, meeting)));
+        assertThrows(DuplicateMeetingException.class, () -> list.setMeetings(Arrays.asList(meeting, meeting)));
         assertEquals(0, list.size());
     }
 
@@ -131,8 +130,7 @@ public class MeetingListTest {
         Meeting duplicate = createMeeting("Client Meeting", "16/10/2026", "1100", "1200");
         list.add(original);
 
-        assertThrows(DuplicateMeetingException.class,
-                () -> list.setMeetings(Arrays.asList(duplicate, duplicate)));
+        assertThrows(DuplicateMeetingException.class, () -> list.setMeetings(Arrays.asList(duplicate, duplicate)));
 
         assertEquals(1, list.size());
         assertEquals(original, list.get(0));
@@ -182,8 +180,7 @@ public class MeetingListTest {
 
         assertEquals(1, observableList.size());
         assertEquals(meeting, observableList.get(0));
-        assertThrows(UnsupportedOperationException.class,
-                () -> observableList.add(
+        assertThrows(UnsupportedOperationException.class, () -> observableList.add(
                         createMeeting("Project Review", "16/10/2026", "1100", "1200")));
     }
 
