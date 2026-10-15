@@ -80,15 +80,16 @@ Format: `help`
 
 Adds a person to PingBook.
 
-Format: `addc n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS [t/TAG]... `
+Format: `addc n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [t/TAG]... `
 
 <box type="tip" seamless>
 
-**Tip:** A person can have any number of tags, including zero.
+**Tip:** A person can have any number of tags, including zero. The address is optional and can be left out.
 </box>
 
 Examples:
 * `addc n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01`
+* `addc n/Mary Lim p/87654321 e/marylim@example.com t/premium` (no address)
 * `addc n/Betsy Crowe t/friend e/betsycrowe@example.com a/Newgate Prison p/1234567 t/criminal`
 
 ### Listing all persons: `listc`
@@ -247,7 +248,7 @@ Furthermore, certain edits can cause PingBook to behave in unexpected ways (e.g.
 
 Action     | Format, Examples
 -----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-**Add client**    | `addc n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS [t/TAG]... ` <br> e.g., `add n/James Ho p/22224444 e/jamesho@example.com a/123, Clementi Rd, 1234665 t/friend t/colleague`
+**Add client**    | `addc n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [t/TAG]... ` <br> e.g., `add n/James Ho p/22224444 e/jamesho@example.com a/123, Clementi Rd, 1234665 t/friend t/colleague`
 **Add meeting**    | `addm n/NAME d/DATE st/START_TIME et/END_TIME` <br> e.g., `addm n/John Doe d/20/09/2026 st/1430 et/1530`
 **Clear**  | `clear`
 **Delete client** | `deletec CLIENT_INDEX`<br> e.g., `deletec 3`
