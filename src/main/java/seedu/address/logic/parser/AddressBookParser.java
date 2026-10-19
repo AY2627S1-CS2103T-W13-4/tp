@@ -62,7 +62,7 @@ public class AddressBookParser {
             case DeleteMeetingCommand.COMMAND_WORD -> new DeleteMeetingCommandParser().parse(arguments);
             case ClearCommand.COMMAND_WORD -> new ClearCommand();
             case FindCommand.COMMAND_WORD -> new FindCommandParser().parse(arguments);
-            case ListClientCommand.COMMAND_WORD -> new ListClientCommand();
+            case ListClientCommand.COMMAND_WORD -> new ListClientCommandParser().parse(arguments);
             case ListMeetingCommand.COMMAND_WORD -> new ListMeetingCommandParser().parse(arguments);
             case ExitCommand.COMMAND_WORD -> new ExitCommand();
             case HelpCommand.COMMAND_WORD -> new HelpCommand();
