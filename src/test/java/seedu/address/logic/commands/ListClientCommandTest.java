@@ -49,7 +49,7 @@ public class ListClientCommandTest {
 
     @Test
     public void constructor_nullTags_throwsAssertionError() {
-        assertThrows(AssertionError.class, () -> new ListClientCommand(null));
+        assertThrows(NullPointerException.class, () -> new ListClientCommand(null));
     }
 
     @Test
