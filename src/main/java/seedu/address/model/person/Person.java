@@ -1,5 +1,6 @@
 package seedu.address.model.person;
 
+import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
 import java.util.Collections;
@@ -59,6 +60,16 @@ public class Person {
      */
     public Set<Tag> getTags() {
         return Collections.unmodifiableSet(tags);
+    }
+
+    /**
+     * Checks if this person contains all tags of a set of tags.
+     * @param tagList The requested tags. Cannot be null or contain null items.
+     * @return True if this person has all tags required.
+     */
+    public boolean hasAllTags(Set<Tag> tagList) {
+        requireAllNonNull(tagList);
+        return tags.containsAll(tagList);
     }
 
     /**

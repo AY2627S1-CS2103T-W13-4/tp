@@ -1,12 +1,13 @@
 package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
-import static seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS;
 
 import java.util.Set;
+import java.util.function.Predicate;
 
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.model.Model;
+import seedu.address.model.person.Person;
 import seedu.address.model.tag.Tag;
 
 /**
@@ -17,6 +18,7 @@ public class ListClientCommand extends Command {
     public static final String COMMAND_WORD = "listc";
     public static final String MESSAGE_SUCCESS = "Listed all persons.";
 
+    private final Predicate<Person> predicateFilterByTags;
     private final Set<Tag> tags;
 
     /**
@@ -24,14 +26,14 @@ public class ListClientCommand extends Command {
      * @param tags The tags to filter which clients are shown. Cannot be null.
      */
     public ListClientCommand(Set<Tag> tags) {
-        assert tags != null;
-        this.tags = tags;
+        this.tags = Set.copyOf(requireNonNull(tags));
+        this.predicateFilterByTags = person -> person.hasAllTags(this.tags);
     }
 
     @Override
     public CommandResult execute(Model model) {
         requireNonNull(model);
-        model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
+        model.updateFilteredPersonList(predicateFilterByTags);
         return new CommandResult(MESSAGE_SUCCESS);
     }
 
