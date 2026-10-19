@@ -7,9 +7,14 @@ import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
 import static seedu.address.logic.commands.CommandTestUtil.showPersonAtIndex;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_PERSON;
+import static seedu.address.testutil.TypicalPersons.ALICE;
+import static seedu.address.testutil.TypicalPersons.BENSON;
+import static seedu.address.testutil.TypicalPersons.DANIEL;
 import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
+import static seedu.address.testutil.TypicalPersons.getTypicalPersons;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -45,6 +50,27 @@ public class ListClientCommandTest {
         showPersonAtIndex(model, INDEX_FIRST_PERSON);
         assertCommandSuccess(new ListClientCommand(new HashSet<>()), model,
                 ListClientCommand.MESSAGE_SUCCESS, expectedModel);
+    }
+
+    @Test
+    public void execute_withTags_showsMatchingClients() throws Exception {
+        Set<Tag> tags = Set.of(new Tag("friends"));
+        ListClientCommand command = new ListClientCommand(tags);
+
+        CommandResult result = command.execute(model);
+
+        assertEquals(new CommandResult(ListClientCommand.MESSAGE_SUCCESS), result);
+        assertEquals(List.of(ALICE, BENSON, DANIEL), model.getFilteredPersonList());
+    }
+
+    @Test
+    public void execute_withEmptyTags_showsAllClients() throws Exception {
+        ListClientCommand command = new ListClientCommand(Set.of());
+
+        CommandResult result = command.execute(model);
+
+        assertEquals(new CommandResult(ListClientCommand.MESSAGE_SUCCESS), result);
+        assertEquals(getTypicalPersons(), model.getFilteredPersonList());
     }
 
     @Test
