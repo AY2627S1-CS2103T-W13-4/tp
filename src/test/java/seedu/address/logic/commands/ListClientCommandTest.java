@@ -5,6 +5,8 @@ import static seedu.address.logic.commands.CommandTestUtil.showPersonAtIndex;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_PERSON;
 import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
 
+import java.util.HashSet;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -28,12 +30,14 @@ public class ListClientCommandTest {
 
     @Test
     public void execute_listIsNotFiltered_showsSameList() {
-        assertCommandSuccess(new ListClientCommand(null), model, ListClientCommand.MESSAGE_SUCCESS, expectedModel);
+        assertCommandSuccess(new ListClientCommand(new HashSet<>()), model,
+                ListClientCommand.MESSAGE_SUCCESS, expectedModel);
     }
 
     @Test
     public void execute_listIsFiltered_showsEverything() {
         showPersonAtIndex(model, INDEX_FIRST_PERSON);
-        assertCommandSuccess(new ListClientCommand(null), model, ListClientCommand.MESSAGE_SUCCESS, expectedModel);
+        assertCommandSuccess(new ListClientCommand(new HashSet<>()), model,
+                ListClientCommand.MESSAGE_SUCCESS, expectedModel);
     }
 }

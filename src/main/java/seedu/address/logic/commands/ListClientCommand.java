@@ -19,7 +19,12 @@ public class ListClientCommand extends Command {
 
     private final Set<Tag> tags;
 
+    /**
+     * Creates an {@code ListClientCommand} to list the clients filtered by tags.
+     * @param tags The tags to filter which clients are shown. Cannot be null.
+     */
     public ListClientCommand(Set<Tag> tags) {
+        assert tags != null;
         this.tags = tags;
     }
 
