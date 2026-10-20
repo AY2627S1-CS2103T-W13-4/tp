@@ -102,22 +102,26 @@ Format: `listc`
 
 Adds a meeting to PingBook and displays the Meetings panel.
 
-Format: `addm n/NAME d/DATE st/START_TIME et/END_TIME`
+Format: `addm n/NAME d/DATE st/START_TIME et/END_TIME [t/TAG]...`
 
-* All four fields are required, and each prefix can be used only once.
+* Name, date, start time and end time are required, and each of their prefixes can be used only once.
 * `NAME` can contain only letters, spaces, hyphens (`-`), and apostrophes (`'`). It must contain at least one letter.
 * `DATE` must be a valid calendar date in `DD/MM/YYYY` format.
 * `START_TIME` and `END_TIME` must each use the 24-hour `HHMM` format, from `0000` to `2359`.
+* Tags are optional. Use one `t/TAG` per tag; tag names must contain only letters and digits, with no spaces.
+  Repeated identical tags are stored once. Tag names are case-sensitive, as with client tags.
+* Tags appear on the meeting card and are saved with the meeting. Older saved meetings without tags still load normally.
 * A meeting is considered a duplicate if its name, date, start time, and end time are the same as those of an
-  existing meeting. Name comparison is case-insensitive, and repeated spaces in names are ignored.
+  existing meeting, regardless of tags. Name comparison is case-insensitive, and repeated spaces in names are ignored.
 
 Examples:
 * `addm n/Project Review d/08/10/2026 st/1400 et/1500`
 * `addm d/14/10/2026 n/Client Check-in et/1030 st/0930`
+* `addm n/Project Review d/25/10/2026 st/1400 et/1500 t/urgent t/work`
 
 ### Listing all meetings: `listm`
 
-Shows all saved meetings in the Meetings panel, with numbered rows containing the name, date and start/end times.
+Shows all saved meetings in the Meetings panel, with numbered rows containing the name, date, start/end times and tags.
 
 Format: `listm`
 
@@ -249,7 +253,7 @@ Furthermore, certain edits can cause PingBook to behave in unexpected ways (e.g.
 Action     | Format, Examples
 -----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 **Add client**    | `addc n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [t/TAG]... ` <br> e.g., `add n/James Ho p/22224444 e/jamesho@example.com a/123, Clementi Rd, 1234665 t/friend t/colleague`
-**Add meeting**    | `addm n/NAME d/DATE st/START_TIME et/END_TIME` <br> e.g., `addm n/John Doe d/20/09/2026 st/1430 et/1530`
+**Add meeting**    | `addm n/NAME d/DATE st/START_TIME et/END_TIME [t/TAG]...` <br> e.g., `addm n/John Doe d/20/09/2026 st/1430 et/1530 t/work`
 **Clear**  | `clear`
 **Delete client** | `deletec CLIENT_INDEX`<br> e.g., `deletec 3`
 **Delete meeting** | `deletem MEETING_INDEX`<br> e.g., `deletem 3`

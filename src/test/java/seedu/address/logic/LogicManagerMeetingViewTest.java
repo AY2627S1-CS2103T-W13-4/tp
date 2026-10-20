@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,6 +45,7 @@ import seedu.address.model.meeting.MeetingDate;
 import seedu.address.model.meeting.MeetingName;
 import seedu.address.model.meeting.MeetingTime;
 import seedu.address.model.person.Person;
+import seedu.address.model.tag.Tag;
 import seedu.address.storage.JsonAddressBookStorage;
 import seedu.address.storage.JsonUserPrefsStorage;
 import seedu.address.storage.StorageManager;
@@ -77,6 +79,25 @@ public class LogicManagerMeetingViewTest {
         logic.execute(ListMeetingCommand.COMMAND_WORD);
 
         assertContactCommandRejected("  " + DeleteClientCommand.COMMAND_WORD + " 1  ");
+    }
+
+    @Test
+    public void execute_addTaggedMeeting_displaysAndPersistsTags() throws Exception {
+        CommandResult result = logic.execute(AddMeetingCommand.COMMAND_WORD
+                + " n/Project Review d/08/10/2099 st/1400 et/1500 t/urgent t/work");
+        Meeting added = model.getAddressBook().getMeetingList().get(1);
+        assertTrue(result.isShowMeetings());
+        assertEquals(Set.of(new Tag("urgent"), new Tag("work")), added.getTags());
+
+        logic.execute(ListMeetingCommand.COMMAND_WORD);
+        assertEquals(added, logic.getMeetingList().get(0));
+        ReadOnlyAddressBook restored = addressBookStorage.readAddressBook().orElseThrow();
+        assertEquals(added.getTags(), restored.getMeetingList().get(1).getTags());
+
+        assertThrows(CommandException.class, AddMeetingCommand.MESSAGE_DUPLICATE_MEETING, () ->
+                logic.execute(AddMeetingCommand.COMMAND_WORD
+                        + " n/Project Review d/08/10/2099 st/1400 et/1500 t/other"));
+        assertEquals(2, model.getAddressBook().getMeetingList().size());
     }
 
     @Test
