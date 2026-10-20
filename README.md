@@ -26,6 +26,7 @@ The first version of PingBook will support:
 |----------------|-----------------------------------------------------------|
 | Add a client   | `addc n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [t/TAG]...` |
 | Delete a client | `deletec CLIENT_INDEX`                                   |
+| Edit a client  | `editc INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]...` |
 | List clients   | `listc`                                                   |
 | Add a meeting  | `addm n/NAME d/DATE st/START_TIME et/END_TIME`            |
 | Delete a meeting | `deletem MEETING_INDEX`                                 |
@@ -34,7 +35,7 @@ The first version of PingBook will support:
 Features being considered for later versions include:
 
 * tagging, pinning and searching for clients
-* editing client details and storing multiple phone numbers and emails per client
+* storing multiple phone numbers and emails per client
 * warnings when meetings clash
 * recurring meetings
 * finding free time slots and viewing the schedule for a given day

@@ -132,15 +132,15 @@ Format: `listm`
 * Duplicate meetings are prevented by the shared model and rejected when loading data. Duplicates have the same
   name (ignoring case and repeated spaces), date, start time and end time; `listm` does not delete stored records.
 * Use `listc` to return to the contacts panel. `help` and invalid commands keep the currently selected panel.
-* Contact commands `deletec INDEX` and `edit INDEX ...` are rejected while the Meetings panel is active.
+* Contact commands `deletec INDEX` and `editc INDEX ...` are rejected while the Meetings panel is active.
   Run `listc` to display contacts before editing or deleting them. You can also use `find KEYWORD` to display
   matching contacts and then use the indices in those results.
 
-### Editing a person: `edit`
+### Editing a person: `editc`
 
 Edits an existing person in PingBook.
 
-Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [t/TAG]... `
+Format: `editc INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [t/TAG]... `
 
 * Edits the person at the specified `INDEX`. The index refers to the index number shown in the displayed person list. The index **must be a positive integer** 1, 2, 3, ...
 * The contacts panel must be active. If you are viewing meetings, run `listc` or `find KEYWORD` first.
@@ -150,8 +150,8 @@ Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [t/TAG]... `
 * To remove all of a person's tags, enter `t/` without a tag after it.
 
 Examples:
-*  `edit 1 p/91234567 e/johndoe@example.com` Edits the phone number and email address of the 1st person to be `91234567` and `johndoe@example.com` respectively.
-*  `edit 2 n/Betsy Crower t/` Edits the name of the 2nd person to be `Betsy Crower` and clears all existing tags.
+*  `editc 1 p/91234567 e/johndoe@example.com` Edits the phone number and email address of the 1st person to be `91234567` and `johndoe@example.com` respectively.
+*  `editc 2 n/Betsy Crower t/` Edits the name of the 2nd person to be `Betsy Crower` and clears all existing tags.
 
 ### Locating persons by name: `find`
 
@@ -253,7 +253,7 @@ Action     | Format, Examples
 **Clear**  | `clear`
 **Delete client** | `deletec CLIENT_INDEX`<br> e.g., `deletec 3`
 **Delete meeting** | `deletem MEETING_INDEX`<br> e.g., `deletem 3`
-**Edit client**   | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]... `<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com`
+**Edit client**   | `editc INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]... `<br> e.g.,`editc 2 n/James Lee e/jameslee@example.com`
 **Find**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
 **List clients**   | `listc`
 **List meetings** | `listm`
