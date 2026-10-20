@@ -61,7 +61,7 @@ PingBook is a **desktop application for managing contacts, optimized for use thr
 * Parameters can be in any order.<br>
   For example, if the command specifies `n/NAME p/PHONE_NUMBER`, `p/PHONE_NUMBER n/NAME` is also acceptable.
 
-* Extraneous parameters for commands that take no parameters, such as `help`, `listc`, `exit`, and `clear`, are ignored.<br>
+* Extraneous parameters for commands that take no parameters, such as `help`, `exit`, and `clear`, are ignored.<br>
   For example, `help 123` is interpreted as `help`.
 
 * If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines as space characters surrounding line-breaks may be omitted when copied over to the application.
@@ -92,11 +92,20 @@ Examples:
 * `addc n/Mary Lim p/87654321 e/marylim@example.com t/premium` (no address)
 * `addc n/Betsy Crowe t/friend e/betsycrowe@example.com a/Newgate Prison p/1234567 t/criminal`
 
-### Listing all persons: `listc`
+### Listing clients by tags: `listc`
 
-Shows a list of all persons in PingBook.
+Shows a list of all persons in PingBook that match the given tags.
 
-Format: `listc`
+Format: `listc [t/TAG]...`
+
+* `TAG` is optional and there can be multiple tags.
+* The command will ignore fields other than `TAG`. For example, `listc n/John` is the same as `listc`.
+* The command is case-sensitive. `listC` or `Listc` are considered invalid.
+* A person is shown only if they have all the tags given.
+
+Examples:
+* `listc`
+* `listc t/friend t/colleagues`
 
 ### Adding a meeting: `addm`
 
@@ -255,6 +264,6 @@ Action     | Format, Examples
 **Delete meeting** | `deletem MEETING_INDEX`<br> e.g., `deletem 3`
 **Edit client**   | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]... `<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com`
 **Find**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
-**List clients**   | `listc`
+**List clients**   | `listc [t/TAG]...`
 **List meetings** | `listm`
 **Help**   | `help`
