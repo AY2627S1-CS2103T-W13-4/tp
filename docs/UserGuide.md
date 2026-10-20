@@ -136,6 +136,25 @@ Format: `listm`
   Run `listc` to display contacts before editing or deleting them. You can also use `find KEYWORD` to display
   matching contacts and then use the indices in those results.
 
+### Editing a meeting: `editm`
+
+Edits an existing meeting in PingBook.
+
+Format: `editm MEETING_INDEX [n/NAME] [d/DATE] [st/START_TIME] [et/END_TIME]`
+
+* Edits the meeting at the specified `MEETING_INDEX` in the displayed meeting list.
+* The Meetings panel must be active. Run `listm` before editing a meeting.
+* The index must be a positive integer: 1, 2, 3, ...
+* At least one field must be provided, and each prefix can be used only once.
+* Fields that are not provided keep their existing values.
+* Names, dates, and times follow the same validation rules as `addm`.
+* An edit that would make two meetings identical is rejected.
+* Editing a meeting's date or time may move it to a different position in the sorted meeting list.
+
+Examples:
+* `editm 1 d/25/10/2026` changes only the date of the 1st displayed meeting.
+* `editm 2 n/Client Review st/1500 et/1600` changes the name and times of the 2nd displayed meeting.
+
 ### Editing a person: `edit`
 
 Edits an existing person in PingBook.
@@ -254,6 +273,7 @@ Action     | Format, Examples
 **Delete client** | `deletec CLIENT_INDEX`<br> e.g., `deletec 3`
 **Delete meeting** | `deletem MEETING_INDEX`<br> e.g., `deletem 3`
 **Edit client**   | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]... `<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com`
+**Edit meeting** | `editm MEETING_INDEX [n/NAME] [d/DATE] [st/START_TIME] [et/END_TIME]`<br> e.g., `editm 2 d/25/10/2026 st/1500 et/1600`
 **Find**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
 **List clients**   | `listc`
 **List meetings** | `listm`

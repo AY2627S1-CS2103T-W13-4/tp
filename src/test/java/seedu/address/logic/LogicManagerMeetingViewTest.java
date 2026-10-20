@@ -30,6 +30,7 @@ import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.DeleteClientCommand;
 import seedu.address.logic.commands.DeleteMeetingCommand;
 import seedu.address.logic.commands.EditCommand;
+import seedu.address.logic.commands.EditMeetingCommand;
 import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.commands.HelpCommand;
 import seedu.address.logic.commands.ListClientCommand;
@@ -104,6 +105,31 @@ public class LogicManagerMeetingViewTest {
     }
 
     @Test
+    public void execute_editMeetingAfterListMeeting_usesSortedDisplayIndexAndResorts() throws Exception {
+        Meeting later = model.getMeetingList().get(0);
+        Meeting earlier = new Meeting(new MeetingName("Earlier meeting"), new MeetingDate("07/10/2099"),
+                new MeetingTime("1500"), new MeetingTime("1600"));
+        Meeting middle = new Meeting(new MeetingName("Middle meeting"), new MeetingDate("08/10/2099"),
+                new MeetingTime("1500"), new MeetingTime("1600"));
+        model.addMeeting(earlier);
+        model.addMeeting(middle);
+
+        logic.execute(ListMeetingCommand.COMMAND_WORD);
+        assertEquals(List.of(earlier, middle, later), logic.getMeetingList());
+
+        CommandResult result = logic.execute(EditMeetingCommand.COMMAND_WORD + " 1 d/10/10/2099");
+        Meeting editedEarlier = new Meeting(earlier.getName(), new MeetingDate("10/10/2099"),
+                earlier.getStartTime(), earlier.getEndTime());
+
+        assertTrue(result.isShowMeetings());
+        assertEquals(String.format(EditMeetingCommand.MESSAGE_EDIT_MEETING_SUCCESS, editedEarlier),
+                result.getFeedbackToUser());
+        assertEquals(List.of(middle, later, editedEarlier), logic.getMeetingList());
+        assertEquals(List.of(later, editedEarlier, middle), model.getAddressBook().getMeetingList());
+        assertEquals(model.getAddressBook(), addressBookStorage.readAddressBook().orElseThrow());
+    }
+
+    @Test
     public void execute_deleteLastMeeting_keepsMeetingPanelAndContactGuard() throws Exception {
         logic.execute(ListMeetingCommand.COMMAND_WORD);
 
@@ -129,6 +155,13 @@ public class LogicManagerMeetingViewTest {
         logic.execute(ListClientCommand.COMMAND_WORD);
 
         assertMeetingCommandRejected("  " + DeleteMeetingCommand.COMMAND_WORD + " 1  ");
+    }
+
+    @Test
+    public void execute_editMeetingWhileShowingClients_rejectsWithoutChangingDataOrSaving() throws Exception {
+        logic.execute(ListClientCommand.COMMAND_WORD);
+
+        assertMeetingCommandRejected("  " + EditMeetingCommand.COMMAND_WORD + " 1 n/Updated Meeting  ");
     }
 
     @Test
