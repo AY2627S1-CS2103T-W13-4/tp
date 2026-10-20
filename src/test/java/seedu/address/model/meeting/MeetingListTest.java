@@ -8,12 +8,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
 import javafx.collections.ObservableList;
 import seedu.address.model.meeting.exceptions.DuplicateMeetingException;
 import seedu.address.model.meeting.exceptions.MeetingNotFoundException;
+import seedu.address.model.tag.Tag;
 
 public class MeetingListTest {
 
@@ -49,6 +51,32 @@ public class MeetingListTest {
         MeetingList list = new MeetingList();
 
         assertThrows(NullPointerException.class, () -> list.add(null));
+    }
+
+    @Test
+    public void add_sameIdentityDifferentTags_throwsDuplicateMeetingException() {
+        MeetingList list = new MeetingList();
+        Meeting meeting = createMeeting("Client Meeting", "15/10/2026", "0900", "1000");
+        Meeting tagged = new Meeting(meeting.getName(), meeting.getDate(), meeting.getStartTime(),
+                meeting.getEndTime(), Set.of(new Tag("urgent")));
+        list.add(meeting);
+
+        assertTrue(list.contains(tagged));
+        assertThrows(DuplicateMeetingException.class, () -> list.add(tagged));
+        assertEquals(Collections.singletonList(meeting), list.asUnmodifiableObservableList());
+    }
+
+    @Test
+    public void setMeetings_sameIdentityDifferentTags_rejectsAndPreservesExistingList() {
+        MeetingList list = new MeetingList();
+        Meeting original = createMeeting("Original Meeting", "14/10/2026", "0900", "1000");
+        list.add(original);
+        Meeting meeting = createMeeting("Client Meeting", "15/10/2026", "0900", "1000");
+        Meeting tagged = new Meeting(meeting.getName(), meeting.getDate(), meeting.getStartTime(),
+                meeting.getEndTime(), Set.of(new Tag("urgent")));
+
+        assertThrows(DuplicateMeetingException.class, () -> list.setMeetings(Arrays.asList(meeting, tagged)));
+        assertEquals(Collections.singletonList(original), list.asUnmodifiableObservableList());
     }
 
     @Test
