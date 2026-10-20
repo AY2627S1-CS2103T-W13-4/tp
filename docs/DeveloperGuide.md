@@ -423,37 +423,7 @@ Use case ends.
 
   Use case ends.
 
-**Use case: UC7 - Edit meeting**
-
-**MSS**
-
-1.  User requests to edit a meeting using its displayed index and supplies one or more replacement fields.
-2.  PingBook validates the index and supplied fields.
-3.  PingBook updates the meeting and displays the reordered meeting list.
-
-    Use case ends.
-
-**Extensions**
-
-* 1a. The Meetings panel is not active.
-
-    * 1a1. PingBook shows an error message and asks the user to display meetings first.
-
-      Use case ends.
-
-* 2a. The index or a supplied field is invalid, or no replacement field is supplied.
-
-    * 2a1. PingBook shows an error message.
-
-      Use case ends.
-
-* 2b. The edit would create a duplicate meeting.
-
-    * 2b1. PingBook shows an error message.
-
-      Use case ends.
-
-**Use case: UC8 - Tag client**
+**Use case: UC7 - Tag client**
 
 **MSS**
 
@@ -476,7 +446,7 @@ Use case ends.
 
       Use case ends.
 
-**Use case: UC9 - Pin client**
+**Use case: UC8 - Pin client**
 
 **MSS**
 
@@ -493,7 +463,7 @@ Use case ends.
 
       Use case ends.
 
-**Use case: UC10 - Sort clients based on a criterion**
+**Use case: UC9 - Sort clients based on a criterion**
 
 **MSS**
 
@@ -510,7 +480,7 @@ Use case ends.
 
       Use case ends.
 
-**Use case: UC11 - Edit client**
+**Use case: UC10 - Edit client**
 
 **MSS**
 
@@ -535,7 +505,7 @@ Use case ends.
 
       Use case ends.
 
-**Use case: UC12 - Tag client**
+**Use case: UC11 - Tag client**
 
 **MSS**
 
@@ -545,7 +515,7 @@ Use case ends.
 
 Use case ends.
 
-**Use case: UC13 - Add contact details**
+**Use case: UC12 - Add contact details**
 
 **MSS**
 
@@ -569,7 +539,7 @@ Use case ends.
 
 Use case ends.
 
-**Use case: UC14 - View prioritised client list**
+**Use case: UC13 - View prioritised client list**
 
 **MSS**
 
@@ -586,7 +556,7 @@ Use case ends.
 
 Use case ends.
 
-**Use case: UC15 - View user guide**
+**Use case: UC14 - View user guide**
 
 **MSS**
 
@@ -604,7 +574,7 @@ Use case ends.
 
 Use case ends.
 
-**Use case: UC16 - Create command alias**
+**Use case: UC15 - Create command alias**
 
 **MSS**
 
@@ -628,7 +598,7 @@ Use case ends.
 
 Use case ends.
 
-**Use case: UC17 - View coworker's meetings**
+**Use case: UC16 - View coworker's meetings**
 
 **MSS**
 
@@ -652,7 +622,7 @@ Use case ends.
 
 Use case ends.
 
-**Use case: UC18 - Detect meeting overlap**
+**Use case: UC17 - Detect meeting overlap**
 
 **MSS**
 
@@ -675,7 +645,7 @@ Use case ends.
 
 Use case resumes at step 3.
 
-**Use case: UC19 - Receive meeting alert**
+**Use case: UC18 - Receive meeting alert**
 
 **MSS**
 
@@ -694,7 +664,7 @@ Use case ends.
 
 Use case ends.
 
-**Use case: UC20 - Prioritise task**
+**Use case: UC19 - Prioritise task**
 
 **MSS**
 
@@ -713,7 +683,7 @@ Use case ends.
 
 Use case ends.
 
-**Use case: UC21 - Record meeting outcome**
+**Use case: UC20 - Record meeting outcome**
 
 **MSS**
 
@@ -732,7 +702,7 @@ Use case ends.
 
 Use case ends.
 
-**Use case: UC22 - View client meeting history**
+**Use case: UC21 - View client meeting history**
 
 **MSS**
 
