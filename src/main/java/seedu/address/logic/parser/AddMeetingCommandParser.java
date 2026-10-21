@@ -46,6 +46,10 @@ public class AddMeetingCommandParser implements Parser<AddMeetingCommand> {
         MeetingTime endTime = ParserUtil.parseMeetingTime(argMultimap.getValue(PREFIX_END_TIME).get());
         Set<Tag> tags = ParserUtil.parseTags(argMultimap.getAllValues(PREFIX_TAG));
 
+        if (!Meeting.isValidTimeRange(startTime, endTime)) {
+            throw new ParseException(Meeting.MESSAGE_INVALID_TIME_RANGE);
+        }
+
         Meeting meeting = new Meeting(name, date, startTime, endTime, tags);
         return new AddMeetingCommand(meeting);
     }

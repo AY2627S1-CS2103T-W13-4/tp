@@ -179,4 +179,12 @@ public class MeetingTest {
         String expected = "Client Meeting 15/10/2026 from 0900 to 1000";
         assertEquals(expected, meeting.toString());
     }
+
+    @Test
+    public void isValidTimeRange() {
+        assertTrue(Meeting.isValidTimeRange(new MeetingTime("0900"), new MeetingTime("0901")));
+        assertFalse(Meeting.isValidTimeRange(new MeetingTime("0900"), new MeetingTime("0900")));
+        assertFalse(Meeting.isValidTimeRange(new MeetingTime("1000"), new MeetingTime("0900")));
+        assertThrows(NullPointerException.class, () -> Meeting.isValidTimeRange(null, new MeetingTime("0900")));
+    }
 }

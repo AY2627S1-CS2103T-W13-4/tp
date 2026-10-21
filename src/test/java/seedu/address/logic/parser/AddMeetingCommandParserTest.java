@@ -120,4 +120,10 @@ public class AddMeetingCommandParserTest {
         assertParseFailure(parser, "unexpected" + NAME_DESC + DATE_DESC + START_TIME_DESC + END_TIME_DESC,
                 expectedMessage);
     }
+
+    @Test
+    public void parse_endNotAfterStart_failure() {
+        assertParseFailure(parser, NAME_DESC + DATE_DESC + " st/1500 et/1500", Meeting.MESSAGE_INVALID_TIME_RANGE);
+        assertParseFailure(parser, NAME_DESC + DATE_DESC + " st/1500 et/1400", Meeting.MESSAGE_INVALID_TIME_RANGE);
+    }
 }

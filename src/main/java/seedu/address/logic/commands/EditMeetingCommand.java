@@ -78,6 +78,10 @@ public class EditMeetingCommand extends Command {
         Meeting meetingToEdit = lastShownList.get(index.getZeroBased());
         Meeting editedMeeting = createEditedMeeting(meetingToEdit, editMeetingDescriptor);
 
+        if (!Meeting.isValidTimeRange(editedMeeting.getStartTime(), editedMeeting.getEndTime())) {
+            throw new CommandException(Meeting.MESSAGE_INVALID_TIME_RANGE);
+        }
+
         if (!meetingToEdit.isSameMeeting(editedMeeting) && model.hasMeeting(editedMeeting)) {
             throw new CommandException(MESSAGE_DUPLICATE_MEETING);
         }

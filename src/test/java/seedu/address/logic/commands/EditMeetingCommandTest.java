@@ -158,4 +158,12 @@ public class EditMeetingCommandTest {
         return new Meeting(new MeetingName(name), new MeetingDate(date),
                 new MeetingTime(startTime), new MeetingTime(endTime), tagSet);
     }
+
+    @Test
+    public void execute_endNotAfterStart_failure() {
+        EditMeetingDescriptor descriptor = new EditMeetingDescriptorBuilder().withEndTime("1400").build();
+
+        assertCommandFailure(new EditMeetingCommand(FIRST_INDEX, descriptor), model,
+                Meeting.MESSAGE_INVALID_TIME_RANGE);
+    }
 }

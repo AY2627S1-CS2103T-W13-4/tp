@@ -17,6 +17,7 @@ import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.EditMeetingCommand;
 import seedu.address.logic.commands.EditMeetingCommand.EditMeetingDescriptor;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.meeting.Meeting;
 import seedu.address.model.tag.Tag;
 
 /**
@@ -66,6 +67,12 @@ public class EditMeetingCommandParser implements Parser<EditMeetingCommand> {
 
         if (!editMeetingDescriptor.isAnyFieldEdited()) {
             throw new ParseException(EditMeetingCommand.MESSAGE_NOT_EDITED);
+        }
+
+        if (editMeetingDescriptor.getStartTime().isPresent() && editMeetingDescriptor.getEndTime().isPresent()
+                && !Meeting.isValidTimeRange(editMeetingDescriptor.getStartTime().get(),
+                        editMeetingDescriptor.getEndTime().get())) {
+            throw new ParseException(Meeting.MESSAGE_INVALID_TIME_RANGE);
         }
 
         return new EditMeetingCommand(index, editMeetingDescriptor);
