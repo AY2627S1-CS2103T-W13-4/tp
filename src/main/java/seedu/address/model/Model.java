@@ -15,7 +15,7 @@ public interface Model {
     /** {@code Predicate} that always evaluates to true */
     Predicate<Person> PREDICATE_SHOW_ALL_PERSONS = unused -> true;
 
-    /** {@code Predicate} that always evaluates to true for meetings */
+    /** {@code Predicate} that matches every meeting. */
     Predicate<Meeting> PREDICATE_SHOW_ALL_MEETINGS = unused -> true;
 
     /**
@@ -85,6 +85,7 @@ public interface Model {
     /**
      * Adds the given meeting.
      * {@code meeting} must not already exist in the address book.
+     * Clears the meeting filter so the new meeting is visible.
      */
     void addMeeting(Meeting meeting);
 
@@ -100,13 +101,12 @@ public interface Model {
      */
     void deleteMeeting(Meeting meeting);
 
-    /** Returns an unmodifiable view of the meeting list in its displayed order. */
+    /** Returns an unmodifiable view of the filtered meeting list in its displayed order. */
     ObservableList<Meeting> getMeetingList();
 
     /**
-     * Updates the filter of the displayed meeting list.
-     *
-     * @param predicate The predicate used to filter meetings.
+     * Updates the meeting filter without modifying stored meetings or their display ordering rules.
+     * @throws NullPointerException if {@code predicate} is null.
      */
     void updateFilteredMeetingList(Predicate<Meeting> predicate);
 

@@ -4,21 +4,30 @@ import static java.util.Objects.requireNonNull;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.Set;
+import java.util.logging.Logger;
 
+import seedu.address.commons.core.LogsCenter;
 import seedu.address.model.Model;
+import seedu.address.model.meeting.MeetingContainsTagsPredicate;
+import seedu.address.model.tag.Tag;
 
 /**
- * Lists all meetings, with unfinished meetings before finished meetings.
+ * Lists meetings matching all optional tag filters, with unfinished meetings first.
  */
 public class ListMeetingCommand extends Command {
 
     public static final String COMMAND_WORD = "listm";
-    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Lists all meetings.\n"
-            + "No parameters or flags are accepted.\nExample: " + COMMAND_WORD;
+    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Lists all meetings or filters by all supplied tags.\n"
+            + "Parameters: [t/TAG]...\nExample: " + COMMAND_WORD + " t/urgent t/work";
     public static final String MESSAGE_SUCCESS = "Listed all meetings.";
+    public static final String MESSAGE_FILTER_SUCCESS = "Listed %1$d meeting(s) matching all specified tags.";
     public static final String MESSAGE_UNKNOWN_COMMAND = "Unknown command. Did you mean \"listm\"?";
 
+    private static final Logger logger = LogsCenter.getLogger(ListMeetingCommand.class);
+
     private final Clock clock;
+    private final MeetingContainsTagsPredicate predicate;
 
     /**
      * Creates a command using the system clock in the default time zone.
@@ -34,11 +43,19 @@ public class ListMeetingCommand extends Command {
      * @throws NullPointerException If {@code clock} is null.
      */
     public ListMeetingCommand(Clock clock) {
-        this.clock = requireNonNull(clock);
+        this(clock, Set.of());
     }
 
     /**
-     * Refreshes the displayed meeting order and returns a result requesting the meeting panel.
+     * Creates a command with a clock for ordering and optional tags for filtering.
+     */
+    public ListMeetingCommand(Clock clock, Set<Tag> tags) {
+        this.clock = requireNonNull(clock);
+        predicate = new MeetingContainsTagsPredicate(tags);
+    }
+
+    /**
+     * Replaces the tag filter, refreshes meeting order and requests the meeting panel.
      * Uses a single reading of the clock for this execution. Does not change the stored meeting records.
      *
      * @param model The model containing the meetings to display.
@@ -49,8 +66,19 @@ public class ListMeetingCommand extends Command {
     @Override
     public CommandResult execute(Model model) {
         requireNonNull(model);
-        model.updateFilteredMeetingList(Model.PREDICATE_SHOW_ALL_MEETINGS);
+        model.updateFilteredMeetingList(predicate);
         model.updateMeetingListOrder(LocalDateTime.now(clock));
-        return new CommandResult(MESSAGE_SUCCESS, true);
+        int displayedCount = model.getMeetingList().size();
+        logger.info(() -> "Meeting list refreshed: tag filter applied=" + !predicate.isEmpty()
+                + ", displayed meetings=" + displayedCount);
+        String message = predicate.isEmpty() ? MESSAGE_SUCCESS : String.format(MESSAGE_FILTER_SUCCESS, displayedCount);
+        return new CommandResult(message, true);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return other == this
+                || other instanceof ListMeetingCommand otherCommand
+                && clock.equals(otherCommand.clock) && predicate.equals(otherCommand.predicate);
     }
 }

@@ -123,6 +123,7 @@ Format: `addm n/NAME d/DATE st/START_TIME et/END_TIME [t/TAG]...`
 * Tags are optional. Use one `t/TAG` per tag; tag names must contain only letters and digits, with no spaces.
   Repeated identical tags are stored once. Tag names are case-sensitive, as with client tags.
 * Tags appear on the meeting card and are saved with the meeting. Older saved meetings without tags still load normally.
+* Adding a meeting clears any active meeting filter so the new meeting is visible.
 * A meeting is considered a duplicate if its name, date, start time, and end time are the same as those of an
   existing meeting, regardless of tags. Name comparison is case-insensitive, and repeated spaces in names are ignored.
 
@@ -131,26 +132,41 @@ Examples:
 * `addm d/14/10/2026 n/Client Check-in et/1030 st/0930`
 * `addm n/Project Review d/25/10/2026 st/1400 et/1500 t/urgent t/work`
 
-### Listing all meetings: `listm`
+### Listing and filtering meetings: `listm`
 
 Shows all saved meetings in the Meetings panel, with numbered rows containing the name, date, start/end times and tags.
 
-Format: `listm`
+Format: `listm [t/TAG]...`
 
-* Takes no parameters or flags. Leading and trailing whitespace is ignored; `listm 1` and `listm --all` are rejected.
+* Plain `listm` displays all meetings and clears any previous meeting filter.
+* Supply one or more `t/TAG` arguments to display meetings containing **all** supplied tags.
+  Matching uses complete tag names and ignores case: `t/urgent` matches `Urgent`, but does not match `urgentMeeting`.
+* Each invocation replaces the previous filter. Repeated tags do not change the results.
+* Tag names must contain only letters and digits. Empty tags (`listm t/`) are rejected.
+* Leading and trailing whitespace is ignored. Other arguments such as `listm 1` and `listm --all` are rejected.
 * The command is case-sensitive. `Listm` and `LISTM` show `Unknown command. Did you mean "listm"?`.
 * Ongoing and upcoming meetings appear first, ordered by date and start time.
   Finished meetings follow, also ordered from earliest to latest.
 * A meeting is finished when its end time on its date is at or before the current local time on your computer.
-  Run `listm` again to refresh this grouping as time passes.
+  To refresh this grouping as time passes while retaining a tag filter, repeat the command with the same tag arguments.
+  For example, after `listm t/work`, run `listm t/work` again. Running plain `listm` refreshes the grouping and clears
+  the active tag filter, showing all meetings.
 * Equal start times are ordered by end time, then name. Sorting does not change the order of records in the data file.
-* An empty list displays `No meetings to display.`. Successful execution reports `Listed all meetings.`.
+* An empty list displays `No meetings to display.`. Plain `listm` reports `Listed all meetings.`.
+  A filtered list reports `Listed N meeting(s) matching all specified tags.`, including zero when no meetings match.
+* Filtering only changes the display; all meetings remain saved. `editm` and `deletem` use the displayed row numbers.
+  Editing tags can hide a meeting if it no longer matches the active filter. Deleting or editing keeps that filter active.
 * Duplicate meetings are prevented by the shared model and rejected when loading data. Duplicates have the same
   name (ignoring case and repeated spaces), date, start time and end time; `listm` does not delete stored records.
 * Use `listc` to return to the contacts panel. `help` and invalid commands keep the currently selected panel.
 * Contact commands `deletec INDEX` and `edit INDEX ...` are rejected while the Meetings panel is active.
   Run `listc` to display contacts before editing or deleting them. You can also use `findc KEYWORD` to display
   matching contacts and then use the indices in those results.
+
+Examples:
+* `listm t/urgent` displays meetings tagged `urgent`, ignoring case.
+* `listm t/urgent t/work` displays meetings containing both tags.
+* `listm` returns to the complete meeting list.
 
 ### Editing a meeting: `editm`
 
@@ -294,7 +310,7 @@ Action     | Format, Examples
 **Delete meeting** | `deletem MEETING_INDEX`<br> e.g., `deletem 3`
 **Edit client**   | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]... `<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com`
 **Edit meeting** | `editm MEETING_INDEX [n/NAME] [d/DATE] [st/START_TIME] [et/END_TIME] [t/TAG]...`<br> e.g., `editm 2 d/25/10/2026 st/1500 et/1600 t/urgent`
-**Find client**   | `findc KEYWORD [MORE_KEYWORDS]`<br> e.g., `findc James Jake`
-**List clients**   | `listc [t/TAG]...`
-**List meetings** | `listm`
+**Find**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
+**List clients**   | `listc`
+**List meetings** | `listm [t/TAG]...`<br> e.g., `listm t/urgent t/work`
 **Help**   | `help`
