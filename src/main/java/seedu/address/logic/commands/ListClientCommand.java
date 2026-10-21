@@ -1,6 +1,7 @@
 package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
 import java.util.Set;
 import java.util.function.Predicate;
@@ -19,6 +20,12 @@ public class ListClientCommand extends Command {
     public static final String COMMAND_WORD = "listc";
     public static final String MESSAGE_SUCCESS = "Listed %1$d persons matching the given tags: %2$s.";
     public static final String MESSAGE_SUCCESS_NO_TAGS = "Listed all %1$d persons.";
+    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Lists all persons matching the given tags. "
+            + "Parameters: "
+            + "[" + PREFIX_TAG + "TAG]...\n"
+            + "Example: " + COMMAND_WORD + " "
+            + PREFIX_TAG + "friends "
+            + PREFIX_TAG + "owesMoney";
 
     private final Predicate<Person> predicateFilterByTags;
     private final Set<Tag> tags;

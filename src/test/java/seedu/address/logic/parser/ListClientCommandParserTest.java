@@ -1,5 +1,7 @@
 package seedu.address.logic.parser;
 
+import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 import static seedu.address.testutil.Assert.assertThrows;
 
@@ -11,6 +13,9 @@ import seedu.address.logic.commands.ListClientCommand;
 import seedu.address.model.tag.Tag;
 
 public class ListClientCommandParserTest {
+    private static final String MESSAGE_INVALID_FORMAT =
+            String.format(MESSAGE_INVALID_COMMAND_FORMAT, ListClientCommand.MESSAGE_USAGE);
+
     private final ListClientCommandParser parser = new ListClientCommandParser();
 
     @Test
@@ -37,6 +42,11 @@ public class ListClientCommandParserTest {
                 + " st/1400 et/1500 t/colleagues";
 
         assertParseSuccess(parser, args, expectedCommand);
+    }
+
+    @Test
+    public void parse_unknownPrefix_failure() {
+        assertParseFailure(parser, "i/unknown", MESSAGE_INVALID_FORMAT);
     }
 
     @Test
