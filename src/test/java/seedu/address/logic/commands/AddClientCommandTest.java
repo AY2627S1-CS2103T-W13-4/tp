@@ -172,7 +172,7 @@ public class AddClientCommandTest {
 
         @Override
         public void updateFilteredMeetingList(Predicate<Meeting> predicate) {
-            // No filtering needed for this test stub.
+            throw new AssertionError("This method should not be called.");
         }
     }
 
