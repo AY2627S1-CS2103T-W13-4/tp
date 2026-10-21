@@ -8,6 +8,8 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_START_TIME;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 
+import java.util.Set;
+
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.Messages;
@@ -16,6 +18,7 @@ import seedu.address.model.meeting.Meeting;
 import seedu.address.model.meeting.MeetingDate;
 import seedu.address.model.meeting.MeetingName;
 import seedu.address.model.meeting.MeetingTime;
+import seedu.address.model.tag.Tag;
 
 public class AddMeetingCommandParserTest {
 
@@ -53,6 +56,33 @@ public class AddMeetingCommandParserTest {
         assertParseFailure(parser, NAME_DESC + START_TIME_DESC + END_TIME_DESC, expectedMessage);
         assertParseFailure(parser, NAME_DESC + DATE_DESC + END_TIME_DESC, expectedMessage);
         assertParseFailure(parser, NAME_DESC + DATE_DESC + START_TIME_DESC, expectedMessage);
+    }
+
+    @Test
+    public void parse_optionalTags_success() {
+        String details = NAME_DESC + DATE_DESC + START_TIME_DESC + END_TIME_DESC;
+        Meeting singleTag = new Meeting(VALID_MEETING.getName(), VALID_MEETING.getDate(),
+                VALID_MEETING.getStartTime(), VALID_MEETING.getEndTime(), Set.of(new Tag("urgent")));
+        Meeting multipleTags = new Meeting(VALID_MEETING.getName(), VALID_MEETING.getDate(),
+                VALID_MEETING.getStartTime(), VALID_MEETING.getEndTime(),
+                Set.of(new Tag("urgent"), new Tag("work")));
+
+        assertParseSuccess(parser, details + " t/urgent", new AddMeetingCommand(singleTag));
+        assertParseSuccess(parser, details + " t/urgent t/work", new AddMeetingCommand(multipleTags));
+        assertParseSuccess(parser, " t/urgent" + NAME_DESC + DATE_DESC + " t/work"
+                + START_TIME_DESC + END_TIME_DESC, new AddMeetingCommand(multipleTags));
+        assertParseSuccess(parser, details + " t/urgent t/urgent", new AddMeetingCommand(singleTag));
+        assertParseSuccess(parser, details + " t/ urgent  ", new AddMeetingCommand(singleTag));
+    }
+
+    @Test
+    public void parse_invalidTags_failure() {
+        String details = NAME_DESC + DATE_DESC + START_TIME_DESC + END_TIME_DESC;
+        assertParseFailure(parser, details + " t/", Tag.MESSAGE_CONSTRAINTS);
+        assertParseFailure(parser, details + " t/   ", Tag.MESSAGE_CONSTRAINTS);
+        assertParseFailure(parser, details + " t/urgent!", Tag.MESSAGE_CONSTRAINTS);
+        assertParseFailure(parser, details + " t/very urgent", Tag.MESSAGE_CONSTRAINTS);
+        assertParseFailure(parser, details + " t/ t/urgent", Tag.MESSAGE_CONSTRAINTS);
     }
 
     @Test

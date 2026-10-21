@@ -7,6 +7,8 @@ import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
 import static seedu.address.testutil.Assert.assertThrows;
 
+import java.util.Set;
+
 import org.junit.jupiter.api.Test;
 
 import seedu.address.model.Model;
@@ -15,6 +17,7 @@ import seedu.address.model.meeting.Meeting;
 import seedu.address.model.meeting.MeetingDate;
 import seedu.address.model.meeting.MeetingName;
 import seedu.address.model.meeting.MeetingTime;
+import seedu.address.model.tag.Tag;
 
 public class AddMeetingCommandTest {
 
@@ -48,6 +51,15 @@ public class AddMeetingCommandTest {
 
         assertCommandFailure(new AddMeetingCommand(PROJECT_REVIEW), model,
                 AddMeetingCommand.MESSAGE_DUPLICATE_MEETING);
+    }
+
+    @Test
+    public void execute_duplicateMeetingWithDifferentTags_throwsCommandException() {
+        Model model = new ModelManager();
+        model.addMeeting(PROJECT_REVIEW);
+        Meeting tagged = new Meeting(PROJECT_REVIEW.getName(), PROJECT_REVIEW.getDate(),
+                PROJECT_REVIEW.getStartTime(), PROJECT_REVIEW.getEndTime(), Set.of(new Tag("urgent")));
+        assertCommandFailure(new AddMeetingCommand(tagged), model, AddMeetingCommand.MESSAGE_DUPLICATE_MEETING);
     }
 
     @Test
