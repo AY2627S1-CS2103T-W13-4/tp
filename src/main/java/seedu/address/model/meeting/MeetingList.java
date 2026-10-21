@@ -2,7 +2,6 @@ package seedu.address.model.meeting;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -13,7 +12,7 @@ import seedu.address.model.meeting.exceptions.MeetingNotFoundException;
 
 /**
  * A list of meetings that does not allow duplicates.
- * Two meetings are duplicates if they are equal (same name, date, start and end time).
+ * Two meetings are duplicates if they have the same name, date, start and end time, regardless of tags.
  */
 public class MeetingList implements Iterable<Meeting> {
 
@@ -24,7 +23,7 @@ public class MeetingList implements Iterable<Meeting> {
      */
     public boolean contains(Meeting meeting) {
         requireNonNull(meeting);
-        return internalList.contains(meeting);
+        return internalList.stream().anyMatch(meeting::isSameMeeting);
     }
 
     /**
@@ -66,10 +65,9 @@ public class MeetingList implements Iterable<Meeting> {
      */
     public void setMeetings(List<Meeting> meetings) {
         requireNonNull(meetings);
-        if (new HashSet<>(meetings).size() != meetings.size()) {
-            throw new DuplicateMeetingException();
-        }
-        internalList.setAll(meetings);
+        MeetingList replacement = new MeetingList();
+        meetings.forEach(replacement::add);
+        internalList.setAll(replacement.internalList);
     }
 
     /**

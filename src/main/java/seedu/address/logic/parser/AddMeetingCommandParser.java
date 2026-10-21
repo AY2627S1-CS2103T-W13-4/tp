@@ -5,7 +5,9 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_END_TIME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_START_TIME;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
+import java.util.Set;
 import java.util.stream.Stream;
 
 import seedu.address.logic.commands.AddMeetingCommand;
@@ -14,6 +16,7 @@ import seedu.address.model.meeting.Meeting;
 import seedu.address.model.meeting.MeetingDate;
 import seedu.address.model.meeting.MeetingName;
 import seedu.address.model.meeting.MeetingTime;
+import seedu.address.model.tag.Tag;
 
 /**
  * Parses input arguments and creates a new {@code AddMeetingCommand} object.
@@ -27,7 +30,7 @@ public class AddMeetingCommandParser implements Parser<AddMeetingCommand> {
      */
     public AddMeetingCommand parse(String args) throws ParseException {
         ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(
-                args, PREFIX_NAME, PREFIX_DATE, PREFIX_START_TIME, PREFIX_END_TIME);
+                args, PREFIX_NAME, PREFIX_DATE, PREFIX_START_TIME, PREFIX_END_TIME, PREFIX_TAG);
 
         if (!arePrefixesPresent(argMultimap, PREFIX_NAME, PREFIX_DATE, PREFIX_START_TIME, PREFIX_END_TIME)
                 || !argMultimap.getPreamble().isEmpty()) {
@@ -41,8 +44,9 @@ public class AddMeetingCommandParser implements Parser<AddMeetingCommand> {
         MeetingDate date = ParserUtil.parseMeetingDate(argMultimap.getValue(PREFIX_DATE).get());
         MeetingTime startTime = ParserUtil.parseMeetingTime(argMultimap.getValue(PREFIX_START_TIME).get());
         MeetingTime endTime = ParserUtil.parseMeetingTime(argMultimap.getValue(PREFIX_END_TIME).get());
+        Set<Tag> tags = ParserUtil.parseTags(argMultimap.getAllValues(PREFIX_TAG));
 
-        Meeting meeting = new Meeting(name, date, startTime, endTime);
+        Meeting meeting = new Meeting(name, date, startTime, endTime, tags);
         return new AddMeetingCommand(meeting);
     }
 
