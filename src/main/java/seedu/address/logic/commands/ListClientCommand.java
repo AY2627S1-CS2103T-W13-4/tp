@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.model.Model;
@@ -16,7 +17,8 @@ import seedu.address.model.tag.Tag;
 public class ListClientCommand extends Command {
 
     public static final String COMMAND_WORD = "listc";
-    public static final String MESSAGE_SUCCESS = "Listed all persons.";
+    public static final String MESSAGE_SUCCESS = "Listed %1$d persons matching the given tags: %2$s.";
+    public static final String MESSAGE_SUCCESS_NO_TAGS = "Listed all %1$d persons.";
 
     private final Predicate<Person> predicateFilterByTags;
     private final Set<Tag> tags;
@@ -34,7 +36,15 @@ public class ListClientCommand extends Command {
     public CommandResult execute(Model model) {
         requireNonNull(model);
         model.updateFilteredPersonList(predicateFilterByTags);
-        return new CommandResult(MESSAGE_SUCCESS);
+
+        if (tags.isEmpty()) {
+            return new CommandResult(String.format(MESSAGE_SUCCESS_NO_TAGS, model.getFilteredPersonList().size()));
+        }
+        String formattedTags = tags.stream()
+                .map(tag -> tag.tagName)
+                .sorted()
+                .collect(Collectors.joining(", "));
+        return new CommandResult(String.format(MESSAGE_SUCCESS, model.getFilteredPersonListSize(), formattedTags));
     }
 
     @Override

@@ -16,6 +16,7 @@ import static seedu.address.testutil.TypicalPersons.getTypicalPersons;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,14 +43,16 @@ public class ListClientCommandTest {
     @Test
     public void execute_listIsNotFiltered_showsSameList() {
         assertCommandSuccess(new ListClientCommand(new HashSet<>()), model,
-                ListClientCommand.MESSAGE_SUCCESS, expectedModel);
+                String.format(ListClientCommand.MESSAGE_SUCCESS_NO_TAGS, model.getFilteredPersonListSize()),
+                expectedModel);
     }
 
     @Test
     public void execute_listIsFiltered_showsEverything() {
         showPersonAtIndex(model, INDEX_FIRST_PERSON);
         assertCommandSuccess(new ListClientCommand(new HashSet<>()), model,
-                ListClientCommand.MESSAGE_SUCCESS, expectedModel);
+                String.format(ListClientCommand.MESSAGE_SUCCESS_NO_TAGS, expectedModel.getFilteredPersonListSize()),
+                expectedModel);
     }
 
     @Test
@@ -59,7 +62,10 @@ public class ListClientCommandTest {
 
         CommandResult result = command.execute(model);
 
-        assertEquals(new CommandResult(ListClientCommand.MESSAGE_SUCCESS), result);
+        String formattedTags = tags.stream().map(tag -> tag.tagName).sorted().collect(Collectors.joining(", "));
+        String expectedMessage = String.format(ListClientCommand.MESSAGE_SUCCESS,
+                model.getFilteredPersonListSize(), formattedTags);
+        assertEquals(new CommandResult(expectedMessage), result);
         assertEquals(List.of(ALICE, BENSON, DANIEL), model.getFilteredPersonList());
     }
 
@@ -69,7 +75,9 @@ public class ListClientCommandTest {
 
         CommandResult result = command.execute(model);
 
-        assertEquals(new CommandResult(ListClientCommand.MESSAGE_SUCCESS), result);
+        String expectedMessage = String.format(ListClientCommand.MESSAGE_SUCCESS_NO_TAGS,
+                model.getFilteredPersonListSize());
+        assertEquals(new CommandResult(expectedMessage), result);
         assertEquals(getTypicalPersons(), model.getFilteredPersonList());
     }
 
