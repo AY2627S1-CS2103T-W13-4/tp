@@ -298,7 +298,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | `* * *`  | first-time user | add command aliases                                      | type frequently used commands quickly                         |
 | `* * *`  | first-time user | record meeting outcomes after a meeting                  | remember what happened during the meeting                     |
 | `* * *`  | first-time user | search for a client by name, company, or number          | find the clients I want                                       |
-| `* * *`  | first-time user | receive a warning when meeting schedules overlap         | know if meeting schedules clash                               |
+| `* * *`  | first-time user | be warned when meeting schedules overlap, and override  | know about clashes but still schedule when intended           |
 | `* *`    | secretary       | add tags to clients                                      | filter or search for groups of clients easily                 |
 | `* *`    | secretary       | mark clients as favorite or pinned                       | easily access important clients                               |
 | `* *`    | secretary       | view recently or frequently contacted clients            | easily find clients I am likely looking for                   |
@@ -626,24 +626,44 @@ Use case ends.
 
 **MSS**
 
-1. User provides the details of a new meeting.
-2. PingBook checks the new meeting against existing meetings.
+1. User adds or edits a meeting.
+2. PingBook checks the meeting against the other meetings.
 3. PingBook detects that there is no overlap.
-4. PingBook adds the new meeting.
+4. PingBook saves the meeting.
 
 Use case ends.
 
 **Extensions**
 
-* 3a. The new meeting overlaps with an existing meeting.
+* 2a. The end time is not later than the start time.
 
-* 3a1. PingBook shows a warning about the scheduling conflict.
+    * 2a1. PingBook shows an error and does not save the meeting.
 
-* 3a2. User provides a different meeting time.
+      Use case ends.
 
-* 3a3. PingBook checks the new meeting against existing meetings again.
+* 3a. The meeting overlaps with one or more other meetings and the user did not use `force/`.
 
-Use case resumes at step 3.
+    * 3a1. PingBook shows an error listing the conflicting meetings (at most three, then a count of the rest)
+      and does not save the meeting.
+
+    * 3a2. User changes the meeting time, or repeats the command with `force/`.
+
+      Use case resumes at step 2.
+
+* 3b. The meeting overlaps with other meetings and the user used `force/`.
+
+    * 3b1. PingBook saves the meeting and shows a warning listing the overlapping meetings.
+
+      Use case ends.
+
+**Design notes**
+
+* Two meetings overlap when they are on the same date and `start < otherEnd && otherStart < end`
+  (`Meeting#overlapsWith`). Touching boundaries do not overlap. Finished meetings are included.
+* `Model#getOverlappingMeetings(meeting, excluded)` lists the overlaps; `editm` passes the meeting being edited as
+  `excluded` so it is not compared with itself.
+* `force/` is a valueless flag parsed by `ParserUtil#parseForceFlag`. Overlaps are computed on demand and never
+  stored, so the JSON format is unchanged and saved files that already contain overlaps still load.
 
 **Use case: UC18 - Receive meeting alert**
 
