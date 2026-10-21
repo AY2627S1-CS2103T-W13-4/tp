@@ -29,7 +29,7 @@ PingBook is a **desktop application for managing contacts, optimized for use thr
 1. Type a command in the command box and press Enter to execute it. For example, type **`help`** and press Enter to open the help window.<br>
    Some example commands you can try:
 
-   * `listc` : Lists all contacts.
+   * `listc t/colleague` : Lists all contacts that have the tag `colleague`.
 
    * `addc n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01` : Adds a contact named `John Doe` to PingBook.
 
@@ -99,6 +99,7 @@ Shows a list of all persons in PingBook that match the given tags.
 Format: `listc [t/TAG]...`
 
 * `TAG` is optional and there can be multiple tags.
+* Tags are alphanumeric and case-sensitive.
 * The command will ignore fields other than `TAG`. For example, `listc n/John` is the same as `listc`.
 * The command is case-sensitive. `listC` or `Listc` are considered invalid.
 * A person is shown only if they have all the tags given.
