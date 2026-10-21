@@ -30,7 +30,7 @@ import seedu.address.logic.commands.AddMeetingCommand;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.DeleteClientCommand;
 import seedu.address.logic.commands.DeleteMeetingCommand;
-import seedu.address.logic.commands.EditCommand;
+import seedu.address.logic.commands.EditClientCommand;
 import seedu.address.logic.commands.EditMeetingCommand;
 import seedu.address.logic.commands.FindClientCommand;
 import seedu.address.logic.commands.HelpCommand;
@@ -169,7 +169,7 @@ public class LogicManagerMeetingViewTest {
         assertEquals(originalSaveAttempts, addressBookStorage.saveAttempts);
         assertEquals(originalFile, Files.readString(addressBookStorage.getAddressBookFilePath()));
         assertContactCommandRejected(DeleteClientCommand.COMMAND_WORD + " 1");
-        assertContactCommandRejected(EditCommand.COMMAND_WORD + " 1 p/87654321");
+        assertContactCommandRejected(EditClientCommand.COMMAND_WORD + " 1 p/87654321");
     }
 
     @Test
@@ -201,7 +201,7 @@ public class LogicManagerMeetingViewTest {
         logic.execute(ListMeetingCommand.COMMAND_WORD);
         assertEquals(List.of(BOB), model.getFilteredPersonList());
 
-        assertContactCommandRejected(EditCommand.COMMAND_WORD + " 1 p/87654321");
+        assertContactCommandRejected(EditClientCommand.COMMAND_WORD + " 1 p/87654321");
     }
 
     @Test
@@ -228,7 +228,7 @@ public class LogicManagerMeetingViewTest {
         CommandResult result = logic.execute(FindClientCommand.COMMAND_WORD + " Bob");
         assertFalse(result.isShowMeetings());
         assertEquals(List.of(BOB), model.getFilteredPersonList());
-        logic.execute(EditCommand.COMMAND_WORD + " 1 p/87654321");
+        logic.execute(EditClientCommand.COMMAND_WORD + " 1 p/87654321");
 
         Person editedBob = new PersonBuilder(BOB).withPhone("87654321").build();
         assertEquals(List.of(AMY, editedBob), model.getAddressBook().getPersonList());
@@ -242,7 +242,7 @@ public class LogicManagerMeetingViewTest {
         assertTrue(logic.execute(HelpCommand.COMMAND_WORD).isShowHelp());
 
         assertContactCommandRejected(DeleteClientCommand.COMMAND_WORD + " 1");
-        assertContactCommandRejected(EditCommand.COMMAND_WORD + " 1 p/87654321");
+        assertContactCommandRejected(EditClientCommand.COMMAND_WORD + " 1 p/87654321");
     }
 
     @Test
@@ -256,7 +256,7 @@ public class LogicManagerMeetingViewTest {
                 + EMAIL_DESC_AMY + ADDRESS_DESC_AMY;
         assertThrows(CommandException.class,
                 AddClientCommand.MESSAGE_DUPLICATE_PERSON, () -> logic.execute(duplicateAdd));
-        assertContactCommandRejected(EditCommand.COMMAND_WORD + " 1 p/87654321");
+        assertContactCommandRejected(EditClientCommand.COMMAND_WORD + " 1 p/87654321");
     }
 
     @Test
@@ -266,7 +266,7 @@ public class LogicManagerMeetingViewTest {
 
         assertThrows(CommandException.class, SAVE_ERROR, () -> logic.execute(ListClientCommand.COMMAND_WORD));
         assertContactCommandRejected(DeleteClientCommand.COMMAND_WORD + " 1");
-        assertContactCommandRejected(EditCommand.COMMAND_WORD + " 1 p/87654321");
+        assertContactCommandRejected(EditClientCommand.COMMAND_WORD + " 1 p/87654321");
 
         logic.execute(ListClientCommand.COMMAND_WORD);
         logic.execute(DeleteClientCommand.COMMAND_WORD + " 1");
@@ -293,7 +293,7 @@ public class LogicManagerMeetingViewTest {
         assertTrue(model.getMeetingList().isEmpty());
 
         assertContactCommandRejected(DeleteClientCommand.COMMAND_WORD + " 1");
-        assertContactCommandRejected(EditCommand.COMMAND_WORD + " 1 p/87654321");
+        assertContactCommandRejected(EditClientCommand.COMMAND_WORD + " 1 p/87654321");
     }
 
     @Test
