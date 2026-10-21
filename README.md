@@ -20,17 +20,17 @@ PingBook is designed for secretaries and sales representatives who:
 
 ## Features
 
-The first version of PingBook will support:
+The 1.4 version of PingBook will support:
 
-| Feature        | Command                                                   |
-|----------------|-----------------------------------------------------------|
-| Add a client   | `addc n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [t/TAG]...` |
-| Delete a client | `deletec CLIENT_INDEX`                                   |
-| List clients   | `listc`                                                   |
-| Add a meeting  | `addm n/NAME d/DATE st/START_TIME et/END_TIME [t/TAG]...` |
-| Delete a meeting | `deletem MEETING_INDEX`                                 |
+| Feature        | Command                                                                          |
+|----------------|----------------------------------------------------------------------------------|
+| Add a client   | `addc n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [t/TAG]...`                      |
+| Delete a client | `deletec CLIENT_INDEX`                                                           |
+| List clients   | `listc [t/TAG]...`                                                               |
+| Add a meeting  | `addm n/NAME d/DATE st/START_TIME et/END_TIME [t/TAG]...`                        |
+| Delete a meeting | `deletem MEETING_INDEX`                                                          |
 | Edit a meeting | `editm MEETING_INDEX [n/NAME] [d/DATE] [st/START_TIME] [et/END_TIME] [t/TAG]...` |
-| List meetings  | `listm`                                                   |
+| List meetings  | `listm`                                                                          |
 
 Features being considered for later versions include:
 

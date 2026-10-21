@@ -29,7 +29,7 @@ PingBook is a **desktop application for managing contacts, optimized for use thr
 1. Type a command in the command box and press Enter to execute it. For example, type **`help`** and press Enter to open the help window.<br>
    Some example commands you can try:
 
-   * `listc` : Lists all contacts.
+   * `listc t/colleague` : Lists all contacts that have the tag `colleague`.
 
    * `addc n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01` : Adds a contact named `John Doe` to PingBook.
 
@@ -61,7 +61,7 @@ PingBook is a **desktop application for managing contacts, optimized for use thr
 * Parameters can be in any order.<br>
   For example, if the command specifies `n/NAME p/PHONE_NUMBER`, `p/PHONE_NUMBER n/NAME` is also acceptable.
 
-* Extraneous parameters for commands that take no parameters, such as `help`, `listc`, `exit`, and `clear`, are ignored.<br>
+* Extraneous parameters for commands that take no parameters, such as `help`, `exit`, and `clear`, are ignored.<br>
   For example, `help 123` is interpreted as `help`.
 
 * If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines as space characters surrounding line-breaks may be omitted when copied over to the application.
@@ -92,11 +92,23 @@ Examples:
 * `addc n/Mary Lim p/87654321 e/marylim@example.com t/premium` (no address)
 * `addc n/Betsy Crowe t/friend e/betsycrowe@example.com a/Newgate Prison p/1234567 t/criminal`
 
-### Listing all persons: `listc`
+### Listing clients by tags: `listc`
 
-Shows a list of all persons in PingBook.
+Shows a list of all persons in PingBook that match the given tags.
 
-Format: `listc`
+Format: `listc [t/TAG]...`
+
+* `TAG` is optional and there can be multiple tags.
+* Tags are alphanumeric and case-sensitive.
+* The command will ignore fields other than `TAG`. For example, `listc n/John` is the same as `listc`.
+* The command is case-sensitive. `listC` or `Listc` are considered invalid.
+* A person is shown only if they have all the tags given.
+* If there are no tags provided, PingBook will display all persons and a success message detailing the number of persons listed.
+* If there are tags provided, PingBook will display all matching persons and a success message detailing the number of persons listed and the tags given.
+
+Examples:
+* `listc`
+* `listc t/friend t/colleagues`
 
 ### Adding a meeting: `addm`
 
@@ -283,6 +295,6 @@ Action     | Format, Examples
 **Edit client**   | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]... `<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com`
 **Edit meeting** | `editm MEETING_INDEX [n/NAME] [d/DATE] [st/START_TIME] [et/END_TIME] [t/TAG]...`<br> e.g., `editm 2 d/25/10/2026 st/1500 et/1600 t/urgent`
 **Find client**   | `findc KEYWORD [MORE_KEYWORDS]`<br> e.g., `findc James Jake`
-**List clients**   | `listc`
+**List clients**   | `listc [t/TAG]...`
 **List meetings** | `listm`
 **Help**   | `help`
