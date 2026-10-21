@@ -32,7 +32,7 @@ import seedu.address.logic.commands.DeleteClientCommand;
 import seedu.address.logic.commands.DeleteMeetingCommand;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.EditMeetingCommand;
-import seedu.address.logic.commands.FindCommand;
+import seedu.address.logic.commands.FindClientCommand;
 import seedu.address.logic.commands.HelpCommand;
 import seedu.address.logic.commands.ListClientCommand;
 import seedu.address.logic.commands.ListMeetingCommand;
@@ -269,7 +269,7 @@ public class LogicManagerMeetingViewTest {
 
     @Test
     public void execute_deleteAfterFindAndListMeeting_rejectsHiddenFilteredContact() throws Exception {
-        logic.execute(FindCommand.COMMAND_WORD + " Bob");
+        logic.execute(FindClientCommand.COMMAND_WORD + " Bob");
         logic.execute(ListMeetingCommand.COMMAND_WORD);
         assertEquals(List.of(BOB), model.getFilteredPersonList());
 
@@ -278,7 +278,7 @@ public class LogicManagerMeetingViewTest {
 
     @Test
     public void execute_editAfterFindAndListMeeting_rejectsHiddenFilteredContact() throws Exception {
-        logic.execute(FindCommand.COMMAND_WORD + " Bob");
+        logic.execute(FindClientCommand.COMMAND_WORD + " Bob");
         logic.execute(ListMeetingCommand.COMMAND_WORD);
         assertEquals(List.of(BOB), model.getFilteredPersonList());
 
@@ -287,7 +287,7 @@ public class LogicManagerMeetingViewTest {
 
     @Test
     public void execute_listAfterMeetings_allowsDeleteFromAllContacts() throws Exception {
-        logic.execute(FindCommand.COMMAND_WORD + " Bob");
+        logic.execute(FindClientCommand.COMMAND_WORD + " Bob");
         logic.execute(ListMeetingCommand.COMMAND_WORD);
         assertContactCommandRejected(DeleteClientCommand.COMMAND_WORD + " 1");
 
@@ -306,7 +306,7 @@ public class LogicManagerMeetingViewTest {
     public void execute_findAfterMeetings_allowsEditUsingVisibleFilteredIndex() throws Exception {
         logic.execute(ListMeetingCommand.COMMAND_WORD);
 
-        CommandResult result = logic.execute(FindCommand.COMMAND_WORD + " Bob");
+        CommandResult result = logic.execute(FindClientCommand.COMMAND_WORD + " Bob");
         assertFalse(result.isShowMeetings());
         assertEquals(List.of(BOB), model.getFilteredPersonList());
         logic.execute(EditCommand.COMMAND_WORD + " 1 p/87654321");

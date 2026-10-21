@@ -29,7 +29,7 @@ PingBook is a **desktop application for managing contacts, optimized for use thr
 1. Type a command in the command box and press Enter to execute it. For example, type **`help`** and press Enter to open the help window.<br>
    Some example commands you can try:
 
-   * `listc` : Lists all contacts.
+   * `listc t/colleague` : Lists all contacts that have the tag `colleague`.
 
    * `addc n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01` : Adds a contact named `John Doe` to PingBook.
 
@@ -61,7 +61,7 @@ PingBook is a **desktop application for managing contacts, optimized for use thr
 * Parameters can be in any order.<br>
   For example, if the command specifies `n/NAME p/PHONE_NUMBER`, `p/PHONE_NUMBER n/NAME` is also acceptable.
 
-* Extraneous parameters for commands that take no parameters, such as `help`, `listc`, `exit`, and `clear`, are ignored.<br>
+* Extraneous parameters for commands that take no parameters, such as `help`, `exit`, and `clear`, are ignored.<br>
   For example, `help 123` is interpreted as `help`.
 
 * If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines as space characters surrounding line-breaks may be omitted when copied over to the application.
@@ -92,11 +92,23 @@ Examples:
 * `addc n/Mary Lim p/87654321 e/marylim@example.com t/premium` (no address)
 * `addc n/Betsy Crowe t/friend e/betsycrowe@example.com a/Newgate Prison p/1234567 t/criminal`
 
-### Listing all persons: `listc`
+### Listing clients by tags: `listc`
 
-Shows a list of all persons in PingBook.
+Shows a list of all persons in PingBook that match the given tags.
 
-Format: `listc`
+Format: `listc [t/TAG]...`
+
+* `TAG` is optional and there can be multiple tags.
+* Tags are alphanumeric and case-sensitive.
+* The command will ignore fields other than `TAG`. For example, `listc n/John` is the same as `listc`.
+* The command is case-sensitive. `listC` or `Listc` are considered invalid.
+* A person is shown only if they have all the tags given.
+* If there are no tags provided, PingBook will display all persons and a success message detailing the number of persons listed.
+* If there are tags provided, PingBook will display all matching persons and a success message detailing the number of persons listed and the tags given.
+
+Examples:
+* `listc`
+* `listc t/friend t/colleagues`
 
 ### Adding a meeting: `addm`
 
@@ -148,7 +160,7 @@ Format: `listm [t/TAG]...`
   name (ignoring case and repeated spaces), date, start time and end time; `listm` does not delete stored records.
 * Use `listc` to return to the contacts panel. `help` and invalid commands keep the currently selected panel.
 * Contact commands `deletec INDEX` and `edit INDEX ...` are rejected while the Meetings panel is active.
-  Run `listc` to display contacts before editing or deleting them. You can also use `find KEYWORD` to display
+  Run `listc` to display contacts before editing or deleting them. You can also use `findc KEYWORD` to display
   matching contacts and then use the indices in those results.
 
 Examples:
@@ -186,7 +198,7 @@ Edits an existing person in PingBook.
 Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [t/TAG]... `
 
 * Edits the person at the specified `INDEX`. The index refers to the index number shown in the displayed person list. The index **must be a positive integer** 1, 2, 3, ...
-* The contacts panel must be active. If you are viewing meetings, run `listc` or `find KEYWORD` first.
+* The contacts panel must be active. If you are viewing meetings, run `listc` or `findc KEYWORD` first.
 * At least one of the optional fields must be provided.
 * Existing values will be updated to the input values.
 * When editing tags, all of the person's existing tags are removed; adding tags is not cumulative.
@@ -196,11 +208,11 @@ Examples:
 *  `edit 1 p/91234567 e/johndoe@example.com` Edits the phone number and email address of the 1st person to be `91234567` and `johndoe@example.com` respectively.
 *  `edit 2 n/Betsy Crower t/` Edits the name of the 2nd person to be `Betsy Crower` and clears all existing tags.
 
-### Locating persons by name: `find`
+### Locating persons by name: `findc`
 
 Finds persons whose names contain any of the given keywords.
 
-Format: `find KEYWORD [MORE_KEYWORDS]`
+Format: `findc KEYWORD [MORE_KEYWORDS]`
 
 * The search is case-insensitive; for example, `hans` matches `Hans`.
 * Keyword order does not matter; for example, `Hans Bo` matches `Bo Hans`.
@@ -209,9 +221,9 @@ Format: `find KEYWORD [MORE_KEYWORDS]`
 * Persons matching at least one keyword are returned (an `OR` search); for example, `Hans Bo` returns `Hans Gruber` and `Bo Yang`.
 
 Examples:
-* `find John` returns `john` and `John Doe`
-* `find alex david` returns `Alex Yeoh`, `David Li`<br>
-  ![result for 'find alex david'](images/findAlexDavidResult.png)
+* `findc John` returns `john` and `John Doe`
+* `findc alex david` returns `Alex Yeoh`, `David Li`<br>
+  ![result for 'findc alex david'](images/findAlexDavidResult.png)
 
 ### Deleting a person: `deletec`
 
@@ -221,12 +233,12 @@ Format: `deletec INDEX`
 
 * Deletes the person at the specified `INDEX`.
 * The index refers to the index number shown in the displayed person list.
-* The contacts panel must be active. If you are viewing meetings, run `listc` or `find KEYWORD` first.
+* The contacts panel must be active. If you are viewing meetings, run `listc` or `findc KEYWORD` first.
 * The index **must be a positive integer** 1, 2, 3, ...
 
 Examples:
 * `listc` followed by `deletec 2` deletes the 2nd person in PingBook.
-* `find Betsy` followed by `deletec 1` deletes the 1st person in the results of the `find` command.
+* `findc Betsy` followed by `deletec 1` deletes the 1st person in the results of the `findc` command.
 
 ### Deleting a meeting: `deletem`
 
