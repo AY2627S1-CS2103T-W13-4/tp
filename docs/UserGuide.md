@@ -137,7 +137,7 @@ Format: `listm`
   name (ignoring case and repeated spaces), date, start time and end time; `listm` does not delete stored records.
 * Use `listc` to return to the contacts panel. `help` and invalid commands keep the currently selected panel.
 * Contact commands `deletec INDEX` and `edit INDEX ...` are rejected while the Meetings panel is active.
-  Run `listc` to display contacts before editing or deleting them. You can also use `find KEYWORD` to display
+  Run `listc` to display contacts before editing or deleting them. You can also use `findc KEYWORD` to display
   matching contacts and then use the indices in those results.
 
 ### Editing a meeting: `editm`
@@ -170,7 +170,7 @@ Edits an existing person in PingBook.
 Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [t/TAG]... `
 
 * Edits the person at the specified `INDEX`. The index refers to the index number shown in the displayed person list. The index **must be a positive integer** 1, 2, 3, ...
-* The contacts panel must be active. If you are viewing meetings, run `listc` or `find KEYWORD` first.
+* The contacts panel must be active. If you are viewing meetings, run `listc` or `findc KEYWORD` first.
 * At least one of the optional fields must be provided.
 * Existing values will be updated to the input values.
 * When editing tags, all of the person's existing tags are removed; adding tags is not cumulative.
@@ -180,11 +180,11 @@ Examples:
 *  `edit 1 p/91234567 e/johndoe@example.com` Edits the phone number and email address of the 1st person to be `91234567` and `johndoe@example.com` respectively.
 *  `edit 2 n/Betsy Crower t/` Edits the name of the 2nd person to be `Betsy Crower` and clears all existing tags.
 
-### Locating persons by name: `find`
+### Locating persons by name: `findc`
 
 Finds persons whose names contain any of the given keywords.
 
-Format: `find KEYWORD [MORE_KEYWORDS]`
+Format: `findc KEYWORD [MORE_KEYWORDS]`
 
 * The search is case-insensitive; for example, `hans` matches `Hans`.
 * Keyword order does not matter; for example, `Hans Bo` matches `Bo Hans`.
@@ -193,9 +193,9 @@ Format: `find KEYWORD [MORE_KEYWORDS]`
 * Persons matching at least one keyword are returned (an `OR` search); for example, `Hans Bo` returns `Hans Gruber` and `Bo Yang`.
 
 Examples:
-* `find John` returns `john` and `John Doe`
-* `find alex david` returns `Alex Yeoh`, `David Li`<br>
-  ![result for 'find alex david'](images/findAlexDavidResult.png)
+* `findc John` returns `john` and `John Doe`
+* `findc alex david` returns `Alex Yeoh`, `David Li`<br>
+  ![result for 'findc alex david'](images/findAlexDavidResult.png)
 
 ### Deleting a person: `deletec`
 
@@ -205,12 +205,12 @@ Format: `deletec INDEX`
 
 * Deletes the person at the specified `INDEX`.
 * The index refers to the index number shown in the displayed person list.
-* The contacts panel must be active. If you are viewing meetings, run `listc` or `find KEYWORD` first.
+* The contacts panel must be active. If you are viewing meetings, run `listc` or `findc KEYWORD` first.
 * The index **must be a positive integer** 1, 2, 3, ...
 
 Examples:
 * `listc` followed by `deletec 2` deletes the 2nd person in PingBook.
-* `find Betsy` followed by `deletec 1` deletes the 1st person in the results of the `find` command.
+* `findc Betsy` followed by `deletec 1` deletes the 1st person in the results of the `findc` command.
 
 ### Deleting a meeting: `deletem`
 
@@ -282,7 +282,7 @@ Action     | Format, Examples
 **Delete meeting** | `deletem MEETING_INDEX`<br> e.g., `deletem 3`
 **Edit client**   | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]... `<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com`
 **Edit meeting** | `editm MEETING_INDEX [n/NAME] [d/DATE] [st/START_TIME] [et/END_TIME] [t/TAG]...`<br> e.g., `editm 2 d/25/10/2026 st/1500 et/1600 t/urgent`
-**Find**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
+**Find client**   | `findc KEYWORD [MORE_KEYWORDS]`<br> e.g., `findc James Jake`
 **List clients**   | `listc`
 **List meetings** | `listm`
 **Help**   | `help`
