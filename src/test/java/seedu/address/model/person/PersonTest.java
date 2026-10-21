@@ -7,13 +7,18 @@ import static seedu.address.logic.commands.CommandTestUtil.VALID_ADDRESS_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_EMAIL_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_NAME_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_PHONE_BOB;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_FRIEND;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HUSBAND;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalPersons.ALICE;
 import static seedu.address.testutil.TypicalPersons.BOB;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.jupiter.api.Test;
 
+import seedu.address.model.tag.Tag;
 import seedu.address.testutil.PersonBuilder;
 
 public class PersonTest {
@@ -49,6 +54,28 @@ public class PersonTest {
         String nameWithTrailingSpaces = VALID_NAME_BOB + " ";
         editedBob = new PersonBuilder(BOB).withName(nameWithTrailingSpaces).build();
         assertFalse(BOB.isSamePerson(editedBob));
+    }
+
+    @Test
+    public void hasAllTags() {
+        // no requested tags -> returns true
+        assertTrue(BOB.hasAllTags(Set.of()));
+
+        // person has all requested tags -> returns true
+        assertTrue(BOB.hasAllTags(Set.of(new Tag(VALID_TAG_FRIEND))));
+        assertTrue(BOB.hasAllTags(Set.of(new Tag(VALID_TAG_FRIEND), new Tag(VALID_TAG_HUSBAND))));
+
+        // person is missing a requested tag -> returns false
+        assertFalse(BOB.hasAllTags(Set.of(new Tag(VALID_TAG_FRIEND), new Tag("colleague"))));
+    }
+
+    @Test
+    public void hasAllTags_nullTags_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> BOB.hasAllTags(null));
+
+        Set<Tag> tagsWithNull = new HashSet<>();
+        tagsWithNull.add(null);
+        assertThrows(NullPointerException.class, () -> BOB.hasAllTags(tagsWithNull));
     }
 
     @Test
