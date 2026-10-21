@@ -136,7 +136,9 @@ Format: `listm [t/TAG]...`
 * Ongoing and upcoming meetings appear first, ordered by date and start time.
   Finished meetings follow, also ordered from earliest to latest.
 * A meeting is finished when its end time on its date is at or before the current local time on your computer.
-  Run `listm` again to refresh this grouping as time passes.
+  To refresh this grouping as time passes while retaining a tag filter, repeat the command with the same tag arguments.
+  For example, after `listm t/work`, run `listm t/work` again. Running plain `listm` refreshes the grouping and clears
+  the active tag filter, showing all meetings.
 * Equal start times are ordered by end time, then name. Sorting does not change the order of records in the data file.
 * An empty list displays `No meetings to display.`. Plain `listm` reports `Listed all meetings.`.
   A filtered list reports `Listed N meeting(s) matching all specified tags.`, including zero when no meetings match.
