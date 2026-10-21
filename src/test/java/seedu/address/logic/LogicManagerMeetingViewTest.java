@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,7 +31,8 @@ import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.DeleteClientCommand;
 import seedu.address.logic.commands.DeleteMeetingCommand;
 import seedu.address.logic.commands.EditCommand;
-import seedu.address.logic.commands.FindCommand;
+import seedu.address.logic.commands.EditMeetingCommand;
+import seedu.address.logic.commands.FindClientCommand;
 import seedu.address.logic.commands.HelpCommand;
 import seedu.address.logic.commands.ListClientCommand;
 import seedu.address.logic.commands.ListMeetingCommand;
@@ -44,6 +46,7 @@ import seedu.address.model.meeting.MeetingDate;
 import seedu.address.model.meeting.MeetingName;
 import seedu.address.model.meeting.MeetingTime;
 import seedu.address.model.person.Person;
+import seedu.address.model.tag.Tag;
 import seedu.address.storage.JsonAddressBookStorage;
 import seedu.address.storage.JsonUserPrefsStorage;
 import seedu.address.storage.StorageManager;
@@ -80,6 +83,25 @@ public class LogicManagerMeetingViewTest {
     }
 
     @Test
+    public void execute_addTaggedMeeting_displaysAndPersistsTags() throws Exception {
+        CommandResult result = logic.execute(AddMeetingCommand.COMMAND_WORD
+                + " n/Project Review d/08/10/2099 st/1400 et/1500 t/urgent t/work");
+        Meeting added = model.getAddressBook().getMeetingList().get(1);
+        assertTrue(result.isShowMeetings());
+        assertEquals(Set.of(new Tag("urgent"), new Tag("work")), added.getTags());
+
+        logic.execute(ListMeetingCommand.COMMAND_WORD);
+        assertEquals(added, logic.getMeetingList().get(0));
+        ReadOnlyAddressBook restored = addressBookStorage.readAddressBook().orElseThrow();
+        assertEquals(added.getTags(), restored.getMeetingList().get(1).getTags());
+
+        assertThrows(CommandException.class, AddMeetingCommand.MESSAGE_DUPLICATE_MEETING, () ->
+                logic.execute(AddMeetingCommand.COMMAND_WORD
+                        + " n/Project Review d/08/10/2099 st/1400 et/1500 t/other"));
+        assertEquals(2, model.getAddressBook().getMeetingList().size());
+    }
+
+    @Test
     public void execute_deleteAfterListMeeting_usesSortedDisplayIndex() throws Exception {
         Meeting later = model.getMeetingList().get(0);
         Meeting earlier = new Meeting(new MeetingName("Earlier meeting"), new MeetingDate("07/10/2099"),
@@ -100,6 +122,32 @@ public class LogicManagerMeetingViewTest {
                 result.getFeedbackToUser());
         assertEquals(List.of(middle, later), logic.getMeetingList());
         assertEquals(List.of(later, middle), model.getAddressBook().getMeetingList());
+        assertEquals(model.getAddressBook(), addressBookStorage.readAddressBook().orElseThrow());
+    }
+
+    @Test
+    public void execute_editMeetingAfterListMeeting_usesSortedDisplayIndexAndResorts() throws Exception {
+        Meeting later = model.getMeetingList().get(0);
+        Meeting earlier = new Meeting(new MeetingName("Earlier meeting"), new MeetingDate("07/10/2099"),
+                new MeetingTime("1500"), new MeetingTime("1600"),
+                Set.of(new Tag("urgent"), new Tag("work")));
+        Meeting middle = new Meeting(new MeetingName("Middle meeting"), new MeetingDate("08/10/2099"),
+                new MeetingTime("1500"), new MeetingTime("1600"));
+        model.addMeeting(earlier);
+        model.addMeeting(middle);
+
+        logic.execute(ListMeetingCommand.COMMAND_WORD);
+        assertEquals(List.of(earlier, middle, later), logic.getMeetingList());
+
+        CommandResult result = logic.execute(EditMeetingCommand.COMMAND_WORD + " 1 d/10/10/2099");
+        Meeting editedEarlier = new Meeting(earlier.getName(), new MeetingDate("10/10/2099"),
+                earlier.getStartTime(), earlier.getEndTime(), earlier.getTags());
+
+        assertTrue(result.isShowMeetings());
+        assertEquals(String.format(EditMeetingCommand.MESSAGE_EDIT_MEETING_SUCCESS, editedEarlier),
+                result.getFeedbackToUser());
+        assertEquals(List.of(middle, later, editedEarlier), logic.getMeetingList());
+        assertEquals(List.of(later, editedEarlier, middle), model.getAddressBook().getMeetingList());
         assertEquals(model.getAddressBook(), addressBookStorage.readAddressBook().orElseThrow());
     }
 
@@ -132,8 +180,15 @@ public class LogicManagerMeetingViewTest {
     }
 
     @Test
+    public void execute_editMeetingWhileShowingClients_rejectsWithoutChangingDataOrSaving() throws Exception {
+        logic.execute(ListClientCommand.COMMAND_WORD);
+
+        assertMeetingCommandRejected("  " + EditMeetingCommand.COMMAND_WORD + " 1 n/Updated Meeting  ");
+    }
+
+    @Test
     public void execute_deleteAfterFindAndListMeeting_rejectsHiddenFilteredContact() throws Exception {
-        logic.execute(FindCommand.COMMAND_WORD + " Bob");
+        logic.execute(FindClientCommand.COMMAND_WORD + " Bob");
         logic.execute(ListMeetingCommand.COMMAND_WORD);
         assertEquals(List.of(BOB), model.getFilteredPersonList());
 
@@ -142,7 +197,7 @@ public class LogicManagerMeetingViewTest {
 
     @Test
     public void execute_editAfterFindAndListMeeting_rejectsHiddenFilteredContact() throws Exception {
-        logic.execute(FindCommand.COMMAND_WORD + " Bob");
+        logic.execute(FindClientCommand.COMMAND_WORD + " Bob");
         logic.execute(ListMeetingCommand.COMMAND_WORD);
         assertEquals(List.of(BOB), model.getFilteredPersonList());
 
@@ -151,7 +206,7 @@ public class LogicManagerMeetingViewTest {
 
     @Test
     public void execute_listAfterMeetings_allowsDeleteFromAllContacts() throws Exception {
-        logic.execute(FindCommand.COMMAND_WORD + " Bob");
+        logic.execute(FindClientCommand.COMMAND_WORD + " Bob");
         logic.execute(ListMeetingCommand.COMMAND_WORD);
         assertContactCommandRejected(DeleteClientCommand.COMMAND_WORD + " 1");
 
@@ -170,7 +225,7 @@ public class LogicManagerMeetingViewTest {
     public void execute_findAfterMeetings_allowsEditUsingVisibleFilteredIndex() throws Exception {
         logic.execute(ListMeetingCommand.COMMAND_WORD);
 
-        CommandResult result = logic.execute(FindCommand.COMMAND_WORD + " Bob");
+        CommandResult result = logic.execute(FindClientCommand.COMMAND_WORD + " Bob");
         assertFalse(result.isShowMeetings());
         assertEquals(List.of(BOB), model.getFilteredPersonList());
         logic.execute(EditCommand.COMMAND_WORD + " 1 p/87654321");

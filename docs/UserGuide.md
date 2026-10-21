@@ -29,7 +29,7 @@ PingBook is a **desktop application for managing contacts, optimized for use thr
 1. Type a command in the command box and press Enter to execute it. For example, type **`help`** and press Enter to open the help window.<br>
    Some example commands you can try:
 
-   * `listc` : Lists all contacts.
+   * `listc t/colleague` : Lists all contacts that have the tag `colleague`.
 
    * `addc n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01` : Adds a contact named `John Doe` to PingBook.
 
@@ -61,7 +61,7 @@ PingBook is a **desktop application for managing contacts, optimized for use thr
 * Parameters can be in any order.<br>
   For example, if the command specifies `n/NAME p/PHONE_NUMBER`, `p/PHONE_NUMBER n/NAME` is also acceptable.
 
-* Extraneous parameters for commands that take no parameters, such as `help`, `listc`, `exit`, and `clear`, are ignored.<br>
+* Extraneous parameters for commands that take no parameters, such as `help`, `exit`, and `clear`, are ignored.<br>
   For example, `help 123` is interpreted as `help`.
 
 * If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines as space characters surrounding line-breaks may be omitted when copied over to the application.
@@ -92,32 +92,48 @@ Examples:
 * `addc n/Mary Lim p/87654321 e/marylim@example.com t/premium` (no address)
 * `addc n/Betsy Crowe t/friend e/betsycrowe@example.com a/Newgate Prison p/1234567 t/criminal`
 
-### Listing all persons: `listc`
+### Listing clients by tags: `listc`
 
-Shows a list of all persons in PingBook.
+Shows a list of all persons in PingBook that match the given tags.
 
-Format: `listc`
+Format: `listc [t/TAG]...`
+
+* `TAG` is optional and there can be multiple tags.
+* Tags are alphanumeric and case-sensitive.
+* The command will ignore fields other than `TAG`. For example, `listc n/John` is the same as `listc`.
+* The command is case-sensitive. `listC` or `Listc` are considered invalid.
+* A person is shown only if they have all the tags given.
+* If there are no tags provided, PingBook will display all persons and a success message detailing the number of persons listed.
+* If there are tags provided, PingBook will display all matching persons and a success message detailing the number of persons listed and the tags given.
+
+Examples:
+* `listc`
+* `listc t/friend t/colleagues`
 
 ### Adding a meeting: `addm`
 
 Adds a meeting to PingBook and displays the Meetings panel.
 
-Format: `addm n/NAME d/DATE st/START_TIME et/END_TIME`
+Format: `addm n/NAME d/DATE st/START_TIME et/END_TIME [t/TAG]...`
 
-* All four fields are required, and each prefix can be used only once.
+* Name, date, start time and end time are required, and each of their prefixes can be used only once.
 * `NAME` can contain only letters, spaces, hyphens (`-`), and apostrophes (`'`). It must contain at least one letter.
 * `DATE` must be a valid calendar date in `DD/MM/YYYY` format.
 * `START_TIME` and `END_TIME` must each use the 24-hour `HHMM` format, from `0000` to `2359`.
+* Tags are optional. Use one `t/TAG` per tag; tag names must contain only letters and digits, with no spaces.
+  Repeated identical tags are stored once. Tag names are case-sensitive, as with client tags.
+* Tags appear on the meeting card and are saved with the meeting. Older saved meetings without tags still load normally.
 * A meeting is considered a duplicate if its name, date, start time, and end time are the same as those of an
-  existing meeting. Name comparison is case-insensitive, and repeated spaces in names are ignored.
+  existing meeting, regardless of tags. Name comparison is case-insensitive, and repeated spaces in names are ignored.
 
 Examples:
 * `addm n/Project Review d/08/10/2026 st/1400 et/1500`
 * `addm d/14/10/2026 n/Client Check-in et/1030 st/0930`
+* `addm n/Project Review d/25/10/2026 st/1400 et/1500 t/urgent t/work`
 
 ### Listing all meetings: `listm`
 
-Shows all saved meetings in the Meetings panel, with numbered rows containing the name, date and start/end times.
+Shows all saved meetings in the Meetings panel, with numbered rows containing the name, date, start/end times and tags.
 
 Format: `listm`
 
@@ -133,8 +149,31 @@ Format: `listm`
   name (ignoring case and repeated spaces), date, start time and end time; `listm` does not delete stored records.
 * Use `listc` to return to the contacts panel. `help` and invalid commands keep the currently selected panel.
 * Contact commands `deletec INDEX` and `editc INDEX ...` are rejected while the Meetings panel is active.
-  Run `listc` to display contacts before editing or deleting them. You can also use `find KEYWORD` to display
+  Run `listc` to display contacts before editing or deleting them. You can also use `findc KEYWORD` to display
   matching contacts and then use the indices in those results.
+
+### Editing a meeting: `editm`
+
+Edits an existing meeting in PingBook.
+
+Format: `editm MEETING_INDEX [n/NAME] [d/DATE] [st/START_TIME] [et/END_TIME] [t/TAG]...`
+
+* Edits the meeting at the specified `MEETING_INDEX` in the displayed meeting list.
+* The Meetings panel must be active. Run `listm` before editing a meeting.
+* The index must be a positive integer: 1, 2, 3, ...
+* At least one field must be provided. Each prefix except `t/` can be used only once.
+* Fields that are not provided keep their existing values.
+* Names, dates, times, and tags follow the same validation rules as `addm`.
+* When editing tags, all existing tags are replaced; adding tags is not cumulative.
+* To remove all tags, enter `t/` without a tag after it.
+* An edit that would make two meetings identical is rejected.
+* Editing a meeting's date or time may move it to a different position in the sorted meeting list.
+
+Examples:
+* `editm 1 d/25/10/2026` changes only the date of the 1st displayed meeting.
+* `editm 2 n/Client Review st/1500 et/1600` changes the name and times of the 2nd displayed meeting.
+* `editm 3 t/urgent t/work` replaces all tags of the 3rd displayed meeting with `urgent` and `work`.
+* `editm 1 t/` removes all tags from the 1st displayed meeting.
 
 ### Editing a person: `editc`
 
@@ -143,7 +182,7 @@ Edits an existing person in PingBook.
 Format: `editc INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [t/TAG]... `
 
 * Edits the person at the specified `INDEX`. The index refers to the index number shown in the displayed person list. The index **must be a positive integer** 1, 2, 3, ...
-* The contacts panel must be active. If you are viewing meetings, run `listc` or `find KEYWORD` first.
+* The contacts panel must be active. If you are viewing meetings, run `listc` or `findc KEYWORD` first.
 * At least one of the optional fields must be provided.
 * Existing values will be updated to the input values.
 * When editing tags, all of the person's existing tags are removed; adding tags is not cumulative.
@@ -153,11 +192,11 @@ Examples:
 *  `editc 1 p/91234567 e/johndoe@example.com` Edits the phone number and email address of the 1st person to be `91234567` and `johndoe@example.com` respectively.
 *  `editc 2 n/Betsy Crower t/` Edits the name of the 2nd person to be `Betsy Crower` and clears all existing tags.
 
-### Locating persons by name: `find`
+### Locating persons by name: `findc`
 
 Finds persons whose names contain any of the given keywords.
 
-Format: `find KEYWORD [MORE_KEYWORDS]`
+Format: `findc KEYWORD [MORE_KEYWORDS]`
 
 * The search is case-insensitive; for example, `hans` matches `Hans`.
 * Keyword order does not matter; for example, `Hans Bo` matches `Bo Hans`.
@@ -166,9 +205,9 @@ Format: `find KEYWORD [MORE_KEYWORDS]`
 * Persons matching at least one keyword are returned (an `OR` search); for example, `Hans Bo` returns `Hans Gruber` and `Bo Yang`.
 
 Examples:
-* `find John` returns `john` and `John Doe`
-* `find alex david` returns `Alex Yeoh`, `David Li`<br>
-  ![result for 'find alex david'](images/findAlexDavidResult.png)
+* `findc John` returns `john` and `John Doe`
+* `findc alex david` returns `Alex Yeoh`, `David Li`<br>
+  ![result for 'findc alex david'](images/findAlexDavidResult.png)
 
 ### Deleting a person: `deletec`
 
@@ -178,12 +217,12 @@ Format: `deletec INDEX`
 
 * Deletes the person at the specified `INDEX`.
 * The index refers to the index number shown in the displayed person list.
-* The contacts panel must be active. If you are viewing meetings, run `listc` or `find KEYWORD` first.
+* The contacts panel must be active. If you are viewing meetings, run `listc` or `findc KEYWORD` first.
 * The index **must be a positive integer** 1, 2, 3, ...
 
 Examples:
 * `listc` followed by `deletec 2` deletes the 2nd person in PingBook.
-* `find Betsy` followed by `deletec 1` deletes the 1st person in the results of the `find` command.
+* `findc Betsy` followed by `deletec 1` deletes the 1st person in the results of the `findc` command.
 
 ### Deleting a meeting: `deletem`
 
@@ -249,12 +288,13 @@ Furthermore, certain edits can cause PingBook to behave in unexpected ways (e.g.
 Action     | Format, Examples
 -----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 **Add client**    | `addc n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [t/TAG]... ` <br> e.g., `add n/James Ho p/22224444 e/jamesho@example.com a/123, Clementi Rd, 1234665 t/friend t/colleague`
-**Add meeting**    | `addm n/NAME d/DATE st/START_TIME et/END_TIME` <br> e.g., `addm n/John Doe d/20/09/2026 st/1430 et/1530`
+**Add meeting**    | `addm n/NAME d/DATE st/START_TIME et/END_TIME [t/TAG]...` <br> e.g., `addm n/John Doe d/20/09/2026 st/1430 et/1530 t/work`
 **Clear**  | `clear`
 **Delete client** | `deletec CLIENT_INDEX`<br> e.g., `deletec 3`
 **Delete meeting** | `deletem MEETING_INDEX`<br> e.g., `deletem 3`
 **Edit client**   | `editc INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]... `<br> e.g.,`editc 2 n/James Lee e/jameslee@example.com`
-**Find**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
-**List clients**   | `listc`
+**Edit meeting** | `editm MEETING_INDEX [n/NAME] [d/DATE] [st/START_TIME] [et/END_TIME] [t/TAG]...`<br> e.g., `editm 2 d/25/10/2026 st/1500 et/1600 t/urgent`
+**Find client**   | `findc KEYWORD [MORE_KEYWORDS]`<br> e.g., `findc James Jake`
+**List clients**   | `listc [t/TAG]...`
 **List meetings** | `listm`
 **Help**   | `help`

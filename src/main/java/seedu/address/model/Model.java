@@ -65,6 +65,9 @@ public interface Model {
     /** Returns an unmodifiable view of the filtered person list */
     ObservableList<Person> getFilteredPersonList();
 
+    /** Returns the number of elements in the filtered person list */
+    int getFilteredPersonListSize();
+
     /**
      * Updates the filter of the filtered person list to filter by the given {@code predicate}.
      * @throws NullPointerException if {@code predicate} is null.
@@ -81,6 +84,12 @@ public interface Model {
      * {@code meeting} must not already exist in the address book.
      */
     void addMeeting(Meeting meeting);
+
+    /**
+     * Replaces {@code target} with {@code editedMeeting}.
+     * {@code target} must exist and {@code editedMeeting} must not duplicate another meeting.
+     */
+    void setMeeting(Meeting target, Meeting editedMeeting);
 
     /**
      * Deletes the given meeting.
