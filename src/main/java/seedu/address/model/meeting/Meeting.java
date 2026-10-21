@@ -89,6 +89,17 @@ public class Meeting {
         return endTime.getTime().isAfter(startTime.getTime());
     }
 
+    /**
+     * Returns true if this meeting and {@code otherMeeting} are on the same date and their time ranges overlap.
+     * Meetings that merely touch (one ends exactly when the other starts) do not overlap.
+     */
+    public boolean overlapsWith(Meeting otherMeeting) {
+        requireAllNonNull(otherMeeting);
+        return date.equals(otherMeeting.date)
+                && startTime.getTime().isBefore(otherMeeting.endTime.getTime())
+                && otherMeeting.startTime.getTime().isBefore(endTime.getTime());
+    }
+
     @Override
     public boolean equals(Object other) {
         if (other == this) {

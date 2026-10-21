@@ -7,6 +7,7 @@ import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
 import static seedu.address.testutil.Assert.assertThrows;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -148,7 +149,7 @@ public class EditMeetingCommandTest {
                 .build();
         EditMeetingCommand command = new EditMeetingCommand(FIRST_INDEX, descriptor);
         String expected = EditMeetingCommand.class.getCanonicalName() + "{index=" + FIRST_INDEX
-                + ", editMeetingDescriptor=" + descriptor + "}";
+                + ", editMeetingDescriptor=" + descriptor + ", isForced=false}";
 
         assertEquals(expected, command.toString());
     }
@@ -160,10 +161,56 @@ public class EditMeetingCommandTest {
     }
 
     @Test
+    public void execute_editOverlapsOtherMeetingWithoutForce_failure() {
+        EditMeetingDescriptor descriptor = new EditMeetingDescriptorBuilder()
+                .withDate("09/10/2026").withStartTime("0930").withEndTime("1030").build();
+
+        String expectedMessage = String.format(Messages.MESSAGE_MEETING_OVERLAP,
+                Messages.formatOverlappingMeetings(List.of(secondMeeting)));
+        assertCommandFailure(new EditMeetingCommand(FIRST_INDEX, descriptor), model, expectedMessage);
+    }
+
+    @Test
+    public void execute_editOverlapsOtherMeetingWithForce_successWithWarning() {
+        EditMeetingDescriptor descriptor = new EditMeetingDescriptorBuilder()
+                .withDate("09/10/2026").withStartTime("0930").withEndTime("1030").build();
+        Meeting edited = meeting("Project Review", "09/10/2026", "0930", "1030", "urgent", "work");
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+        expectedModel.setMeeting(firstMeeting, edited);
+
+        String expectedMessage = String.format(EditMeetingCommand.MESSAGE_EDIT_MEETING_SUCCESS, edited) + "\n"
+                + String.format(Messages.MESSAGE_MEETING_OVERLAP_WARNING,
+                        Messages.formatOverlappingMeetings(List.of(secondMeeting)));
+        assertCommandSuccess(new EditMeetingCommand(FIRST_INDEX, descriptor, true), model,
+                new CommandResult(expectedMessage, true), expectedModel);
+    }
+
+    @Test
+    public void execute_editOverlapsOnlyItself_success() {
+        EditMeetingDescriptor descriptor = new EditMeetingDescriptorBuilder()
+                .withStartTime("1415").withEndTime("1445").build();
+        Meeting edited = meeting("Project Review", "08/10/2026", "1415", "1445", "urgent", "work");
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+        expectedModel.setMeeting(firstMeeting, edited);
+
+        assertCommandSuccess(new EditMeetingCommand(FIRST_INDEX, descriptor), model,
+                new CommandResult(String.format(EditMeetingCommand.MESSAGE_EDIT_MEETING_SUCCESS, edited), true),
+                expectedModel);
+    }
+
+    @Test
     public void execute_endNotAfterStart_failure() {
         EditMeetingDescriptor descriptor = new EditMeetingDescriptorBuilder().withEndTime("1400").build();
 
         assertCommandFailure(new EditMeetingCommand(FIRST_INDEX, descriptor), model,
                 Meeting.MESSAGE_INVALID_TIME_RANGE);
+    }
+
+    @Test
+    public void equals_differentForce_notEqual() {
+        EditMeetingDescriptor descriptor = new EditMeetingDescriptorBuilder().withName("X").build();
+
+        assertFalse(new EditMeetingCommand(FIRST_INDEX, descriptor)
+                .equals(new EditMeetingCommand(FIRST_INDEX, descriptor, true)));
     }
 }

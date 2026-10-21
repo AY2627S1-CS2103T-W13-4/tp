@@ -72,6 +72,17 @@ public class JsonSerializableAddressBookTest {
     }
 
     @Test
+    public void toModelType_overlappingMeetings_loadsSuccessfully() throws Exception {
+        JsonAdaptedMeeting first = new JsonAdaptedMeeting("Client Review", "15/10/2026", "0900", "1000",
+                List.of());
+        JsonAdaptedMeeting second = new JsonAdaptedMeeting("Sales Sync", "15/10/2026", "0930", "1030",
+                List.of());
+        JsonSerializableAddressBook data = new JsonSerializableAddressBook(List.of(), List.of(first, second));
+
+        assertEquals(2, data.toModelType().getMeetingList().size());
+    }
+
+    @Test
     public void toModelType_invalidMeetingFile_throwsIllegalValueException() throws Exception {
         JsonSerializableAddressBook dataFromFile = JsonUtil.readJsonFile(INVALID_MEETING_FILE,
                 JsonSerializableAddressBook.class).get();

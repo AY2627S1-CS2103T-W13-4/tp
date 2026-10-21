@@ -3,6 +3,7 @@ package seedu.address.logic.commands;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_END_TIME;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_FORCE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_START_TIME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
@@ -41,7 +42,9 @@ public class EditMeetingCommand extends Command {
             + "[" + PREFIX_DATE + "DATE] "
             + "[" + PREFIX_START_TIME + "START_TIME] "
             + "[" + PREFIX_END_TIME + "END_TIME] "
-            + "[" + PREFIX_TAG + "TAG]...\n"
+            + "[" + PREFIX_TAG + "TAG]... "
+            + "[" + PREFIX_FORCE + "]\n"
+            + "Overlapping meetings are rejected unless " + PREFIX_FORCE + " is given.\n"
             + "Example: " + COMMAND_WORD + " 1 "
             + PREFIX_DATE + "08/10/2026 "
             + PREFIX_START_TIME + "1400 "
@@ -54,16 +57,26 @@ public class EditMeetingCommand extends Command {
 
     private final Index index;
     private final EditMeetingDescriptor editMeetingDescriptor;
+    private final boolean isForced;
+
+    /**
+     * Creates an {@code EditMeetingCommand} that edits the meeting at {@code index}, rejecting overlaps.
+     */
+    public EditMeetingCommand(Index index, EditMeetingDescriptor editMeetingDescriptor) {
+        this(index, editMeetingDescriptor, false);
+    }
 
     /**
      * Creates an {@code EditMeetingCommand} that edits the meeting at {@code index}.
+     * If {@code isForced} is true, the edit is applied even if the result overlaps other meetings.
      */
-    public EditMeetingCommand(Index index, EditMeetingDescriptor editMeetingDescriptor) {
+    public EditMeetingCommand(Index index, EditMeetingDescriptor editMeetingDescriptor, boolean isForced) {
         requireNonNull(index);
         requireNonNull(editMeetingDescriptor);
 
         this.index = index;
         this.editMeetingDescriptor = new EditMeetingDescriptor(editMeetingDescriptor);
+        this.isForced = isForced;
     }
 
     @Override
@@ -86,8 +99,19 @@ public class EditMeetingCommand extends Command {
             throw new CommandException(MESSAGE_DUPLICATE_MEETING);
         }
 
+        List<Meeting> overlaps = model.getOverlappingMeetings(editedMeeting, meetingToEdit);
+        if (!overlaps.isEmpty() && !isForced) {
+            throw new CommandException(String.format(Messages.MESSAGE_MEETING_OVERLAP,
+                    Messages.formatOverlappingMeetings(overlaps)));
+        }
+
         model.setMeeting(meetingToEdit, editedMeeting);
-        return new CommandResult(String.format(MESSAGE_EDIT_MEETING_SUCCESS, editedMeeting), true);
+        String feedback = String.format(MESSAGE_EDIT_MEETING_SUCCESS, editedMeeting);
+        if (!overlaps.isEmpty()) {
+            feedback += "\n" + String.format(Messages.MESSAGE_MEETING_OVERLAP_WARNING,
+                    Messages.formatOverlappingMeetings(overlaps));
+        }
+        return new CommandResult(feedback, true);
     }
 
     /**
@@ -119,7 +143,8 @@ public class EditMeetingCommand extends Command {
         }
 
         return index.equals(otherEditMeetingCommand.index)
-                && editMeetingDescriptor.equals(otherEditMeetingCommand.editMeetingDescriptor);
+                && editMeetingDescriptor.equals(otherEditMeetingCommand.editMeetingDescriptor)
+                && isForced == otherEditMeetingCommand.isForced;
     }
 
     @Override
@@ -127,6 +152,7 @@ public class EditMeetingCommand extends Command {
         return new ToStringBuilder(this)
                 .add("index", index)
                 .add("editMeetingDescriptor", editMeetingDescriptor)
+                .add("isForced", isForced)
                 .toString();
     }
 
