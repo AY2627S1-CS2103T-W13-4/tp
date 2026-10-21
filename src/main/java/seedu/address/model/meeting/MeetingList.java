@@ -66,7 +66,7 @@ public class MeetingList implements Iterable<Meeting> {
             throw new MeetingNotFoundException();
         }
 
-        if (!target.equals(editedMeeting) && contains(editedMeeting)) {
+        if (!target.isSameMeeting(editedMeeting) && contains(editedMeeting)) {
             throw new DuplicateMeetingException();
         }
 

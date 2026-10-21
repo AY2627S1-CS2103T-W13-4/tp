@@ -111,9 +111,10 @@ public class AddressBookParserTest {
         EditMeetingDescriptor descriptor = new EditMeetingDescriptorBuilder()
                 .withDate("10/10/2026")
                 .withStartTime("1500")
+                .withTags("urgent")
                 .build();
         EditMeetingCommand command = (EditMeetingCommand) parser.parseCommand(
-                "editm 1 d/10/10/2026 st/1500");
+                "editm 1 d/10/10/2026 st/1500 t/urgent");
 
         assertEquals(new EditMeetingCommand(INDEX_FIRST_PERSON, descriptor), command);
     }

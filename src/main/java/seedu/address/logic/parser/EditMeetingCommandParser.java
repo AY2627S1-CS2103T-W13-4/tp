@@ -6,11 +6,18 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_END_TIME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_START_TIME;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.Set;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.EditMeetingCommand;
 import seedu.address.logic.commands.EditMeetingCommand.EditMeetingDescriptor;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.tag.Tag;
 
 /**
  * Parses input arguments and creates an {@code EditMeetingCommand}.
@@ -25,7 +32,7 @@ public class EditMeetingCommandParser implements Parser<EditMeetingCommand> {
     public EditMeetingCommand parse(String args) throws ParseException {
         requireNonNull(args);
         ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(
-                args, PREFIX_NAME, PREFIX_DATE, PREFIX_START_TIME, PREFIX_END_TIME);
+                args, PREFIX_NAME, PREFIX_DATE, PREFIX_START_TIME, PREFIX_END_TIME, PREFIX_TAG);
 
         Index index;
         try {
@@ -55,11 +62,28 @@ public class EditMeetingCommandParser implements Parser<EditMeetingCommand> {
             editMeetingDescriptor.setEndTime(
                     ParserUtil.parseMeetingTime(argMultimap.getValue(PREFIX_END_TIME).get()));
         }
+        parseTagsForEdit(argMultimap.getAllValues(PREFIX_TAG)).ifPresent(editMeetingDescriptor::setTags);
 
         if (!editMeetingDescriptor.isAnyFieldEdited()) {
             throw new ParseException(EditMeetingCommand.MESSAGE_NOT_EDITED);
         }
 
         return new EditMeetingCommand(index, editMeetingDescriptor);
+    }
+
+    /**
+     * Parses {@code tags} as replacement tags when at least one tag prefix is present.
+     * A single empty tag value represents an empty replacement set.
+     */
+    private Optional<Set<Tag>> parseTagsForEdit(Collection<String> tags) throws ParseException {
+        assert tags != null;
+
+        if (tags.isEmpty()) {
+            return Optional.empty();
+        }
+        Collection<String> tagValues = tags.size() == 1 && tags.contains("")
+                ? Collections.emptySet()
+                : tags;
+        return Optional.of(ParserUtil.parseTags(tagValues));
     }
 }

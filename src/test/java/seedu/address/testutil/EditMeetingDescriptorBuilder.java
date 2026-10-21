@@ -1,10 +1,15 @@
 package seedu.address.testutil;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import seedu.address.logic.commands.EditMeetingCommand.EditMeetingDescriptor;
 import seedu.address.model.meeting.Meeting;
 import seedu.address.model.meeting.MeetingDate;
 import seedu.address.model.meeting.MeetingName;
 import seedu.address.model.meeting.MeetingTime;
+import seedu.address.model.tag.Tag;
 
 /**
  * Helps build {@code EditMeetingDescriptor} objects for tests.
@@ -30,6 +35,7 @@ public class EditMeetingDescriptorBuilder {
         descriptor.setDate(meeting.getDate());
         descriptor.setStartTime(meeting.getStartTime());
         descriptor.setEndTime(meeting.getEndTime());
+        descriptor.setTags(meeting.getTags());
     }
 
     /**
@@ -61,6 +67,15 @@ public class EditMeetingDescriptorBuilder {
      */
     public EditMeetingDescriptorBuilder withEndTime(String endTime) {
         descriptor.setEndTime(new MeetingTime(endTime));
+        return this;
+    }
+
+    /**
+     * Sets the meeting tags in the descriptor.
+     */
+    public EditMeetingDescriptorBuilder withTags(String... tags) {
+        Set<Tag> tagSet = Stream.of(tags).map(Tag::new).collect(Collectors.toSet());
+        descriptor.setTags(tagSet);
         return this;
     }
 

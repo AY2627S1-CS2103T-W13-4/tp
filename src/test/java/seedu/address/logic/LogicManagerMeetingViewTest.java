@@ -129,7 +129,8 @@ public class LogicManagerMeetingViewTest {
     public void execute_editMeetingAfterListMeeting_usesSortedDisplayIndexAndResorts() throws Exception {
         Meeting later = model.getMeetingList().get(0);
         Meeting earlier = new Meeting(new MeetingName("Earlier meeting"), new MeetingDate("07/10/2099"),
-                new MeetingTime("1500"), new MeetingTime("1600"));
+                new MeetingTime("1500"), new MeetingTime("1600"),
+                Set.of(new Tag("urgent"), new Tag("work")));
         Meeting middle = new Meeting(new MeetingName("Middle meeting"), new MeetingDate("08/10/2099"),
                 new MeetingTime("1500"), new MeetingTime("1600"));
         model.addMeeting(earlier);
@@ -140,7 +141,7 @@ public class LogicManagerMeetingViewTest {
 
         CommandResult result = logic.execute(EditMeetingCommand.COMMAND_WORD + " 1 d/10/10/2099");
         Meeting editedEarlier = new Meeting(earlier.getName(), new MeetingDate("10/10/2099"),
-                earlier.getStartTime(), earlier.getEndTime());
+                earlier.getStartTime(), earlier.getEndTime(), earlier.getTags());
 
         assertTrue(result.isShowMeetings());
         assertEquals(String.format(EditMeetingCommand.MESSAGE_EDIT_MEETING_SUCCESS, editedEarlier),

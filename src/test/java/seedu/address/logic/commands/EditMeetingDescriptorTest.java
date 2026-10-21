@@ -16,6 +16,7 @@ public class EditMeetingDescriptorTest {
             .withDate("08/10/2026")
             .withStartTime("1400")
             .withEndTime("1500")
+            .withTags("work")
             .build();
 
     @Test
@@ -26,6 +27,7 @@ public class EditMeetingDescriptorTest {
     @Test
     public void isAnyFieldEdited_fieldPresent_returnsTrue() {
         assertTrue(new EditMeetingDescriptorBuilder().withName("Project Review").build().isAnyFieldEdited());
+        assertTrue(new EditMeetingDescriptorBuilder().withTags("work").build().isAnyFieldEdited());
     }
 
     @Test
@@ -44,13 +46,15 @@ public class EditMeetingDescriptorTest {
                 new EditMeetingDescriptorBuilder(PROJECT_REVIEW).withStartTime("1300").build()));
         assertFalse(PROJECT_REVIEW.equals(
                 new EditMeetingDescriptorBuilder(PROJECT_REVIEW).withEndTime("1600").build()));
+        assertFalse(PROJECT_REVIEW.equals(
+                new EditMeetingDescriptorBuilder(PROJECT_REVIEW).withTags("urgent").build()));
     }
 
     @Test
     public void toStringMethod() {
         EditMeetingDescriptor descriptor = new EditMeetingDescriptor();
         String expected = EditMeetingDescriptor.class.getCanonicalName()
-                + "{name=null, date=null, startTime=null, endTime=null}";
+                + "{name=null, date=null, startTime=null, endTime=null, tags=null}";
 
         assertEquals(expected, descriptor.toString());
     }

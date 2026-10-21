@@ -124,6 +124,13 @@ public class MeetingListTest {
 
         assertEquals(1, list.size());
         assertEquals(edited, list.get(0));
+
+        Meeting editedTags = new Meeting(edited.getName(), edited.getDate(), edited.getStartTime(),
+                edited.getEndTime(), Set.of(new Tag("urgent")));
+        list.setMeeting(edited, editedTags);
+
+        assertEquals(1, list.size());
+        assertEquals(editedTags, list.get(0));
     }
 
     @Test

@@ -7,6 +7,10 @@ import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
 import static seedu.address.testutil.Assert.assertThrows;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,6 +24,7 @@ import seedu.address.model.meeting.Meeting;
 import seedu.address.model.meeting.MeetingDate;
 import seedu.address.model.meeting.MeetingName;
 import seedu.address.model.meeting.MeetingTime;
+import seedu.address.model.tag.Tag;
 import seedu.address.testutil.EditMeetingDescriptorBuilder;
 
 public class EditMeetingCommandTest {
@@ -34,7 +39,7 @@ public class EditMeetingCommandTest {
     @BeforeEach
     public void setUp() {
         model = new ModelManager();
-        firstMeeting = meeting("Project Review", "08/10/2026", "1400", "1500");
+        firstMeeting = meeting("Project Review", "08/10/2026", "1400", "1500", "urgent", "work");
         secondMeeting = meeting("Team Sync", "09/10/2026", "0900", "1000");
         model.addMeeting(firstMeeting);
         model.addMeeting(secondMeeting);
@@ -54,7 +59,7 @@ public class EditMeetingCommandTest {
 
     @Test
     public void execute_allFieldsSpecified_success() {
-        Meeting editedMeeting = meeting("Client Review", "10/10/2026", "1100", "1200");
+        Meeting editedMeeting = meeting("Client Review", "10/10/2026", "1100", "1200", "client");
         EditMeetingDescriptor descriptor = new EditMeetingDescriptorBuilder(editedMeeting).build();
         EditMeetingCommand command = new EditMeetingCommand(FIRST_INDEX, descriptor);
 
@@ -68,7 +73,7 @@ public class EditMeetingCommandTest {
 
     @Test
     public void execute_someFieldsSpecified_success() {
-        Meeting editedMeeting = meeting("Project Review", "08/10/2026", "1300", "1600");
+        Meeting editedMeeting = meeting("Project Review", "08/10/2026", "1300", "1600", "urgent", "work");
         EditMeetingDescriptor descriptor = new EditMeetingDescriptorBuilder()
                 .withStartTime("1300")
                 .withEndTime("1600")
@@ -90,6 +95,15 @@ public class EditMeetingCommandTest {
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
         CommandResult expectedResult = new CommandResult(
                 String.format(EditMeetingCommand.MESSAGE_EDIT_MEETING_SUCCESS, firstMeeting), true);
+
+        assertCommandSuccess(command, model, expectedResult, expectedModel);
+
+        Meeting meetingWithEditedTags = meeting("Project Review", "08/10/2026", "1400", "1500", "client");
+        descriptor = new EditMeetingDescriptorBuilder().withTags("client").build();
+        command = new EditMeetingCommand(FIRST_INDEX, descriptor);
+        expectedModel.setMeeting(firstMeeting, meetingWithEditedTags);
+        expectedResult = new CommandResult(
+                String.format(EditMeetingCommand.MESSAGE_EDIT_MEETING_SUCCESS, meetingWithEditedTags), true);
 
         assertCommandSuccess(command, model, expectedResult, expectedModel);
     }
@@ -139,8 +153,9 @@ public class EditMeetingCommandTest {
         assertEquals(expected, command.toString());
     }
 
-    private Meeting meeting(String name, String date, String startTime, String endTime) {
+    private Meeting meeting(String name, String date, String startTime, String endTime, String... tags) {
+        Set<Tag> tagSet = Stream.of(tags).map(Tag::new).collect(Collectors.toSet());
         return new Meeting(new MeetingName(name), new MeetingDate(date),
-                new MeetingTime(startTime), new MeetingTime(endTime));
+                new MeetingTime(startTime), new MeetingTime(endTime), tagSet);
     }
 }

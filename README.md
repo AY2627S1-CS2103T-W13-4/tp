@@ -29,7 +29,7 @@ The first version of PingBook will support:
 | List clients   | `listc`                                                   |
 | Add a meeting  | `addm n/NAME d/DATE st/START_TIME et/END_TIME [t/TAG]...` |
 | Delete a meeting | `deletem MEETING_INDEX`                                 |
-| Edit a meeting | `editm MEETING_INDEX [n/NAME] [d/DATE] [st/START_TIME] [et/END_TIME]` |
+| Edit a meeting | `editm MEETING_INDEX [n/NAME] [d/DATE] [st/START_TIME] [et/END_TIME] [t/TAG]...` |
 | List meetings  | `listm`                                                   |
 
 Features being considered for later versions include:

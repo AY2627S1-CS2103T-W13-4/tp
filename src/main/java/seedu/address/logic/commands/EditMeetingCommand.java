@@ -5,10 +5,14 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_END_TIME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_START_TIME;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.CollectionUtil;
@@ -20,6 +24,7 @@ import seedu.address.model.meeting.Meeting;
 import seedu.address.model.meeting.MeetingDate;
 import seedu.address.model.meeting.MeetingName;
 import seedu.address.model.meeting.MeetingTime;
+import seedu.address.model.tag.Tag;
 
 /**
  * Edits the details of an existing meeting in PingBook.
@@ -35,11 +40,13 @@ public class EditMeetingCommand extends Command {
             + "[" + PREFIX_NAME + "NAME] "
             + "[" + PREFIX_DATE + "DATE] "
             + "[" + PREFIX_START_TIME + "START_TIME] "
-            + "[" + PREFIX_END_TIME + "END_TIME]\n"
+            + "[" + PREFIX_END_TIME + "END_TIME] "
+            + "[" + PREFIX_TAG + "TAG]...\n"
             + "Example: " + COMMAND_WORD + " 1 "
             + PREFIX_DATE + "08/10/2026 "
             + PREFIX_START_TIME + "1400 "
-            + PREFIX_END_TIME + "1500";
+            + PREFIX_END_TIME + "1500 "
+            + PREFIX_TAG + "urgent";
 
     public static final String MESSAGE_EDIT_MEETING_SUCCESS = "Edited meeting: %1$s";
     public static final String MESSAGE_NOT_EDITED = "At least one field to edit must be provided.";
@@ -71,7 +78,7 @@ public class EditMeetingCommand extends Command {
         Meeting meetingToEdit = lastShownList.get(index.getZeroBased());
         Meeting editedMeeting = createEditedMeeting(meetingToEdit, editMeetingDescriptor);
 
-        if (!meetingToEdit.equals(editedMeeting) && model.hasMeeting(editedMeeting)) {
+        if (!meetingToEdit.isSameMeeting(editedMeeting) && model.hasMeeting(editedMeeting)) {
             throw new CommandException(MESSAGE_DUPLICATE_MEETING);
         }
 
@@ -91,8 +98,9 @@ public class EditMeetingCommand extends Command {
         MeetingTime updatedStartTime = editMeetingDescriptor.getStartTime()
                 .orElse(meetingToEdit.getStartTime());
         MeetingTime updatedEndTime = editMeetingDescriptor.getEndTime().orElse(meetingToEdit.getEndTime());
+        Set<Tag> updatedTags = editMeetingDescriptor.getTags().orElse(meetingToEdit.getTags());
 
-        return new Meeting(updatedName, updatedDate, updatedStartTime, updatedEndTime);
+        return new Meeting(updatedName, updatedDate, updatedStartTime, updatedEndTime, updatedTags);
     }
 
     @Override
@@ -126,6 +134,7 @@ public class EditMeetingCommand extends Command {
         private MeetingDate date;
         private MeetingTime startTime;
         private MeetingTime endTime;
+        private Set<Tag> tags;
 
         public EditMeetingDescriptor() {}
 
@@ -137,13 +146,14 @@ public class EditMeetingCommand extends Command {
             setDate(toCopy.date);
             setStartTime(toCopy.startTime);
             setEndTime(toCopy.endTime);
+            setTags(toCopy.tags);
         }
 
         /**
          * Returns true if at least one meeting field is edited.
          */
         public boolean isAnyFieldEdited() {
-            return CollectionUtil.isAnyNonNull(name, date, startTime, endTime);
+            return CollectionUtil.isAnyNonNull(name, date, startTime, endTime, tags);
         }
 
         public void setName(MeetingName name) {
@@ -178,6 +188,22 @@ public class EditMeetingCommand extends Command {
             return Optional.ofNullable(endTime);
         }
 
+        /**
+         * Sets {@code tags} as the replacement tags, using a defensive copy.
+         */
+        public void setTags(Set<Tag> tags) {
+            this.tags = tags == null ? null : new HashSet<>(tags);
+        }
+
+        /**
+         * Returns the replacement tags, if they were specified.
+         */
+        public Optional<Set<Tag>> getTags() {
+            return tags == null
+                    ? Optional.empty()
+                    : Optional.of(Collections.unmodifiableSet(tags));
+        }
+
         @Override
         public boolean equals(Object other) {
             if (other == this) {
@@ -192,7 +218,8 @@ public class EditMeetingCommand extends Command {
             return Objects.equals(name, otherEditMeetingDescriptor.name)
                     && Objects.equals(date, otherEditMeetingDescriptor.date)
                     && Objects.equals(startTime, otherEditMeetingDescriptor.startTime)
-                    && Objects.equals(endTime, otherEditMeetingDescriptor.endTime);
+                    && Objects.equals(endTime, otherEditMeetingDescriptor.endTime)
+                    && Objects.equals(tags, otherEditMeetingDescriptor.tags);
         }
 
         @Override
@@ -202,6 +229,7 @@ public class EditMeetingCommand extends Command {
                     .add("date", date)
                     .add("startTime", startTime)
                     .add("endTime", endTime)
+                    .add("tags", tags)
                     .toString();
         }
     }
