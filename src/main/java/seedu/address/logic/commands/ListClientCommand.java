@@ -11,7 +11,7 @@ import seedu.address.model.person.Person;
 import seedu.address.model.tag.Tag;
 
 /**
- * Lists all persons in the address book to the user.
+ * Lists all persons in PingBook filtered by tags to the user.
  */
 public class ListClientCommand extends Command {
 
