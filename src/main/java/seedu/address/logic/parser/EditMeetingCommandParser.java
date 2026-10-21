@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_END_TIME;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_FORCE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_START_TIME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
@@ -17,6 +18,7 @@ import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.EditMeetingCommand;
 import seedu.address.logic.commands.EditMeetingCommand.EditMeetingDescriptor;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.meeting.Meeting;
 import seedu.address.model.tag.Tag;
 
 /**
@@ -32,7 +34,8 @@ public class EditMeetingCommandParser implements Parser<EditMeetingCommand> {
     public EditMeetingCommand parse(String args) throws ParseException {
         requireNonNull(args);
         ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(
-                args, PREFIX_NAME, PREFIX_DATE, PREFIX_START_TIME, PREFIX_END_TIME, PREFIX_TAG);
+                args, PREFIX_NAME, PREFIX_DATE, PREFIX_START_TIME, PREFIX_END_TIME, PREFIX_TAG,
+                PREFIX_FORCE);
 
         Index index;
         try {
@@ -43,7 +46,7 @@ public class EditMeetingCommandParser implements Parser<EditMeetingCommand> {
         }
 
         argMultimap.verifyNoDuplicatePrefixesFor(
-                PREFIX_NAME, PREFIX_DATE, PREFIX_START_TIME, PREFIX_END_TIME);
+                PREFIX_NAME, PREFIX_DATE, PREFIX_START_TIME, PREFIX_END_TIME, PREFIX_FORCE);
 
         EditMeetingDescriptor editMeetingDescriptor = new EditMeetingDescriptor();
         if (argMultimap.getValue(PREFIX_NAME).isPresent()) {
@@ -68,7 +71,14 @@ public class EditMeetingCommandParser implements Parser<EditMeetingCommand> {
             throw new ParseException(EditMeetingCommand.MESSAGE_NOT_EDITED);
         }
 
-        return new EditMeetingCommand(index, editMeetingDescriptor);
+        if (editMeetingDescriptor.getStartTime().isPresent() && editMeetingDescriptor.getEndTime().isPresent()
+                && !Meeting.isValidTimeRange(editMeetingDescriptor.getStartTime().get(),
+                        editMeetingDescriptor.getEndTime().get())) {
+            throw new ParseException(Meeting.MESSAGE_INVALID_TIME_RANGE);
+        }
+        boolean isForced = ParserUtil.parseForceFlag(argMultimap);
+
+        return new EditMeetingCommand(index, editMeetingDescriptor, isForced);
     }
 
     /**

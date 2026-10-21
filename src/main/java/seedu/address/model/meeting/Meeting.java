@@ -16,6 +16,8 @@ import seedu.address.model.tag.Tag;
  */
 public class Meeting {
 
+    public static final String MESSAGE_INVALID_TIME_RANGE = "Invalid time range. End time must be after start time.";
+
     private final MeetingName name;
     private final MeetingDate date;
     private final MeetingTime startTime;
@@ -77,6 +79,25 @@ public class Meeting {
                 && date.equals(otherMeeting.date)
                 && startTime.equals(otherMeeting.startTime)
                 && endTime.equals(otherMeeting.endTime);
+    }
+
+    /**
+     * Returns true if {@code endTime} is strictly after {@code startTime}.
+     */
+    public static boolean isValidTimeRange(MeetingTime startTime, MeetingTime endTime) {
+        requireAllNonNull(startTime, endTime);
+        return endTime.getTime().isAfter(startTime.getTime());
+    }
+
+    /**
+     * Returns true if this meeting and {@code otherMeeting} are on the same date and their time ranges overlap.
+     * Meetings that merely touch (one ends exactly when the other starts) do not overlap.
+     */
+    public boolean overlapsWith(Meeting otherMeeting) {
+        requireAllNonNull(otherMeeting);
+        return date.equals(otherMeeting.date)
+                && startTime.getTime().isBefore(otherMeeting.endTime.getTime())
+                && otherMeeting.startTime.getTime().isBefore(endTime.getTime());
     }
 
     @Override

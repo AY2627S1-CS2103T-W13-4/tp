@@ -1,6 +1,7 @@
 package seedu.address.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.function.Predicate;
 
 import javafx.collections.ObservableList;
@@ -81,6 +82,12 @@ public interface Model {
      * Returns true if the given meeting exists in the address book.
      */
     boolean hasMeeting(Meeting meeting);
+
+    /**
+     * Returns the meetings that overlap with {@code meeting}, in displayed order, ignoring {@code excluded}.
+     * {@code excluded} may be null, in which case no meeting is ignored.
+     */
+    List<Meeting> getOverlappingMeetings(Meeting meeting, Meeting excluded);
 
     /**
      * Adds the given meeting.

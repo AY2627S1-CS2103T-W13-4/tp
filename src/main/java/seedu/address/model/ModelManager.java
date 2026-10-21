@@ -5,8 +5,10 @@ import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -108,6 +110,18 @@ public class ModelManager implements Model {
     public boolean hasMeeting(Meeting meeting) {
         requireNonNull(meeting);
         return addressBook.hasMeeting(meeting);
+    }
+
+    @Override
+    public List<Meeting> getOverlappingMeetings(Meeting meeting, Meeting excluded) {
+        requireNonNull(meeting);
+        List<Meeting> overlaps = sortedMeetings.stream()
+                .filter(other -> other != excluded && !other.equals(excluded))
+                .filter(meeting::overlapsWith)
+                .collect(Collectors.toList());
+        assert overlaps.stream().allMatch(meeting::overlapsWith);
+        assert excluded == null || !overlaps.contains(excluded);
+        return overlaps;
     }
 
     @Override

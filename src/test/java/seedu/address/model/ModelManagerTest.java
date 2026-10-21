@@ -180,4 +180,20 @@ public class ModelManagerTest {
         return new Meeting(new MeetingName(name), new MeetingDate(date),
                 new MeetingTime(startTime), new MeetingTime(endTime));
     }
+
+    @Test
+    public void getOverlappingMeetings_returnsOnlyOverlapsAndHonoursExclusion() {
+        Meeting existing = new Meeting(new MeetingName("Existing"), new MeetingDate("15/10/2026"),
+                new MeetingTime("0900"), new MeetingTime("1000"));
+        Meeting other = new Meeting(new MeetingName("Other"), new MeetingDate("15/10/2026"),
+                new MeetingTime("1000"), new MeetingTime("1100"));
+        Meeting candidate = new Meeting(new MeetingName("Candidate"), new MeetingDate("15/10/2026"),
+                new MeetingTime("0930"), new MeetingTime("1030"));
+        modelManager.addMeeting(existing);
+        modelManager.addMeeting(other);
+
+        assertEquals(List.of(existing, other), modelManager.getOverlappingMeetings(candidate, null));
+        assertEquals(List.of(other), modelManager.getOverlappingMeetings(candidate, existing));
+        assertThrows(NullPointerException.class, () -> modelManager.getOverlappingMeetings(null, null));
+    }
 }

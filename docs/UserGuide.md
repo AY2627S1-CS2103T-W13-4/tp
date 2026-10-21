@@ -114,12 +114,18 @@ Examples:
 
 Adds a meeting to PingBook and displays the Meetings panel.
 
-Format: `addm n/NAME d/DATE st/START_TIME et/END_TIME [t/TAG]...`
+Format: `addm n/NAME d/DATE st/START_TIME et/END_TIME [t/TAG]... [force/]`
 
 * Name, date, start time and end time are required, and each of their prefixes can be used only once.
 * `NAME` can contain only letters, spaces, hyphens (`-`), and apostrophes (`'`). It must contain at least one letter.
 * `DATE` must be a valid calendar date in `DD/MM/YYYY` format.
 * `START_TIME` and `END_TIME` must each use the 24-hour `HHMM` format, from `0000` to `2359`.
+  `END_TIME` must be later than `START_TIME`.
+* If the new meeting overlaps an existing meeting on the same date, it is not added and the error lists the
+  conflicting meetings. Add `force/` (with no value, and used at most once) to add it anyway; the success message
+  then ends with a warning listing the overlapping meetings. Using `force/` when nothing overlaps has no effect.
+* Meetings overlap when they are on the same date and their time ranges intersect. A meeting that starts exactly
+  when another ends (for example `1400`-`1500` and `1500`-`1600`) does not overlap. Finished meetings are included.
 * Tags are optional. Use one `t/TAG` per tag; tag names must contain only letters and digits, with no spaces.
   Repeated identical tags are stored once. Tag names are case-sensitive, as with client tags.
 * Tags appear on the meeting card and are saved with the meeting. Older saved meetings without tags still load normally.
@@ -131,6 +137,7 @@ Examples:
 * `addm n/Project Review d/08/10/2026 st/1400 et/1500`
 * `addm d/14/10/2026 n/Client Check-in et/1030 st/0930`
 * `addm n/Project Review d/25/10/2026 st/1400 et/1500 t/urgent t/work`
+* `addm n/Late Call d/08/10/2026 st/1430 et/1530 force/` adds the meeting even if it overlaps an existing one.
 
 ### Listing and filtering meetings: `listm`
 
@@ -172,7 +179,7 @@ Examples:
 
 Edits an existing meeting in PingBook.
 
-Format: `editm MEETING_INDEX [n/NAME] [d/DATE] [st/START_TIME] [et/END_TIME] [t/TAG]...`
+Format: `editm MEETING_INDEX [n/NAME] [d/DATE] [st/START_TIME] [et/END_TIME] [t/TAG]... [force/]`
 
 * Edits the meeting at the specified `MEETING_INDEX` in the displayed meeting list.
 * The Meetings panel must be active. Run `listm` before editing a meeting.
@@ -183,6 +190,8 @@ Format: `editm MEETING_INDEX [n/NAME] [d/DATE] [st/START_TIME] [et/END_TIME] [t/
 * When editing tags, all existing tags are replaced; adding tags is not cumulative.
 * To remove all tags, enter `t/` without a tag after it.
 * An edit that would make two meetings identical is rejected.
+* The edited meeting must still end after it starts, and it is checked for overlaps with the other meetings (not
+  with its own previous version) in the same way as `addm`. Add `force/` to save an overlapping edit anyway.
 * Editing a meeting's date or time may move it to a different position in the sorted meeting list.
 
 Examples:
@@ -304,12 +313,12 @@ Furthermore, certain edits can cause PingBook to behave in unexpected ways (e.g.
 Action     | Format, Examples
 -----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 **Add client**    | `addc n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [t/TAG]... ` <br> e.g., `add n/James Ho p/22224444 e/jamesho@example.com a/123, Clementi Rd, 1234665 t/friend t/colleague`
-**Add meeting**    | `addm n/NAME d/DATE st/START_TIME et/END_TIME [t/TAG]...` <br> e.g., `addm n/John Doe d/20/09/2026 st/1430 et/1530 t/work`
+**Add meeting**    | `addm n/NAME d/DATE st/START_TIME et/END_TIME [t/TAG]... [force/]` <br> e.g., `addm n/John Doe d/20/09/2026 st/1430 et/1530 t/work`
 **Clear**  | `clear`
 **Delete client** | `deletec CLIENT_INDEX`<br> e.g., `deletec 3`
 **Delete meeting** | `deletem MEETING_INDEX`<br> e.g., `deletem 3`
 **Edit client**   | `editc INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]... `<br> e.g.,`editc 2 n/James Lee e/jameslee@example.com`
-**Edit meeting** | `editm MEETING_INDEX [n/NAME] [d/DATE] [st/START_TIME] [et/END_TIME] [t/TAG]...`<br> e.g., `editm 2 d/25/10/2026 st/1500 et/1600 t/urgent`
+**Edit meeting** | `editm MEETING_INDEX [n/NAME] [d/DATE] [st/START_TIME] [et/END_TIME] [t/TAG]... [force/]`<br> e.g., `editm 2 d/25/10/2026 st/1500 et/1600 t/urgent`
 **Find**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
 **List clients**   | `listc`
 **List meetings** | `listm [t/TAG]...`<br> e.g., `listm t/urgent t/work`

@@ -15,6 +15,7 @@ import seedu.address.commons.core.index.Index;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.EditMeetingCommand;
 import seedu.address.logic.commands.EditMeetingCommand.EditMeetingDescriptor;
+import seedu.address.model.meeting.Meeting;
 import seedu.address.model.meeting.MeetingDate;
 import seedu.address.model.meeting.MeetingName;
 import seedu.address.model.meeting.MeetingTime;
@@ -132,5 +133,26 @@ public class EditMeetingCommandParserTest {
                 Messages.getErrorMessageForDuplicatePrefixes(PREFIX_START_TIME));
         assertParseFailure(parser, "1" + END_TIME_DESC + allFields,
                 Messages.getErrorMessageForDuplicatePrefixes(PREFIX_END_TIME));
+    }
+
+    @Test
+    public void parse_forceFlag_success() {
+        EditMeetingDescriptor descriptor = new EditMeetingDescriptorBuilder().withName(VALID_NAME).build();
+
+        assertParseSuccess(parser, "1" + NAME_DESC + " force/",
+                new EditMeetingCommand(Index.fromOneBased(1), descriptor, true));
+    }
+
+    @Test
+    public void parse_forceFlagInvalid_failure() {
+        assertParseFailure(parser, "1" + NAME_DESC + " force/now", Messages.MESSAGE_FORCE_TAKES_NO_VALUE);
+        assertParseFailure(parser, "1" + NAME_DESC + " force/ force/",
+                Messages.getErrorMessageForDuplicatePrefixes(CliSyntax.PREFIX_FORCE));
+    }
+
+    @Test
+    public void parse_endNotAfterStart_failure() {
+        assertParseFailure(parser, "1 st/1500 et/1500", Meeting.MESSAGE_INVALID_TIME_RANGE);
+        assertParseFailure(parser, "1 st/1500 et/1400", Meeting.MESSAGE_INVALID_TIME_RANGE);
     }
 }

@@ -120,4 +120,30 @@ public class AddMeetingCommandParserTest {
         assertParseFailure(parser, "unexpected" + NAME_DESC + DATE_DESC + START_TIME_DESC + END_TIME_DESC,
                 expectedMessage);
     }
+
+    @Test
+    public void parse_forceFlag_success() {
+        Meeting expected = new Meeting(new MeetingName("Project Review"), new MeetingDate("08/10/2026"),
+                new MeetingTime("1400"), new MeetingTime("1500"));
+
+        assertParseSuccess(parser, NAME_DESC + DATE_DESC + START_TIME_DESC + END_TIME_DESC + " force/",
+                new AddMeetingCommand(expected, true));
+        assertParseSuccess(parser, " force/" + NAME_DESC + DATE_DESC + START_TIME_DESC + END_TIME_DESC,
+                new AddMeetingCommand(expected, true));
+    }
+
+    @Test
+    public void parse_forceFlagInvalid_failure() {
+        String details = NAME_DESC + DATE_DESC + START_TIME_DESC + END_TIME_DESC;
+
+        assertParseFailure(parser, details + " force/yes", Messages.MESSAGE_FORCE_TAKES_NO_VALUE);
+        assertParseFailure(parser, details + " force/ force/",
+                Messages.getErrorMessageForDuplicatePrefixes(CliSyntax.PREFIX_FORCE));
+    }
+
+    @Test
+    public void parse_endNotAfterStart_failure() {
+        assertParseFailure(parser, NAME_DESC + DATE_DESC + " st/1500 et/1500", Meeting.MESSAGE_INVALID_TIME_RANGE);
+        assertParseFailure(parser, NAME_DESC + DATE_DESC + " st/1500 et/1400", Meeting.MESSAGE_INVALID_TIME_RANGE);
+    }
 }

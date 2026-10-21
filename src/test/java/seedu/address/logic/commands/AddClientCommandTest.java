@@ -141,6 +141,11 @@ public class AddClientCommandTest {
         }
 
         @Override
+        public List<Meeting> getOverlappingMeetings(Meeting meeting, Meeting excluded) {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
         public void addMeeting(Meeting meeting) {
             throw new AssertionError("This method should not be called.");
         }

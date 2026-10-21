@@ -179,4 +179,36 @@ public class MeetingTest {
         String expected = "Client Meeting 15/10/2026 from 0900 to 1000";
         assertEquals(expected, meeting.toString());
     }
+
+    private Meeting meetingAt(String date, String start, String end) {
+        return new Meeting(VALID_NAME, new MeetingDate(date), new MeetingTime(start), new MeetingTime(end));
+    }
+
+    @Test
+    public void overlapsWith() {
+        Meeting base = meetingAt("15/10/2026", "0900", "1000");
+
+        // partial, contained, containing, identical
+        assertTrue(base.overlapsWith(meetingAt("15/10/2026", "0930", "1030")));
+        assertTrue(base.overlapsWith(meetingAt("15/10/2026", "0830", "0930")));
+        assertTrue(base.overlapsWith(meetingAt("15/10/2026", "0915", "0945")));
+        assertTrue(base.overlapsWith(meetingAt("15/10/2026", "0800", "1100")));
+        assertTrue(base.overlapsWith(base));
+
+        // touching boundaries, disjoint, different date
+        assertFalse(base.overlapsWith(meetingAt("15/10/2026", "1000", "1100")));
+        assertFalse(base.overlapsWith(meetingAt("15/10/2026", "0800", "0900")));
+        assertFalse(base.overlapsWith(meetingAt("15/10/2026", "1100", "1200")));
+        assertFalse(base.overlapsWith(meetingAt("16/10/2026", "0900", "1000")));
+
+        assertThrows(NullPointerException.class, () -> base.overlapsWith(null));
+    }
+
+    @Test
+    public void isValidTimeRange() {
+        assertTrue(Meeting.isValidTimeRange(new MeetingTime("0900"), new MeetingTime("0901")));
+        assertFalse(Meeting.isValidTimeRange(new MeetingTime("0900"), new MeetingTime("0900")));
+        assertFalse(Meeting.isValidTimeRange(new MeetingTime("1000"), new MeetingTime("0900")));
+        assertThrows(NullPointerException.class, () -> Meeting.isValidTimeRange(null, new MeetingTime("0900")));
+    }
 }

@@ -4,10 +4,12 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.StringUtil;
+import seedu.address.logic.Messages;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.meeting.MeetingDate;
 import seedu.address.model.meeting.MeetingName;
@@ -123,6 +125,20 @@ public class ParserUtil {
             tagSet.add(parseTag(tagName));
         }
         return tagSet;
+    }
+
+    /**
+     * Returns true if the valueless {@code force/} flag is present in {@code argMultimap}.
+     *
+     * @throws ParseException if {@code force/} is given a value.
+     */
+    public static boolean parseForceFlag(ArgumentMultimap argMultimap) throws ParseException {
+        requireNonNull(argMultimap);
+        Optional<String> value = argMultimap.getValue(CliSyntax.PREFIX_FORCE);
+        if (value.isPresent() && !value.get().isEmpty()) {
+            throw new ParseException(Messages.MESSAGE_FORCE_TAKES_NO_VALUE);
+        }
+        return value.isPresent();
     }
 
     /**
