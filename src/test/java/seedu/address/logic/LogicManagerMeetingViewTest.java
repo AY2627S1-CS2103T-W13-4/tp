@@ -102,6 +102,87 @@ public class LogicManagerMeetingViewTest {
     }
 
     @Test
+    public void execute_filteredDeletion_usesDisplayedOrderAndKeepsHiddenMeetings() throws Exception {
+        Meeting hidden = model.getMeetingList().get(0);
+        Meeting later = taggedMeeting("Later", "10/10/2099");
+        Meeting earlier = taggedMeeting("Earlier", "08/10/2099");
+        model.addMeeting(later);
+        model.addMeeting(earlier);
+        AddressBook original = new AddressBook(model.getAddressBook());
+
+        logic.execute(ListMeetingCommand.COMMAND_WORD + " t/urgent");
+        assertEquals(List.of(earlier, later), logic.getMeetingList());
+        assertEquals(original, addressBookStorage.readAddressBook().orElseThrow());
+
+        logic.execute(DeleteMeetingCommand.COMMAND_WORD + " 1");
+        assertEquals(List.of(later), logic.getMeetingList());
+        assertEquals(List.of(hidden, later), model.getAddressBook().getMeetingList());
+        logic.execute(DeleteMeetingCommand.COMMAND_WORD + " 1");
+        assertTrue(logic.getMeetingList().isEmpty());
+        assertEquals(List.of(hidden), addressBookStorage.readAddressBook().orElseThrow().getMeetingList());
+        assertThrows(CommandException.class, MESSAGE_INVALID_MEETING_INDEX, () ->
+                logic.execute(DeleteMeetingCommand.COMMAND_WORD + " 1"));
+
+        logic.execute(ListMeetingCommand.COMMAND_WORD);
+        assertEquals(List.of(hidden), logic.getMeetingList());
+    }
+
+    @Test
+    public void execute_filteredEdit_usesDisplayedIndexAndRechecksTags() throws Exception {
+        Meeting hidden = model.getMeetingList().get(0);
+        model.addMeeting(taggedMeeting("Review", "08/10/2099"));
+        logic.execute(ListMeetingCommand.COMMAND_WORD + " t/urgent");
+
+        logic.execute(EditMeetingCommand.COMMAND_WORD + " 1 t/work");
+
+        assertTrue(logic.getMeetingList().isEmpty());
+        Meeting edited = model.getAddressBook().getMeetingList().get(1);
+        assertEquals(Set.of(new Tag("work")), edited.getTags());
+        assertEquals(hidden, model.getAddressBook().getMeetingList().get(0));
+        assertEquals(model.getAddressBook(), addressBookStorage.readAddressBook().orElseThrow());
+        logic.execute(ListMeetingCommand.COMMAND_WORD + " t/work");
+        assertEquals(List.of(edited), logic.getMeetingList());
+        logic.execute(EditMeetingCommand.COMMAND_WORD + " 1 t/");
+        assertTrue(logic.getMeetingList().isEmpty());
+        assertTrue(model.getAddressBook().getMeetingList().get(1).getTags().isEmpty());
+    }
+
+    @Test
+    public void execute_invalidFilter_preservesDisplayAndSavedData() throws Exception {
+        Meeting urgent = taggedMeeting("Review", "08/10/2099");
+        model.addMeeting(urgent);
+        logic.execute(ListMeetingCommand.COMMAND_WORD + " t/urgent");
+        int saveAttempts = addressBookStorage.saveAttempts;
+        String savedData = Files.readString(addressBookStorage.getAddressBookFilePath());
+
+        assertThrows(ParseException.class, Tag.MESSAGE_CONSTRAINTS, () ->
+                logic.execute(ListMeetingCommand.COMMAND_WORD + " t/"));
+
+        assertEquals(List.of(urgent), logic.getMeetingList());
+        assertEquals(saveAttempts, addressBookStorage.saveAttempts);
+        assertEquals(savedData, Files.readString(addressBookStorage.getAddressBookFilePath()));
+        assertContactCommandRejected(DeleteClientCommand.COMMAND_WORD + " 1");
+    }
+
+    @Test
+    public void execute_addAfterFiltering_clearsFilterAndShowsNewMeeting() throws Exception {
+        model.addMeeting(taggedMeeting("Review", "08/10/2099"));
+        logic.execute(ListMeetingCommand.COMMAND_WORD + " t/urgent");
+        CommandResult result = logic.execute(AddMeetingCommand.COMMAND_WORD
+                + " n/Added d/10/10/2099 st/1400 et/1500");
+
+        assertTrue(result.isShowMeetings());
+        assertEquals(3, logic.getMeetingList().size());
+        assertEquals("Added", logic.getMeetingList().get(2).getName().name);
+        assertEquals(model.getAddressBook(), addressBookStorage.readAddressBook().orElseThrow());
+    }
+
+    private Meeting taggedMeeting(String name, String date) {
+        return new Meeting(new MeetingName(name), new MeetingDate(date),
+                new MeetingTime("1400"), new MeetingTime("1500"), Set.of(new Tag("urgent")));
+    }
+
+    @Test
     public void execute_deleteAfterListMeeting_usesSortedDisplayIndex() throws Exception {
         Meeting later = model.getMeetingList().get(0);
         Meeting earlier = new Meeting(new MeetingName("Earlier meeting"), new MeetingDate("07/10/2099"),
