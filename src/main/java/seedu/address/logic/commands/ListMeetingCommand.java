@@ -49,6 +49,7 @@ public class ListMeetingCommand extends Command {
     @Override
     public CommandResult execute(Model model) {
         requireNonNull(model);
+        model.updateFilteredMeetingList(Model.PREDICATE_SHOW_ALL_MEETINGS);
         model.updateMeetingListOrder(LocalDateTime.now(clock));
         return new CommandResult(MESSAGE_SUCCESS, true);
     }
