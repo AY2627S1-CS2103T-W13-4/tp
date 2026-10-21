@@ -5,6 +5,7 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_END_TIME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_START_TIME;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -23,12 +24,15 @@ public class AddMeetingCommand extends Command {
             + PREFIX_NAME + "NAME "
             + PREFIX_DATE + "DATE "
             + PREFIX_START_TIME + "START_TIME "
-            + PREFIX_END_TIME + "END_TIME\n"
+            + PREFIX_END_TIME + "END_TIME "
+            + "[" + PREFIX_TAG + "TAG]...\n"
             + "Example: " + COMMAND_WORD + " "
             + PREFIX_NAME + "Project Review "
             + PREFIX_DATE + "08/10/2026 "
             + PREFIX_START_TIME + "1400 "
-            + PREFIX_END_TIME + "1500";
+            + PREFIX_END_TIME + "1500 "
+            + PREFIX_TAG + "urgent "
+            + PREFIX_TAG + "work";
 
     public static final String MESSAGE_SUCCESS = "New meeting added: %1$s";
     public static final String MESSAGE_DUPLICATE_MEETING = "This meeting already exists in PingBook.";

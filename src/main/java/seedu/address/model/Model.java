@@ -86,6 +86,12 @@ public interface Model {
     void addMeeting(Meeting meeting);
 
     /**
+     * Replaces {@code target} with {@code editedMeeting}.
+     * {@code target} must exist and {@code editedMeeting} must not duplicate another meeting.
+     */
+    void setMeeting(Meeting target, Meeting editedMeeting);
+
+    /**
      * Deletes the given meeting.
      * The meeting must exist in the address book.
      */
