@@ -15,6 +15,9 @@ public interface Model {
     /** {@code Predicate} that always evaluates to true */
     Predicate<Person> PREDICATE_SHOW_ALL_PERSONS = unused -> true;
 
+    /** {@code Predicate} that always evaluates to true for meetings */
+    Predicate<Meeting> PREDICATE_SHOW_ALL_MEETINGS = unused -> true;
+
     /**
      * Returns the user prefs.
      */
@@ -90,6 +93,13 @@ public interface Model {
 
     /** Returns an unmodifiable view of the meeting list in its displayed order. */
     ObservableList<Meeting> getMeetingList();
+
+    /**
+     * Updates the filter of the displayed meeting list.
+     *
+     * @param predicate The predicate used to filter meetings.
+     */
+    void updateFilteredMeetingList(Predicate<Meeting> predicate);
 
     /**
      * Orders meetings with unfinished meetings first, then finished meetings, using {@code currentTime}.
