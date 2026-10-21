@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
@@ -14,4 +15,5 @@
     <Label fx:id="name" wrapText="true" styleClass="cell_big_label" />
   </HBox>
   <Label fx:id="schedule" wrapText="true" styleClass="cell_small_label" />
+  <FlowPane fx:id="tags" />
 </VBox>

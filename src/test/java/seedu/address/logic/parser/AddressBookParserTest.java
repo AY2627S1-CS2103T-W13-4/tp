@@ -21,6 +21,8 @@ import seedu.address.logic.commands.DeleteClientCommand;
 import seedu.address.logic.commands.DeleteMeetingCommand;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.EditCommand.EditPersonDescriptor;
+import seedu.address.logic.commands.EditMeetingCommand;
+import seedu.address.logic.commands.EditMeetingCommand.EditMeetingDescriptor;
 import seedu.address.logic.commands.ExitCommand;
 import seedu.address.logic.commands.FindClientCommand;
 import seedu.address.logic.commands.HelpCommand;
@@ -33,6 +35,7 @@ import seedu.address.model.meeting.MeetingName;
 import seedu.address.model.meeting.MeetingTime;
 import seedu.address.model.person.NameContainsKeywordsPredicate;
 import seedu.address.model.person.Person;
+import seedu.address.testutil.EditMeetingDescriptorBuilder;
 import seedu.address.testutil.EditPersonDescriptorBuilder;
 import seedu.address.testutil.PersonBuilder;
 import seedu.address.testutil.PersonUtil;
@@ -104,6 +107,19 @@ public class AddressBookParserTest {
     }
 
     @Test
+    public void parseCommand_editMeeting() throws Exception {
+        EditMeetingDescriptor descriptor = new EditMeetingDescriptorBuilder()
+                .withDate("10/10/2026")
+                .withStartTime("1500")
+                .withTags("urgent")
+                .build();
+        EditMeetingCommand command = (EditMeetingCommand) parser.parseCommand(
+                "editm 1 d/10/10/2026 st/1500 t/urgent");
+
+        assertEquals(new EditMeetingCommand(INDEX_FIRST_PERSON, descriptor), command);
+    }
+
+    @Test
     public void parseCommand_exit() throws Exception {
         assertTrue(parser.parseCommand(ExitCommand.COMMAND_WORD) instanceof ExitCommand);
         assertTrue(parser.parseCommand(ExitCommand.COMMAND_WORD + " 3") instanceof ExitCommand);
@@ -126,7 +142,6 @@ public class AddressBookParserTest {
     @Test
     public void parseCommand_listClient() throws Exception {
         assertTrue(parser.parseCommand(ListClientCommand.COMMAND_WORD) instanceof ListClientCommand);
-        assertTrue(parser.parseCommand(ListClientCommand.COMMAND_WORD + " 3") instanceof ListClientCommand);
     }
 
     @Test

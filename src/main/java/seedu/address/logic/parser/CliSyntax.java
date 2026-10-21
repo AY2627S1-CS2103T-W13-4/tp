@@ -15,4 +15,12 @@ public class CliSyntax {
     public static final Prefix PREFIX_START_TIME = new Prefix("st/");
     public static final Prefix PREFIX_END_TIME = new Prefix("et/");
 
+    /**
+     * Gets all prefixes definitions.
+     * @return An array containing all prefixes.
+     */
+    public static Prefix[] getAllPrefixes() {
+        return new Prefix[] {PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS, PREFIX_TAG,
+            PREFIX_DATE, PREFIX_START_TIME, PREFIX_END_TIME};
+    }
 }

@@ -8,12 +8,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
 import javafx.collections.ObservableList;
 import seedu.address.model.meeting.exceptions.DuplicateMeetingException;
 import seedu.address.model.meeting.exceptions.MeetingNotFoundException;
+import seedu.address.model.tag.Tag;
 
 public class MeetingListTest {
 
@@ -52,6 +54,32 @@ public class MeetingListTest {
     }
 
     @Test
+    public void add_sameIdentityDifferentTags_throwsDuplicateMeetingException() {
+        MeetingList list = new MeetingList();
+        Meeting meeting = createMeeting("Client Meeting", "15/10/2026", "0900", "1000");
+        Meeting tagged = new Meeting(meeting.getName(), meeting.getDate(), meeting.getStartTime(),
+                meeting.getEndTime(), Set.of(new Tag("urgent")));
+        list.add(meeting);
+
+        assertTrue(list.contains(tagged));
+        assertThrows(DuplicateMeetingException.class, () -> list.add(tagged));
+        assertEquals(Collections.singletonList(meeting), list.asUnmodifiableObservableList());
+    }
+
+    @Test
+    public void setMeetings_sameIdentityDifferentTags_rejectsAndPreservesExistingList() {
+        MeetingList list = new MeetingList();
+        Meeting original = createMeeting("Original Meeting", "14/10/2026", "0900", "1000");
+        list.add(original);
+        Meeting meeting = createMeeting("Client Meeting", "15/10/2026", "0900", "1000");
+        Meeting tagged = new Meeting(meeting.getName(), meeting.getDate(), meeting.getStartTime(),
+                meeting.getEndTime(), Set.of(new Tag("urgent")));
+
+        assertThrows(DuplicateMeetingException.class, () -> list.setMeetings(Arrays.asList(meeting, tagged)));
+        assertEquals(Collections.singletonList(original), list.asUnmodifiableObservableList());
+    }
+
+    @Test
     public void contains_null_throwsNullPointerException() {
         MeetingList list = new MeetingList();
 
@@ -83,6 +111,57 @@ public class MeetingListTest {
         MeetingList list = new MeetingList();
 
         assertThrows(NullPointerException.class, () -> list.remove(null));
+    }
+
+    @Test
+    public void setMeeting_existingMeeting_success() {
+        MeetingList list = new MeetingList();
+        Meeting original = createMeeting("Client Meeting", "15/10/2026", "0900", "1000");
+        Meeting edited = createMeeting("Updated Meeting", "16/10/2026", "1100", "1200");
+        list.add(original);
+
+        list.setMeeting(original, edited);
+
+        assertEquals(1, list.size());
+        assertEquals(edited, list.get(0));
+
+        Meeting editedTags = new Meeting(edited.getName(), edited.getDate(), edited.getStartTime(),
+                edited.getEndTime(), Set.of(new Tag("urgent")));
+        list.setMeeting(edited, editedTags);
+
+        assertEquals(1, list.size());
+        assertEquals(editedTags, list.get(0));
+    }
+
+    @Test
+    public void setMeeting_missingMeeting_throwsMeetingNotFoundException() {
+        MeetingList list = new MeetingList();
+        Meeting missing = createMeeting("Missing Meeting", "15/10/2026", "0900", "1000");
+        Meeting edited = createMeeting("Updated Meeting", "16/10/2026", "1100", "1200");
+
+        assertThrows(MeetingNotFoundException.class, () -> list.setMeeting(missing, edited));
+    }
+
+    @Test
+    public void setMeeting_duplicateMeeting_throwsDuplicateMeetingException() {
+        MeetingList list = new MeetingList();
+        Meeting first = createMeeting("Client Meeting", "15/10/2026", "0900", "1000");
+        Meeting second = createMeeting("Project Review", "16/10/2026", "1100", "1200");
+        list.add(first);
+        list.add(second);
+
+        assertThrows(DuplicateMeetingException.class, () -> list.setMeeting(first, second));
+        assertEquals(Arrays.asList(first, second), list.asUnmodifiableObservableList());
+    }
+
+    @Test
+    public void setMeeting_nullArguments_throwsNullPointerException() {
+        MeetingList list = new MeetingList();
+        Meeting meeting = createMeeting("Client Meeting", "15/10/2026", "0900", "1000");
+        list.add(meeting);
+
+        assertThrows(NullPointerException.class, () -> list.setMeeting(null, meeting));
+        assertThrows(NullPointerException.class, () -> list.setMeeting(meeting, null));
     }
 
     @Test

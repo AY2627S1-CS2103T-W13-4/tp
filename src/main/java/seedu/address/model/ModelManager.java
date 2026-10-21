@@ -116,6 +116,12 @@ public class ModelManager implements Model {
     }
 
     @Override
+    public void setMeeting(Meeting target, Meeting editedMeeting) {
+        requireAllNonNull(target, editedMeeting);
+        addressBook.setMeeting(target, editedMeeting);
+    }
+
+    @Override
     public void deleteMeeting(Meeting meeting) {
         addressBook.removeMeeting(meeting);
     }
@@ -152,6 +158,11 @@ public class ModelManager implements Model {
     @Override
     public ObservableList<Person> getFilteredPersonList() {
         return filteredPersons;
+    }
+
+    @Override
+    public int getFilteredPersonListSize() {
+        return filteredPersons.size();
     }
 
     @Override

@@ -74,7 +74,8 @@ public class LogicManagerTest {
     @Test
     public void execute_validCommand_success() throws Exception {
         String listCommand = ListClientCommand.COMMAND_WORD;
-        assertCommandSuccess(listCommand, ListClientCommand.MESSAGE_SUCCESS, model);
+        assertCommandSuccess(listCommand,
+                String.format(ListClientCommand.MESSAGE_SUCCESS_NO_TAGS, model.getFilteredPersonListSize()), model);
     }
 
     @Test

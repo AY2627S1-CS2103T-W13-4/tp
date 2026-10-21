@@ -115,6 +115,14 @@ public class AddressBook implements ReadOnlyAddressBook {
     }
 
     /**
+     * Replaces {@code target} with {@code editedMeeting}.
+     * {@code target} must exist and {@code editedMeeting} must not duplicate another meeting.
+     */
+    public void setMeeting(Meeting target, Meeting editedMeeting) {
+        meetings.setMeeting(target, editedMeeting);
+    }
+
+    /**
      * Removes {@code meeting} from this {@code AddressBook}.
      * {@code meeting} must exist in the address book.
      */

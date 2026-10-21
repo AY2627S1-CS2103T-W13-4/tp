@@ -13,6 +13,10 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.GuiSettings;
+import seedu.address.model.meeting.Meeting;
+import seedu.address.model.meeting.MeetingDate;
+import seedu.address.model.meeting.MeetingName;
+import seedu.address.model.meeting.MeetingTime;
 import seedu.address.model.person.NameContainsKeywordsPredicate;
 import seedu.address.testutil.AddressBookBuilder;
 
@@ -74,6 +78,17 @@ public class ModelManagerTest {
     }
 
     @Test
+    public void setMeeting_existingMeeting_replacesMeeting() {
+        Meeting original = meeting("Project Review", "08/10/2026", "1400", "1500");
+        Meeting edited = meeting("Updated Review", "09/10/2026", "1500", "1600");
+        modelManager.addMeeting(original);
+
+        modelManager.setMeeting(original, edited);
+
+        assertEquals(List.of(edited), modelManager.getMeetingList());
+    }
+
+    @Test
     public void equals() {
         AddressBook addressBook = new AddressBookBuilder().withPerson(ALICE).withPerson(BENSON).build();
         AddressBook differentAddressBook = new AddressBook();
@@ -108,5 +123,10 @@ public class ModelManagerTest {
         UserPrefs differentUserPrefs = new UserPrefs();
         differentUserPrefs.setGuiSettings(new GuiSettings(1, 2, 3, 4));
         assertFalse(modelManager.equals(new ModelManager(addressBook, differentUserPrefs)));
+    }
+
+    private Meeting meeting(String name, String date, String startTime, String endTime) {
+        return new Meeting(new MeetingName(name), new MeetingDate(date),
+                new MeetingTime(startTime), new MeetingTime(endTime));
     }
 }
