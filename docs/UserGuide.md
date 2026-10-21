@@ -103,6 +103,8 @@ Format: `listc [t/TAG]...`
 * The command will ignore fields other than `TAG`. For example, `listc n/John` is the same as `listc`.
 * The command is case-sensitive. `listC` or `Listc` are considered invalid.
 * A person is shown only if they have all the tags given.
+* If there are no tags provided, PingBook will display all persons and a success message detailing the number of persons listed.
+* If there are tags provided, PingBook will display all matching persons and a success message detailing the number of persons listed and the tags given.
 
 Examples:
 * `listc`
