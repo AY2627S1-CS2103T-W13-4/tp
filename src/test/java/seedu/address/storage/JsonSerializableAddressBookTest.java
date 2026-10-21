@@ -6,6 +6,7 @@ import static seedu.address.testutil.Assert.assertThrows;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -56,6 +57,18 @@ public class JsonSerializableAddressBookTest {
         AddressBook addressBookFromFile = dataFromFile.toModelType();
         AddressBook typicalMeetingsAddressBook = TypicalMeetings.getTypicalAddressBookWithMeetings();
         assertEquals(addressBookFromFile, typicalMeetingsAddressBook);
+        assertTrue(addressBookFromFile.getMeetingList().stream().allMatch(meeting -> meeting.getTags().isEmpty()));
+    }
+
+    @Test
+    public void toModelType_sameMeetingDifferentTags_throwsIllegalValueException() {
+        JsonAdaptedMeeting first = new JsonAdaptedMeeting("Client Review", "15/10/2026", "0900", "1000",
+                List.of(new JsonAdaptedTag("urgent")));
+        JsonAdaptedMeeting second = new JsonAdaptedMeeting("Client Review", "15/10/2026", "0900", "1000",
+                List.of(new JsonAdaptedTag("work")));
+        JsonSerializableAddressBook data = new JsonSerializableAddressBook(List.of(), List.of(first, second));
+        assertThrows(IllegalValueException.class, JsonSerializableAddressBook.MESSAGE_DUPLICATE_MEETING,
+                data::toModelType);
     }
 
     @Test

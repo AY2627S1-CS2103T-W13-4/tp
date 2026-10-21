@@ -5,7 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.testutil.Assert.assertThrows;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.jupiter.api.Test;
+
+import seedu.address.model.tag.Tag;
 
 /**
  * Tests the {@code Meeting} class.
@@ -52,6 +57,76 @@ public class MeetingTest {
     @Test
     public void getEndTime_returnsEndTime() {
         assertEquals(VALID_END_TIME, createMeeting().getEndTime());
+    }
+
+    @Test
+    public void constructor_withoutTags_createsEmptyTagSet() {
+        assertTrue(createMeeting().getTags().isEmpty());
+    }
+
+    @Test
+    public void constructor_tags_defensivelyCopiesSet() {
+        Set<Tag> tags = new HashSet<>(Set.of(new Tag("urgent")));
+        Meeting meeting = new Meeting(VALID_NAME, VALID_DATE, VALID_START_TIME, VALID_END_TIME, tags);
+        tags.clear();
+        assertEquals(Set.of(new Tag("urgent")), meeting.getTags());
+    }
+
+    @Test
+    public void constructor_nullTags_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () ->
+                new Meeting(VALID_NAME, VALID_DATE, VALID_START_TIME, VALID_END_TIME, null));
+        Set<Tag> tags = new HashSet<>();
+        tags.add(null);
+        assertThrows(NullPointerException.class, () ->
+                new Meeting(VALID_NAME, VALID_DATE, VALID_START_TIME, VALID_END_TIME, tags));
+    }
+
+    @Test
+    public void getTags_cannotModifySet() {
+        Meeting meeting = new Meeting(VALID_NAME, VALID_DATE, VALID_START_TIME, VALID_END_TIME,
+                Set.of(new Tag("urgent")));
+        assertThrows(UnsupportedOperationException.class, () -> meeting.getTags().clear());
+    }
+
+    @Test
+    public void isSameMeeting_ignoresTagsButComparesIdentityFields() {
+        Meeting meeting = createMeeting();
+        Meeting tagged = new Meeting(VALID_NAME, VALID_DATE, VALID_START_TIME, VALID_END_TIME,
+                Set.of(new Tag("urgent")));
+        assertTrue(meeting.isSameMeeting(meeting));
+        assertTrue(meeting.isSameMeeting(tagged));
+        assertTrue(tagged.isSameMeeting(meeting));
+        assertFalse(meeting.isSameMeeting(null));
+        assertFalse(meeting.isSameMeeting(new Meeting(new MeetingName("Other Meeting"), VALID_DATE,
+                VALID_START_TIME, VALID_END_TIME)));
+        assertFalse(meeting.isSameMeeting(new Meeting(VALID_NAME, new MeetingDate("16/10/2026"),
+                VALID_START_TIME, VALID_END_TIME)));
+        assertFalse(meeting.isSameMeeting(new Meeting(VALID_NAME, VALID_DATE,
+                new MeetingTime("0930"), VALID_END_TIME)));
+        assertFalse(meeting.isSameMeeting(new Meeting(VALID_NAME, VALID_DATE,
+                VALID_START_TIME, new MeetingTime("1030"))));
+    }
+
+    @Test
+    public void equalsAndHashCode_includeTagsRegardlessOfOrder() {
+        Meeting first = new Meeting(VALID_NAME, VALID_DATE, VALID_START_TIME, VALID_END_TIME,
+                Set.of(new Tag("urgent"), new Tag("work")));
+        Meeting second = new Meeting(VALID_NAME, VALID_DATE, VALID_START_TIME, VALID_END_TIME,
+                Set.of(new Tag("work"), new Tag("urgent")));
+        Meeting differentTags = new Meeting(VALID_NAME, VALID_DATE, VALID_START_TIME, VALID_END_TIME,
+                Set.of(new Tag("work")));
+        assertEquals(first, second);
+        assertEquals(first.hashCode(), second.hashCode());
+        assertFalse(first.equals(differentTags));
+        assertFalse(first.equals(createMeeting()));
+    }
+
+    @Test
+    public void toString_withTags_displaysSortedTags() {
+        Meeting meeting = new Meeting(VALID_NAME, VALID_DATE, VALID_START_TIME, VALID_END_TIME,
+                Set.of(new Tag("work"), new Tag("urgent")));
+        assertEquals("Client Meeting 15/10/2026 from 0900 to 1000 Tags: [urgent] [work]", meeting.toString());
     }
 
     @Test

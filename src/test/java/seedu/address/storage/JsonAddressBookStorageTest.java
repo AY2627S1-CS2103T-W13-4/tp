@@ -13,6 +13,7 @@ import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -20,6 +21,8 @@ import org.junit.jupiter.api.io.TempDir;
 import seedu.address.commons.exceptions.DataLoadingException;
 import seedu.address.model.AddressBook;
 import seedu.address.model.ReadOnlyAddressBook;
+import seedu.address.model.meeting.Meeting;
+import seedu.address.model.tag.Tag;
 
 public class JsonAddressBookStorageTest {
     private static final Path TEST_DATA_FOLDER = Paths.get("src", "test", "data", "JsonAddressBookStorageTest");
@@ -104,6 +107,28 @@ public class JsonAddressBookStorageTest {
         jsonAddressBookStorage.saveAddressBook(original, filePath);
         readBack = jsonAddressBookStorage.readAddressBook(filePath).get();
         assertEquals(original, new AddressBook(readBack));
+    }
+
+    @Test
+    public void readAndSaveAddressBook_withMeetingTags_preservesTagsAfterReloadAndOverwrite() throws Exception {
+        Path filePath = testFolder.resolve("TaggedMeetings.json");
+        AddressBook addressBook = new AddressBook();
+        Meeting tagged = new Meeting(CLIENT_REVIEW.getName(), CLIENT_REVIEW.getDate(),
+                CLIENT_REVIEW.getStartTime(), CLIENT_REVIEW.getEndTime(),
+                Set.of(new Tag("urgent"), new Tag("work")));
+        addressBook.addMeeting(tagged);
+        JsonAddressBookStorage storage = new JsonAddressBookStorage(filePath);
+        storage.saveAddressBook(addressBook);
+
+        ReadOnlyAddressBook restored = new JsonAddressBookStorage(filePath).readAddressBook().orElseThrow();
+        assertEquals(addressBook, new AddressBook(restored));
+        assertEquals(tagged.getTags(), restored.getMeetingList().get(0).getTags());
+
+        addressBook.removeMeeting(tagged);
+        addressBook.addMeeting(CLIENT_REVIEW);
+        storage.saveAddressBook(addressBook);
+        restored = new JsonAddressBookStorage(filePath).readAddressBook().orElseThrow();
+        assertEquals(Set.of(), restored.getMeetingList().get(0).getTags());
     }
 
     @Test
