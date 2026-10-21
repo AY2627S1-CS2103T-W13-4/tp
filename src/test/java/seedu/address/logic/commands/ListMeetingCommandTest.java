@@ -10,7 +10,10 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
@@ -23,6 +26,7 @@ import seedu.address.model.meeting.MeetingDate;
 import seedu.address.model.meeting.MeetingName;
 import seedu.address.model.meeting.MeetingTime;
 import seedu.address.model.meeting.exceptions.DuplicateMeetingException;
+import seedu.address.model.tag.Tag;
 
 public class ListMeetingCommandTest {
     private static final Clock NOON = Clock.fixed(Instant.parse("2026-10-08T04:00:00Z"),
@@ -39,6 +43,61 @@ public class ListMeetingCommandTest {
         assertFalse(result.isShowHelp());
         assertFalse(result.isExit());
         assertTrue(model.getMeetingList().isEmpty());
+    }
+
+    @Test
+    public void execute_tagFilter_matchesAllTagsAndPreservesSorting() {
+        Meeting later = taggedMeeting("Later", "09/10/2026", "1400", "1500", "urgent", "work");
+        Meeting hidden = taggedMeeting("Hidden", "08/10/2026", "0900", "1000", "urgent");
+        Meeting finished = taggedMeeting("Finished", "07/10/2026", "0900", "1000", "urgent", "work");
+        Meeting earlier = taggedMeeting("Earlier", "08/10/2026", "1400", "1500", "Urgent", "Work");
+        List.of(later, hidden, finished, earlier).forEach(model::addMeeting);
+        AddressBook original = new AddressBook(model.getAddressBook());
+
+        CommandResult result = new ListMeetingCommand(NOON, Set.of(new Tag("urgent"), new Tag("work")))
+                .execute(model);
+
+        assertEquals(List.of(earlier, later, finished), model.getMeetingList());
+        assertEquals(String.format(ListMeetingCommand.MESSAGE_FILTER_SUCCESS, 3), result.getFeedbackToUser());
+        assertTrue(result.isShowMeetings());
+        assertEquals(original, model.getAddressBook());
+    }
+
+    @Test
+    public void execute_newFilterReplacesPreviousAndPlainListClearsFilter() {
+        Meeting urgent = taggedMeeting("Urgent", "08/10/2026", "1400", "1500", "urgent");
+        Meeting work = taggedMeeting("Work", "09/10/2026", "1400", "1500", "work");
+        List.of(urgent, work).forEach(model::addMeeting);
+        new ListMeetingCommand(NOON, Set.of(new Tag("urgent"))).execute(model);
+        assertEquals(List.of(urgent), model.getMeetingList());
+        new ListMeetingCommand(NOON, Set.of(new Tag("work"))).execute(model);
+        assertEquals(List.of(work), model.getMeetingList());
+
+        CommandResult result = command.execute(model);
+
+        assertEquals(List.of(urgent, work), model.getMeetingList());
+        assertEquals(ListMeetingCommand.MESSAGE_SUCCESS, result.getFeedbackToUser());
+    }
+
+    @Test
+    public void execute_noMatches_displaysEmptyMeetingPanelWithCount() {
+        model.addMeeting(meeting("Untagged", "08/10/2026", "1400", "1500"));
+        CommandResult result = new ListMeetingCommand(NOON, Set.of(new Tag("missing"))).execute(model);
+        assertTrue(model.getMeetingList().isEmpty());
+        assertTrue(result.isShowMeetings());
+        assertEquals(String.format(ListMeetingCommand.MESSAGE_FILTER_SUCCESS, 0), result.getFeedbackToUser());
+        assertEquals(1, model.getAddressBook().getMeetingList().size());
+    }
+
+    @Test
+    public void equals_comparesFilterAndClock() {
+        ListMeetingCommand filtered = new ListMeetingCommand(NOON, Set.of(new Tag("urgent")));
+        assertEquals(filtered, filtered);
+        assertEquals(filtered, new ListMeetingCommand(NOON, Set.of(new Tag("URGENT"))));
+        assertFalse(filtered.equals(command));
+        assertFalse(filtered.equals(new ListMeetingCommand(Clock.systemUTC(), Set.of(new Tag("urgent")))));
+        assertFalse(filtered.equals(null));
+        assertFalse(filtered.equals("listm"));
     }
 
     @Test
@@ -182,5 +241,11 @@ public class ListMeetingCommandTest {
 
     private Meeting meeting(String name, String date, String start, String end) {
         return new Meeting(new MeetingName(name), new MeetingDate(date), new MeetingTime(start), new MeetingTime(end));
+    }
+
+    private Meeting taggedMeeting(String name, String date, String start, String end, String... tags) {
+        Set<Tag> tagSet = Arrays.stream(tags).map(Tag::new).collect(Collectors.toSet());
+        return new Meeting(new MeetingName(name), new MeetingDate(date), new MeetingTime(start), new MeetingTime(end),
+                tagSet);
     }
 }
