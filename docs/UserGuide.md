@@ -140,6 +140,29 @@ Format: `listm`
   Run `listc` to display contacts before editing or deleting them. You can also use `find KEYWORD` to display
   matching contacts and then use the indices in those results.
 
+### Editing a meeting: `editm`
+
+Edits an existing meeting in PingBook.
+
+Format: `editm MEETING_INDEX [n/NAME] [d/DATE] [st/START_TIME] [et/END_TIME] [t/TAG]...`
+
+* Edits the meeting at the specified `MEETING_INDEX` in the displayed meeting list.
+* The Meetings panel must be active. Run `listm` before editing a meeting.
+* The index must be a positive integer: 1, 2, 3, ...
+* At least one field must be provided. Each prefix except `t/` can be used only once.
+* Fields that are not provided keep their existing values.
+* Names, dates, times, and tags follow the same validation rules as `addm`.
+* When editing tags, all existing tags are replaced; adding tags is not cumulative.
+* To remove all tags, enter `t/` without a tag after it.
+* An edit that would make two meetings identical is rejected.
+* Editing a meeting's date or time may move it to a different position in the sorted meeting list.
+
+Examples:
+* `editm 1 d/25/10/2026` changes only the date of the 1st displayed meeting.
+* `editm 2 n/Client Review st/1500 et/1600` changes the name and times of the 2nd displayed meeting.
+* `editm 3 t/urgent t/work` replaces all tags of the 3rd displayed meeting with `urgent` and `work`.
+* `editm 1 t/` removes all tags from the 1st displayed meeting.
+
 ### Editing a person: `edit`
 
 Edits an existing person in PingBook.
@@ -258,6 +281,7 @@ Action     | Format, Examples
 **Delete client** | `deletec CLIENT_INDEX`<br> e.g., `deletec 3`
 **Delete meeting** | `deletem MEETING_INDEX`<br> e.g., `deletem 3`
 **Edit client**   | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]... `<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com`
+**Edit meeting** | `editm MEETING_INDEX [n/NAME] [d/DATE] [st/START_TIME] [et/END_TIME] [t/TAG]...`<br> e.g., `editm 2 d/25/10/2026 st/1500 et/1600 t/urgent`
 **Find**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
 **List clients**   | `listc`
 **List meetings** | `listm`

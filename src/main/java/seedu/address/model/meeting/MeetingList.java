@@ -1,6 +1,7 @@
 package seedu.address.model.meeting;
 
 import static java.util.Objects.requireNonNull;
+import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
 import java.util.Iterator;
 import java.util.List;
@@ -49,6 +50,27 @@ public class MeetingList implements Iterable<Meeting> {
         if (!internalList.remove(meeting)) {
             throw new MeetingNotFoundException();
         }
+    }
+
+    /**
+     * Replaces {@code target} with {@code editedMeeting}.
+     *
+     * @throws MeetingNotFoundException if {@code target} is not in the list.
+     * @throws DuplicateMeetingException if {@code editedMeeting} duplicates another meeting.
+     */
+    public void setMeeting(Meeting target, Meeting editedMeeting) {
+        requireAllNonNull(target, editedMeeting);
+
+        int index = internalList.indexOf(target);
+        if (index == -1) {
+            throw new MeetingNotFoundException();
+        }
+
+        if (!target.isSameMeeting(editedMeeting) && contains(editedMeeting)) {
+            throw new DuplicateMeetingException();
+        }
+
+        internalList.set(index, editedMeeting);
     }
 
     /**
