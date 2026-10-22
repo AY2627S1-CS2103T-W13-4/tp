@@ -14,6 +14,8 @@ Class UserPrefs
 
 Class UniquePersonList
 Class Person
+Class MeetingList
+Class Meeting
 Class Address
 Class Email
 Class Name
@@ -37,6 +39,8 @@ UserPrefs .up.|> ReadOnlyUserPrefs
 
 AddressBook *--> "1" UniquePersonList
 UniquePersonList --> "~* all" Person
+AddressBook *--> "1" MeetingList
+MeetingList --> "~* all" Meeting
 Person *--> Name
 Person *--> Phone
 Person *--> Email
