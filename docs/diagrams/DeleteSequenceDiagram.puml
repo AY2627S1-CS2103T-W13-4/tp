@@ -30,7 +30,7 @@ deactivate DeleteClientCommandParser
 AddressBookParser -> DeleteClientCommandParser : parse("1")
 activate DeleteClientCommandParser
 
-create DeleteCLientCommand
+create DeleteClientCommand
 DeleteClientCommandParser -> DeleteClientCommand
 activate DeleteClientCommand
 
