@@ -47,15 +47,16 @@ public class ListClientCommand extends Command {
     public CommandResult execute(Model model) {
         requireNonNull(model);
         model.updateFilteredPersonList(predicateFilterByTags);
+        int numberOfDisplayedClients = model.getFilteredPersonListSize();
 
         if (tags.isEmpty()) {
+            logger.info(() -> "Listed clients: no tags applied, #displayed clients: " + numberOfDisplayedClients);
             return new CommandResult(String.format(MESSAGE_SUCCESS_NO_TAGS, model.getFilteredPersonList().size()));
         }
         String formattedTags = tags.stream()
                 .map(tag -> tag.tagName)
                 .sorted()
                 .collect(Collectors.joining(", "));
-        int numberOfDisplayedClients = model.getFilteredPersonListSize();
         logger.info(() -> "Listed clients: tags applied: " + formattedTags
                 + ", #displayed clients: " + numberOfDisplayedClients);
         return new CommandResult(String.format(MESSAGE_SUCCESS, numberOfDisplayedClients, formattedTags));
