@@ -1,6 +1,8 @@
 @startuml
 !include style.puml
 skinparam ArrowFontStyle plain
+skinparam sequenceGroupBackgroundColor white
+skinparam sequenceGroupBodyBackgroundColor transparent
 
 box Logic LOGIC_COLOR_T1
 participant ":LogicManager" as LogicManager LOGIC_COLOR
@@ -46,25 +48,31 @@ destroy DeleteClientCommandParser
 AddressBookParser --> LogicManager : d
 deactivate AddressBookParser
 
-LogicManager -> DeleteClientCommand : execute(m)
-activate DeleteClientCommand
+alt showingMeetings
+    LogicManager -> LogicManager : throw CommandException
+    [<--LogicManager
+    deactivate LogicManager
+else else
+    LogicManager -> DeleteClientCommand : execute(m)
+    activate DeleteClientCommand
 
-DeleteClientCommand -> Model : deletePerson(1)
-activate Model
+    DeleteClientCommand -> Model : deletePerson(1)
+    activate Model
 
-Model --> DeleteClientCommand
-deactivate Model
+    Model --> DeleteClientCommand
+    deactivate Model
 
-create CommandResult
-DeleteClientCommand -> CommandResult
-activate CommandResult
+    create CommandResult
+    DeleteClientCommand -> CommandResult
+    activate CommandResult
 
-CommandResult --> DeleteClientCommand
-deactivate CommandResult
+    CommandResult --> DeleteClientCommand
+    deactivate CommandResult
 
-DeleteClientCommand --> LogicManager : r
-deactivate DeleteClientCommand
+    DeleteClientCommand --> LogicManager : r
+    deactivate DeleteClientCommand
 
-[<--LogicManager
-deactivate LogicManager
+    [<--LogicManager
+    deactivate LogicManager
+end
 @enduml
