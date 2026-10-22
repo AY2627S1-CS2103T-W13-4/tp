@@ -62,6 +62,7 @@ Name -[hidden]right-> Phone
 Phone -[hidden]right-> Address
 Address -[hidden]right-> Email
 
-ModelManager --> "~* filtered" Person
-ModelManager --> "~* filtered, sorted" Meeting
+ModelManager -left-> "~* filtered" Person
+ModelManager --> "~* filteredMeetings" Meeting
+ModelManager --> "~* sortedMeetings" Meeting
 @enduml
