@@ -56,7 +56,15 @@ else else
     LogicManager -> DeleteClientCommand : execute(m)
     activate DeleteClientCommand
 
-    DeleteClientCommand -> Model : deletePerson(1)
+    DeleteClientCommand -> Model : getFilteredPersonList()
+    activate Model
+
+    Model --> DeleteClientCommand : l
+    deactivate Model
+
+    DeleteClientCommand -> DeleteClientCommand : p = l.get(0)
+
+    DeleteClientCommand -> Model : deletePerson(p)
     activate Model
 
     Model --> DeleteClientCommand
