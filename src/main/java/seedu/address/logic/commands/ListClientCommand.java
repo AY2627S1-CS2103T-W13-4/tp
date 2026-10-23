@@ -5,8 +5,10 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.model.Model;
 import seedu.address.model.person.Person;
@@ -27,6 +29,8 @@ public class ListClientCommand extends Command {
             + PREFIX_TAG + "friends "
             + PREFIX_TAG + "owesMoney";
 
+    private static final Logger logger = LogsCenter.getLogger(ListClientCommand.class);
+
     private final Predicate<Person> predicateFilterByTags;
     private final Set<Tag> tags;
 
@@ -43,15 +47,19 @@ public class ListClientCommand extends Command {
     public CommandResult execute(Model model) {
         requireNonNull(model);
         model.updateFilteredPersonList(predicateFilterByTags);
+        int numberOfDisplayedClients = model.getFilteredPersonListSize();
 
         if (tags.isEmpty()) {
+            logger.info(() -> "Listed clients: no tags applied, #displayed clients: " + numberOfDisplayedClients);
             return new CommandResult(String.format(MESSAGE_SUCCESS_NO_TAGS, model.getFilteredPersonList().size()));
         }
         String formattedTags = tags.stream()
                 .map(tag -> tag.tagName)
                 .sorted()
                 .collect(Collectors.joining(", "));
-        return new CommandResult(String.format(MESSAGE_SUCCESS, model.getFilteredPersonListSize(), formattedTags));
+        logger.info(() -> "Listed clients: tags applied: " + formattedTags
+                + ", #displayed clients: " + numberOfDisplayedClients);
+        return new CommandResult(String.format(MESSAGE_SUCCESS, numberOfDisplayedClients, formattedTags));
     }
 
     @Override
