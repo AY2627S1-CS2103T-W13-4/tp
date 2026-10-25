@@ -20,7 +20,9 @@ public class FindClientCommandParser implements Parser<FindClientCommand> {
      */
     public FindClientCommand parse(String args) throws ParseException {
         String trimmedArgs = args.trim();
-        if (trimmedArgs.isEmpty()) {
+
+        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args, CliSyntax.getAllPrefixes());
+        if (trimmedArgs.isEmpty() || !argMultimap.containsOnlyPrefixes()) {
             throw new ParseException(
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindClientCommand.MESSAGE_USAGE));
         }

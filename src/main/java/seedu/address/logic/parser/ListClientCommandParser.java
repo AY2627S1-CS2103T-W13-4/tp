@@ -20,6 +20,7 @@ public class ListClientCommandParser implements Parser<ListClientCommand> {
      * and returns an ListClientCommand object for execution.
      *
      * @param args The text to be parsed.
+     * @return A ListClientCommand object.
      * @throws ParseException if the user input does not conform to the expected format
      */
     @Override

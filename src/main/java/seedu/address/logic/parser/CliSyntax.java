@@ -22,6 +22,6 @@ public class CliSyntax {
      */
     public static Prefix[] getAllPrefixes() {
         return new Prefix[] {PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_ADDRESS, PREFIX_TAG,
-            PREFIX_DATE, PREFIX_START_TIME, PREFIX_END_TIME};
+            PREFIX_DATE, PREFIX_START_TIME, PREFIX_END_TIME, PREFIX_FORCE};
     }
 }

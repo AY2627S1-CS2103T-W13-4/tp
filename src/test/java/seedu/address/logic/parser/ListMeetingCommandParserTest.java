@@ -47,7 +47,7 @@ public class ListMeetingCommandParserTest {
     @Test
     public void parse_invalidTags_throwsParseException() {
         for (String arguments : new String[]{" t/", " t/  ", " t/urgent!", " t/very urgent",
-            " t/ t/work", " t/urgent n/Review", " t/urgent --all"}) {
+            " t/ t/work", " t/urgent r/Review", " t/urgent --all"}) {
             assertThrows(ParseException.class, Tag.MESSAGE_CONSTRAINTS, () -> parser.parse(arguments));
         }
     }

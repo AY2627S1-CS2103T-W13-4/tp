@@ -17,6 +17,12 @@ public class DeleteClientCommandParser implements Parser<DeleteClientCommand> {
      * @throws ParseException if the user input does not conform to the expected format
      */
     public DeleteClientCommand parse(String args) throws ParseException {
+        ArgumentMultimap argMultimap =
+                ArgumentTokenizer.tokenize(args, CliSyntax.getAllPrefixes());
+        if (!argMultimap.containsOnlyPrefixes()) {
+            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteClientCommand.MESSAGE_USAGE));
+        }
+
         try {
             Index index = ParserUtil.parseIndex(args);
             return new DeleteClientCommand(index);
