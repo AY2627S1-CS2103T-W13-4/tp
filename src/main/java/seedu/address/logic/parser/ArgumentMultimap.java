@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import seedu.address.logic.Messages;
@@ -53,6 +54,18 @@ public class ArgumentMultimap {
             return new ArrayList<>();
         }
         return new ArrayList<>(argMultimap.get(prefix));
+    }
+
+    /**
+     * Returns true if every non-preamble prefix in this multimap is one of the given prefixes.
+     *
+     * @param prefixes The given prefixes.
+     */
+    public boolean containsOnlyPrefixes(Prefix... prefixes) {
+        Set<Prefix> allowedPrefixes = Set.of(prefixes);
+        return argMultimap.keySet().stream()
+                .filter(prefix -> !prefix.getPrefix().isEmpty())
+                .allMatch(allowedPrefixes::contains);
     }
 
     /**
