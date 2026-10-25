@@ -90,7 +90,7 @@ Here's a (partial) class diagram of the `Logic` component:
 
 <puml src="diagrams/LogicClassDiagram.puml" width="550"/>
 
-The sequence diagram below illustrates the interactions within the `Logic` component, taking `execute("delete 1")` API call as an example.
+The sequence diagram below illustrates the interactions within the `Logic` component, taking `execute("deletec 1")` API call as an example.
 
 <puml src="diagrams/DeleteClientSequenceDiagram.puml" alt="Interactions Inside the Logic Component for the `deletec 1` Command" />
 
@@ -102,10 +102,11 @@ The sequence diagram below illustrates the interactions within the `Logic` compo
 
 How the `Logic` component works:
 
-1. When `Logic` is called upon to execute a command, the command is passed to an `AddressBookParser` object, which in turn creates a parser that matches the command (e.g., `DeleteClientCommandParser`) and uses it to parse the command.
+1. When `Logic` is called upon to execute a command, the command text is passed to an `AddressBookParser` object, which creates a parser that matches the command (e.g., `DeleteClientCommandParser`) and uses it to parse the command.
 1. This results in a `Command` object (more precisely, an object of one of its subclasses e.g., `DeleteClientCommand`) which is executed by the `LogicManager`.
+   Before executing the command, `LogicManager` checks whether the command is compatible with the currently displayed panel. For example, if the meetings panel is displayed, attempting to execute a client command such as `deletec` will result in a `CommandException`.
 1. The command can communicate with the `Model` when it is executed (e.g. to delete a person).<br>
-   Note that although this is shown as a single step in the diagram above for simplicity, the code can require several interactions between the command object and the `Model` to complete the operation.
+   Note that the code can require several interactions between the command object and the `Model` to complete the operation. For example, in the sequence diagram above, the command retrieves the filtered person list from `Model`, selects the person at the requested index, and then asks `Model` to delete that person.
 1. The result of the command execution is encapsulated as a `CommandResult` object which is returned from `Logic`.
 
 Here are the other classes in `Logic` (omitted from the class diagram above) that are used for parsing a user command:
