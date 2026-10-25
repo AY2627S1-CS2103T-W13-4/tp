@@ -320,6 +320,6 @@ Action     | Format, Examples
 **Edit client**   | `editc INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]... `<br> e.g.,`editc 2 n/James Lee e/jameslee@example.com`
 **Edit meeting** | `editm MEETING_INDEX [n/NAME] [d/DATE] [st/START_TIME] [et/END_TIME] [t/TAG]... [force/]`<br> e.g., `editm 2 d/25/10/2026 st/1500 et/1600 t/urgent`
 **Find**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
-**List clients**   | `listc`
+**List clients**   | `listc [t/TAG]...`<br> e.g., `listc t/colleague t/friend`
 **List meetings** | `listm [t/TAG]...`<br> e.g., `listm t/urgent t/work`
 **Help**   | `help`
