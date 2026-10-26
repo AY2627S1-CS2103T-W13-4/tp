@@ -34,8 +34,6 @@ public class ListClientCommandParserTest {
 
     @Test
     public void parse_otherKnownPrefix_failure() {
-        Set<Tag> tags = Set.of(new Tag("friends"), new Tag("colleagues"));
-
         String args = " n/John Doe p/98765432 e/john@example.com"
                 + " t/friends a/123 Clementi Road d/08/10/2026"
                 + " st/1400 et/1500 t/colleagues";
