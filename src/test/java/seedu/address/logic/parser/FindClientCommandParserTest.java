@@ -38,4 +38,10 @@ public class FindClientCommandParserTest {
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindClientCommand.MESSAGE_USAGE));
     }
 
+    @Test
+    public void parse_forceFlag_throwsParseException() {
+        assertParseFailure(parser, "Alice force/",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindClientCommand.MESSAGE_USAGE));
+    }
+
 }

@@ -42,6 +42,11 @@ public class ListClientCommandParserTest {
     }
 
     @Test
+    public void parse_forceFlag_failure() {
+        assertParseFailure(parser, " force/", MESSAGE_INVALID_FORMAT);
+    }
+
+    @Test
     public void parse_unknownPrefix_failure() {
         assertParseFailure(parser, "i/unknown", MESSAGE_INVALID_FORMAT);
     }

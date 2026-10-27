@@ -36,4 +36,10 @@ public class DeleteClientCommandParserTest {
         assertParseFailure(parser, "1 n/Alice",
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteClientCommand.MESSAGE_USAGE));
     }
+
+    @Test
+    public void parse_forceFlag_throwsParseException() {
+        assertParseFailure(parser, "1 force/",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteClientCommand.MESSAGE_USAGE));
+    }
 }

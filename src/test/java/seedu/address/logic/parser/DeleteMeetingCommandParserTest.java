@@ -34,4 +34,10 @@ public class DeleteMeetingCommandParserTest {
         assertParseFailure(parser, "1 n/Review",
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteMeetingCommand.MESSAGE_USAGE));
     }
+
+    @Test
+    public void parse_forceFlag_throwsParseException() {
+        assertParseFailure(parser, "1 force/",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteMeetingCommand.MESSAGE_USAGE));
+    }
 }
