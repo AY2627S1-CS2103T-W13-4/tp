@@ -57,6 +57,9 @@ public class EditMeetingCommandParserTest {
         assertParseFailure(parser, "0" + NAME_DESC, MESSAGE_INVALID_FORMAT);
         assertParseFailure(parser, "1 unexpected text", MESSAGE_INVALID_FORMAT);
         assertParseFailure(parser, "1 x/value", MESSAGE_INVALID_FORMAT);
+
+        // known prefix not supported by this command
+        assertParseFailure(parser, "1 p/98765432", MESSAGE_INVALID_FORMAT);
     }
 
     @Test

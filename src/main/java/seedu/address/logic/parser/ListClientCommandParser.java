@@ -20,6 +20,7 @@ public class ListClientCommandParser implements Parser<ListClientCommand> {
      * and returns an ListClientCommand object for execution.
      *
      * @param args The text to be parsed.
+     * @return A ListClientCommand object.
      * @throws ParseException if the user input does not conform to the expected format
      */
     @Override
@@ -27,7 +28,7 @@ public class ListClientCommandParser implements Parser<ListClientCommand> {
         requireNonNull(args);
 
         ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args, CliSyntax.getAllPrefixes());
-        if (!argMultimap.getPreamble().isEmpty()) {
+        if (!argMultimap.getPreamble().isEmpty() || !argMultimap.containsOnlyPrefixes(PREFIX_TAG)) {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, ListClientCommand.MESSAGE_USAGE));
         }
         Set<Tag> tags = ParserUtil.parseTags(argMultimap.getAllValues(PREFIX_TAG));

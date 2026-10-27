@@ -32,4 +32,10 @@ public class FindClientCommandParserTest {
         assertParseSuccess(parser, " \n Alice \n \t Bob  \t", expectedFindCommand);
     }
 
+    @Test
+    public void parse_prefixNotSupportedByCommand_throwsParseException() {
+        assertParseFailure(parser, "Alice n/Bob",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindClientCommand.MESSAGE_USAGE));
+    }
+
 }

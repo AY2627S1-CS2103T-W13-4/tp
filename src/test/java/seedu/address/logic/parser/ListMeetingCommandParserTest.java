@@ -2,6 +2,7 @@ package seedu.address.logic.parser;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 import static seedu.address.testutil.Assert.assertThrows;
 
@@ -15,6 +16,9 @@ import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.tag.Tag;
 
 public class ListMeetingCommandParserTest {
+    private static final String MESSAGE_INVALID_FORMAT =
+            String.format(MESSAGE_INVALID_COMMAND_FORMAT, ListMeetingCommand.MESSAGE_USAGE);
+
     private final ListMeetingCommandParser parser = new ListMeetingCommandParser();
 
     @Test
@@ -25,12 +29,20 @@ public class ListMeetingCommandParserTest {
 
     @Test
     public void parse_argumentsOrFlags_throwsParseException() {
-        String expectedMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, ListMeetingCommand.MESSAGE_USAGE);
+        String expectedMessage = MESSAGE_INVALID_FORMAT;
         assertThrows(ParseException.class, expectedMessage, () -> parser.parse(" 1"));
         assertThrows(ParseException.class, expectedMessage, () -> parser.parse(" --all"));
         assertThrows(ParseException.class, expectedMessage, () -> parser.parse(" n/John"));
         assertThrows(ParseException.class, expectedMessage, () -> parser.parse(" /urgent"));
         assertThrows(ParseException.class, expectedMessage, () -> parser.parse(" urgent t/work"));
+    }
+
+    @Test
+    public void parse_otherKnownPrefix_failure() {
+        String args = " n/Project Review d/08/10/2026 st/1400 et/1500"
+                + " t/urgent p/98765432 a/123 Clementi Road";
+
+        assertParseFailure(parser, args, MESSAGE_INVALID_FORMAT);
     }
 
     @Test
@@ -47,7 +59,7 @@ public class ListMeetingCommandParserTest {
     @Test
     public void parse_invalidTags_throwsParseException() {
         for (String arguments : new String[]{" t/", " t/  ", " t/urgent!", " t/very urgent",
-            " t/ t/work", " t/urgent n/Review", " t/urgent --all"}) {
+            " t/ t/work", " t/urgent r/Review", " t/urgent --all"}) {
             assertThrows(ParseException.class, Tag.MESSAGE_CONSTRAINTS, () -> parser.parse(arguments));
         }
     }

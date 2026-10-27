@@ -30,4 +30,10 @@ public class DeleteClientCommandParserTest {
         assertParseFailure(parser, "a",
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteClientCommand.MESSAGE_USAGE));
     }
+
+    @Test
+    public void parse_prefixNotSupportedByCommand_throwsParseException() {
+        assertParseFailure(parser, "1 n/Alice",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteClientCommand.MESSAGE_USAGE));
+    }
 }
