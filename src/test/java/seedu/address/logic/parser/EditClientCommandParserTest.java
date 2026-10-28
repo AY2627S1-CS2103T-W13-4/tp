@@ -79,6 +79,14 @@ public class EditClientCommandParserTest {
 
         // invalid prefix being parsed as preamble
         assertParseFailure(parser, "1 i/ string", MESSAGE_INVALID_FORMAT);
+
+        // known prefix not supported by this command
+        assertParseFailure(parser, "1 force/", MESSAGE_INVALID_FORMAT);
+    }
+
+    @Test
+    public void parse_forceFlag_failure() {
+        assertParseFailure(parser, "1" + NAME_DESC_AMY + " force/", MESSAGE_INVALID_FORMAT);
     }
 
     @Test

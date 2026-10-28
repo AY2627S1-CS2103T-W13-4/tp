@@ -33,9 +33,12 @@ public class EditMeetingCommandParser implements Parser<EditMeetingCommand> {
      */
     public EditMeetingCommand parse(String args) throws ParseException {
         requireNonNull(args);
-        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(
-                args, PREFIX_NAME, PREFIX_DATE, PREFIX_START_TIME, PREFIX_END_TIME, PREFIX_TAG,
-                PREFIX_FORCE);
+        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args, CliSyntax.getAllPrefixes());
+
+        if (!argMultimap.containsOnlyPrefixes(
+                PREFIX_NAME, PREFIX_DATE, PREFIX_START_TIME, PREFIX_END_TIME, PREFIX_TAG, PREFIX_FORCE)) {
+            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, EditMeetingCommand.MESSAGE_USAGE));
+        }
 
         Index index;
         try {

@@ -33,15 +33,17 @@ public class ListClientCommandParserTest {
     }
 
     @Test
-    public void parse_allPrefixesWithTags_success() {
-        Set<Tag> tags = Set.of(new Tag("friends"), new Tag("colleagues"));
-        ListClientCommand expectedCommand = new ListClientCommand(tags);
-
+    public void parse_otherKnownPrefix_failure() {
         String args = " n/John Doe p/98765432 e/john@example.com"
                 + " t/friends a/123 Clementi Road d/08/10/2026"
                 + " st/1400 et/1500 t/colleagues";
 
-        assertParseSuccess(parser, args, expectedCommand);
+        assertParseFailure(parser, args, MESSAGE_INVALID_FORMAT);
+    }
+
+    @Test
+    public void parse_forceFlag_failure() {
+        assertParseFailure(parser, " force/", MESSAGE_INVALID_FORMAT);
     }
 
     @Test

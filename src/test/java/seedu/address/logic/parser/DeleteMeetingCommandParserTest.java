@@ -1,5 +1,6 @@
 package seedu.address.logic.parser;
 
+import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 
@@ -26,5 +27,17 @@ public class DeleteMeetingCommandParserTest {
         assertParseFailure(parser, "-1", Messages.MESSAGE_INVALID_MEETING_INDEX);
         assertParseFailure(parser, "1 2", Messages.MESSAGE_INVALID_MEETING_INDEX);
         assertParseFailure(parser, "abc", Messages.MESSAGE_INVALID_MEETING_INDEX);
+    }
+
+    @Test
+    public void parse_prefixNotSupportedByCommand_throwsParseException() {
+        assertParseFailure(parser, "1 n/Review",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteMeetingCommand.MESSAGE_USAGE));
+    }
+
+    @Test
+    public void parse_forceFlag_throwsParseException() {
+        assertParseFailure(parser, "1 force/",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteMeetingCommand.MESSAGE_USAGE));
     }
 }

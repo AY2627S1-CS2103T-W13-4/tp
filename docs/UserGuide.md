@@ -61,7 +61,9 @@ PingBook is a **desktop application for managing contacts, optimized for use thr
 * Parameters can be in any order.<br>
   For example, if the command specifies `n/NAME p/PHONE_NUMBER`, `p/PHONE_NUMBER n/NAME` is also acceptable.
 
-* Extraneous parameters for commands that take no parameters, such as `help`, `exit`, and `clear`, are ignored.<br>
+* Extra parameters that are defined by PingBook but not used for the command are rejected.<br>For example, `deletec 1 t/friend` is invalid.
+
+* Extra parameters for commands that take no parameters, such as `help`, `exit`, and `clear`, are ignored.<br>
   For example, `help 123` is interpreted as `help`.
 
 * If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines as space characters surrounding line-breaks may be omitted when copied over to the application.
@@ -92,7 +94,7 @@ Examples:
 * `addc n/Mary Lim p/87654321 e/marylim@example.com t/premium` (no address)
 * `addc n/Betsy Crowe t/friend e/betsycrowe@example.com a/Newgate Prison p/1234567 t/criminal`
 
-### Listing clients by tags: `listc`
+### Listing and filtering clients: `listc`
 
 Shows a list of all persons in PingBook that match the given tags.
 
@@ -100,7 +102,7 @@ Format: `listc [t/TAG]...`
 
 * `TAG` is optional and there can be multiple tags.
 * Tags are alphanumeric and case-sensitive.
-* The command will ignore fields other than `TAG`. For example, `listc n/John` is the same as `listc`.
+* The command will only accept `TAG` fields. Other fields such as `NAME`, `DATE` are rejected.
 * The command is case-sensitive. `listC` or `Listc` are considered invalid.
 * A person is shown only if they have all the tags given.
 * If there are no tags provided, PingBook will display all persons and a success message detailing the number of persons listed.
@@ -320,6 +322,6 @@ Action     | Format, Examples
 **Edit client**   | `editc INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]... `<br> e.g.,`editc 2 n/James Lee e/jameslee@example.com`
 **Edit meeting** | `editm MEETING_INDEX [n/NAME] [d/DATE] [st/START_TIME] [et/END_TIME] [t/TAG]... [force/]`<br> e.g., `editm 2 d/25/10/2026 st/1500 et/1600 t/urgent`
 **Find**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
-**List clients**   | `listc`
+**List clients**   | `listc [t/TAG]...`<br> e.g., `listc t/colleague t/friend`
 **List meetings** | `listm [t/TAG]...`<br> e.g., `listm t/urgent t/work`
 **Help**   | `help`

@@ -76,6 +76,14 @@ public class AddMeetingCommandParserTest {
     }
 
     @Test
+    public void parse_prefixNotSupportedByCommand_failure() {
+        String details = NAME_DESC + DATE_DESC + START_TIME_DESC + END_TIME_DESC;
+        String expectedMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddMeetingCommand.MESSAGE_USAGE);
+
+        assertParseFailure(parser, details + " p/98765432", expectedMessage);
+    }
+
+    @Test
     public void parse_invalidTags_failure() {
         String details = NAME_DESC + DATE_DESC + START_TIME_DESC + END_TIME_DESC;
         assertParseFailure(parser, details + " t/", Tag.MESSAGE_CONSTRAINTS);

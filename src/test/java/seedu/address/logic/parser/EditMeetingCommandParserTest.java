@@ -57,6 +57,9 @@ public class EditMeetingCommandParserTest {
         assertParseFailure(parser, "0" + NAME_DESC, MESSAGE_INVALID_FORMAT);
         assertParseFailure(parser, "1 unexpected text", MESSAGE_INVALID_FORMAT);
         assertParseFailure(parser, "1 x/value", MESSAGE_INVALID_FORMAT);
+
+        // known prefix not supported by this command
+        assertParseFailure(parser, "1 p/98765432", MESSAGE_INVALID_FORMAT);
     }
 
     @Test
@@ -141,6 +144,20 @@ public class EditMeetingCommandParserTest {
 
         assertParseSuccess(parser, "1" + NAME_DESC + " force/",
                 new EditMeetingCommand(Index.fromOneBased(1), descriptor, true));
+    }
+
+    @Test
+    public void parse_forceFlagBeforeFields_success() {
+        EditMeetingDescriptor descriptor = new EditMeetingDescriptorBuilder().withName(VALID_NAME).build();
+
+        assertParseSuccess(parser, "1 force/" + NAME_DESC,
+                new EditMeetingCommand(Index.fromOneBased(1), descriptor, true));
+    }
+
+    @Test
+    public void parse_forceFlagOnly_notEdited() {
+        // force/ is a supported prefix, so it is not rejected as an invalid format; no field is edited though
+        assertParseFailure(parser, "1 force/", EditMeetingCommand.MESSAGE_NOT_EDITED);
     }
 
     @Test
