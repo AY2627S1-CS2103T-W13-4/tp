@@ -1,3 +1,4 @@
+
 @startuml
 !include style.puml
 skinparam arrowThickness 1.1
@@ -5,24 +6,26 @@ skinparam arrowColor UI_COLOR_T4
 skinparam classBackgroundColor UI_COLOR
 
 package UI <<Rectangle>>{
-Class "<<interface>>\nUi" as Ui
-Class "{abstract}\nUiPart" as UiPart
-Class UiManager
-Class MainWindow
-Class HelpWindow
-Class ResultDisplay
-Class PersonListPanel
-Class PersonCard
-Class StatusBarFooter
-Class CommandBox
+    Class "<<interface>>\nUi" as Ui
+    Class "{abstract}\nUiPart" as UiPart
+    Class UiManager
+    Class MainWindow
+    Class HelpWindow
+    Class ResultDisplay
+    Class PersonListPanel
+    Class PersonCard
+    Class MeetingListPanel
+    Class MeetingCard
+    Class StatusBarFooter
+    Class CommandBox
 }
 
 package Model <<Rectangle>> {
-Class HiddenModel #FFFFFF
+    Class HiddenModel #FFFFFF
 }
 
 package Logic <<Rectangle>> {
-Class HiddenLogic #FFFFFF
+    Class HiddenLogic #FFFFFF
 }
 
 Class HiddenOutside #FFFFFF
@@ -30,13 +33,15 @@ HiddenOutside ..> Ui
 
 UiManager .left.|> Ui
 UiManager -down-> "1" MainWindow
-MainWindow *-down->  "1" CommandBox
+MainWindow *-down-> "1" CommandBox
 MainWindow *-down-> "1" ResultDisplay
 MainWindow *-down-> "1" PersonListPanel
+MainWindow *-down-> "1" MeetingListPanel
 MainWindow *-down-> "1" StatusBarFooter
 MainWindow --> "0..1" HelpWindow
 
 PersonListPanel -down-> "*" PersonCard
+MeetingListPanel -down-> "*" MeetingCard
 
 MainWindow -left-|> UiPart
 
@@ -44,10 +49,13 @@ ResultDisplay --|> UiPart
 CommandBox --|> UiPart
 PersonListPanel --|> UiPart
 PersonCard --|> UiPart
+MeetingListPanel --|> UiPart
+MeetingCard --|> UiPart
 StatusBarFooter --|> UiPart
 HelpWindow --|> UiPart
 
 PersonCard ..> Model
+MeetingCard ..> Model
 UiManager -right-> Logic
 MainWindow -left-> Logic
 
