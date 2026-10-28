@@ -122,7 +122,7 @@ How the parsing works:
 
 <puml src="diagrams/ModelClassDiagram.puml" width="1000" />
 
-[Open the full-size model diagram](diagrams/ModelClassDiagram.png)
+[Open the full-size model diagram](diagrams/ModelClassDiagram.puml)
 
 
 The `Model` component,
@@ -131,14 +131,6 @@ The `Model` component,
 * stores the `Person` objects selected by the current filter, such as search results, in a separate _filtered_ list. It exposes this list as an unmodifiable `ObservableList<Person>` that the UI can observe and bind to, so the UI updates when the list changes.
 * stores a `UserPrefs` object that represents the user’s preferences (currently, just the GUI settings). This is exposed to the outside as a `ReadOnlyUserPrefs` object.
 * does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components)
-
-
-<box type="info" seamless>
-
-**Note:** The alternative, arguably more object-oriented, design below keeps a unique list of tags in `AddressBook`, and each `Person` references tags from that list. This lets `AddressBook` maintain one `Tag` object per unique tag instead of each `Person` holding its own `Tag` objects.<br>
-
-<puml src="diagrams/BetterModelClassDiagram.puml" width="450" />
-</box>
 
 
 ### Storage component
@@ -215,349 +207,286 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 (For all use cases below, the **System** is the `PingBook` and the **Actor** is the `user`, unless specified otherwise)
 
-**Use case: UC1 - View clients**
+**Use case: UC1 - View and filter clients**
 
 **MSS**
 
-1.  User requests to view clients.
-2.  PingBook shows a list of clients.
+1. User requests to view clients, optionally providing one or more tags.
+2. PingBook displays the clients matching all supplied tags.
 
-    Use case ends.
+Use case ends.
+
+**Extensions**
+
+* 1a. A supplied tag is invalid or empty.
+
+    * 1a1. PingBook shows an error message.
+
+      Use case ends.
 
 **Use case: UC2 - Add client**
 
 **MSS**
 
-1.  User provides name, phone number, and email for a new client.
-2.  PingBook adds the new client.
+1. User provides a name, phone number, email address, and optionally an address and tags.
+2. PingBook adds the new client.
 
 Use case ends.
 
-
 **Extensions**
 
-* 1a. There is a missing field.
-
-    * 1a1. PingBook shows an error message.
-  
-      Use case ends.
-
-**Use case: UC3 - Delete client**
-
-**MSS**
-
-1.  User requests to delete a client.
-2.  PingBook asks the user for confirmation.
-3.  User confirms to delete.
-4.  PingBook deletes the client.
-
-    Use case ends.
-
-**Extensions**
-
-* 1a. The client does not exist.
+* 1a. A required field is missing or a supplied field is invalid.
 
     * 1a1. PingBook shows an error message.
 
       Use case ends.
 
-* 3a. The user does not confirm.
+* 2a. The client already exists.
 
-     Use case ends.
+    * 2a1. PingBook shows an error message and does not add the client.
 
-**Use case: UC4 - View meetings**
+      Use case ends.
 
-**MSS**
-
-1.  User requests to view meetings.
-2.  PingBook shows a list of meetings.
-
-    Use case ends.
-
-**Use case: UC5 - Add meeting**
+**Use case: UC3 - Edit client**
 
 **MSS**
 
-1.  User provides name, starting time, and ending time for a new meeting.
-2.  PingBook adds the new meeting.
+1. User requests to edit a client using its displayed index and provides one or more fields to edit.
+2. PingBook replaces the supplied name, phone number, email address, address, or tags.
 
-    Use case ends.
+Use case ends.
 
 **Extensions**
 
-* 1a. There is a missing field.
+* 1a. The contacts panel is not active.
 
     * 1a1. PingBook shows an error message.
 
       Use case ends.
 
-* 1b. Starting or ending time is invalid.
+* 1b. The index is invalid.
 
     * 1b1. PingBook shows an error message.
 
       Use case ends.
 
-* 1c. Starting time is after the ending time.
+* 1c. No field is provided or a supplied field is invalid.
 
     * 1c1. PingBook shows an error message.
 
       Use case ends.
 
-**Use case: UC6 - Delete meeting**
+* 2a. The edited client duplicates another client.
+
+    * 2a1. PingBook shows an error message and does not edit the client.
+
+      Use case ends.
+
+**Use case: UC4 - Delete client**
 
 **MSS**
 
-1.  User requests to delete a meeting.
-2.  PingBook asks the user for confirmation.
-3.  User confirms to delete.
-4.  PingBook deletes the meeting.
+1. User requests to delete a client using its displayed index.
+2. PingBook deletes the selected client.
 
-    Use case ends.
+Use case ends.
 
 **Extensions**
 
-* 1a. The meeting does not exist.
+* 1a. The contacts panel is not active.
 
     * 1a1. PingBook shows an error message.
 
       Use case ends.
 
-* 3a. The user does not confirm.
-
-  Use case ends.
-
-**Use case: UC7 - Tag client**
-
-**MSS**
-
-1.  User requests to add a tag to a client.
-2.  PingBook adds a tag to the client.
-
-    Use case ends.
-
-**Extensions**
-
-* 1a. The client does not exist.
-
-    * 1a1. PingBook shows an error message.
-
-      Use case ends.
-
-* 1b. Tag is not provided or empty.
+* 1b. The index is invalid.
 
     * 1b1. PingBook shows an error message.
 
       Use case ends.
 
-**Use case: UC8 - Pin client**
+**Use case: UC5 - Find client**
 
 **MSS**
 
-1.  User requests to pin a client.
-2.  PingBook pins the client.
+1. User provides one or more name keywords.
+2. PingBook displays clients whose names contain any of the keywords, ignoring case.
 
-    Use case ends.
+Use case ends.
 
 **Extensions**
 
-* 1a. The client does not exist.
+* 1a. There are no name keywords provided.
 
     * 1a1. PingBook shows an error message.
 
       Use case ends.
 
-**Use case: UC9 - Sort clients based on a criterion**
+**Use case: UC6 - View and filter meetings**
 
 **MSS**
 
-1.  User requests to sort a client based on a criterion.
-2.  PingBook displays a list of clients sorted based on the criterion.
+1. User requests to view meetings, optionally providing one or more tags.
+2. PingBook displays the meetings matching all supplied tags, ordering meetings whose end time has not passed before those whose end time has passed.
 
-    Use case ends.
+Use case ends.
 
 **Extensions**
 
-* 1a. Criterion is not provided, empty, or not defined by PingBook.
+* 1a. A supplied tag is invalid.
 
     * 1a1. PingBook shows an error message.
 
       Use case ends.
 
-**Use case: UC10 - Edit client**
+**Use case: UC7 - Add meeting**
 
 **MSS**
 
-1.  User requests to edit a client.
-2.  PingBook displays the client to be edited.
-3.  User requests to edit the fields. 
-4.  PingBook edits the fields.
+1. User provides a name, date, starting time, ending time, and optionally tags for a new meeting.
+2. PingBook validates the meeting and saves it.
 
-    Use case ends.
+Use case ends.
 
 **Extensions**
 
-* 1a. The client does not exist.
+* 1a. A required field is missing, a supplied field is invalid, or the ending time is not later than the starting time.
 
     * 1a1. PingBook shows an error message.
 
       Use case ends.
 
-* 3a. The fields requested for edit are invalid or empty.
+* 2a. The meeting is a duplicate of an existing meeting.
 
-    * 3a1. PingBook shows an error message.
+    * 2a1. PingBook shows an error message and does not save the meeting.
 
       Use case ends.
 
-**Use case: UC11 - Tag client**
+* 2b. The meeting overlaps an existing meeting and `force/` was not provided.
+
+    * 2b1. PingBook shows an error message and does not save the meeting.
+
+      Use case ends.
+
+* 2c. The meeting overlaps an existing meeting and `force/` was provided.
+
+    * 2c1. PingBook saves the meeting and shows a warning listing the overlaps.
+
+      Use case ends.
+
+**Use case: UC8 - Edit meeting**
 
 **MSS**
 
-1. User selects a client.
-2. User provides a tag for the client.
-3. PingBook adds the tag to the client.
-
-Use case ends.
-
-**Use case: UC12 - Add contact details**
-
-**MSS**
-
-1. User selects a client.
-2. User provides an email address or phone number for the client.
-3. PingBook adds the contact detail to the client.
+1. User requests to edit a meeting using its displayed index and provides one or more fields to edit.
+2. PingBook replaces the supplied name, date, times, or tags and keeps unspecified fields unchanged.
 
 Use case ends.
 
 **Extensions**
 
-* 2a. The contact detail is invalid.
+* 1a. The meetings panel is not active.
 
-* 2a1. PingBook shows an error message.
+    * 1a1. PingBook shows an error message.
 
-Use case ends.
+      Use case ends.
 
-* 2b. The contact detail already exists for the client.
+* 1b. The index is invalid.
 
-* 2b1. PingBook shows an error message.
+    * 1b1. PingBook shows an error message.
 
-Use case ends.
+      Use case ends.
 
-**Use case: UC13 - View prioritised client list**
+* 1c. No field is provided, a supplied field is invalid, or the ending time is not later than the starting time.
+
+    * 1c1. PingBook shows an error message.
+
+      Use case ends.
+
+* 2a. The edited meeting is a duplicate of another meeting.
+
+    * 2a1. PingBook shows an error message and does not edit the meeting.
+
+      Use case ends.
+
+* 2b. The edited meeting overlaps another meeting and `force/` was not provided.
+
+    * 2b1. PingBook shows an error message and does not edit the meeting.
+
+      Use case ends.
+
+* 2c. The edited meeting overlaps another meeting and `force/` was provided.
+
+    * 2c1. PingBook edits the meeting and shows a warning listing the overlaps.
+
+      Use case ends.
+
+**Use case: UC9 - Delete meeting**
 
 **MSS**
 
-1. User requests to view the client list.
-2. PingBook displays the clients, with recently contacted clients at the top.
+1. User requests to delete a meeting using its displayed index.
+2. PingBook deletes the selected meeting.
 
 Use case ends.
 
 **Extensions**
 
-* 2a. A client has no contact history.
+* 1a. The meetings panel is not active.
 
-* 2a1. PingBook places the client according to the available information.
+    * 1a1. PingBook shows an error message.
+
+      Use case ends.
+
+* 1b. The index is invalid.
+
+    * 1b1. PingBook shows an error message.
+
+      Use case ends.
+
+**Use case: UC10 - Find meeting**
+
+**MSS**
+
+1. User provides one or more name keywords.
+2. PingBook displays meetings whose names contain any of the keywords, ignoring case.
 
 Use case ends.
 
-**Use case: UC14 - View user guide**
+**Extensions**
+
+* 1a. There are no name keywords provided.
+
+    * 1a1. PingBook shows an error message.
+
+      Use case ends.
+
+**Use case: UC11 - View user guide**
 
 **MSS**
 
 1. User requests to view the user guide.
-2. PingBook displays a guide containing the basic commands.
-3. User reads the guide.
+2. PingBook displays the help window containing a link to the user guide.
 
 Use case ends.
 
-**Extensions**
-
-* 1a. The user guide is unavailable.
-
-* 1a1. PingBook shows an error message.
-
-Use case ends.
-
-**Use case: UC15 - Create command alias**
+**Use case: UC12 - Clear entries**
 
 **MSS**
 
-1. User provides an existing command and a new alias.
-2. PingBook creates the alias for the command.
-3. User can use the alias to execute the command.
+1. User requests to clear PingBook.
+2. PingBook removes all clients and meetings.
 
 Use case ends.
 
-**Extensions**
-
-* 1a. The command does not exist.
-
-* 1a1. PingBook shows an error message.
-
-Use case ends.
-
-* 1b. The alias is already in use.
-
-* 1b1. PingBook shows an error message.
-
-Use case ends.
-
-**Use case: UC16 - View coworker's meetings**
+**Use case: UC13 - Exit application**
 
 **MSS**
 
-1. User provides the name of a coworker.
-2. PingBook displays the coworker's scheduled meetings.
-3. User views the coworker's schedule.
+1. User requests to exit PingBook.
+2. PingBook closes the application.
 
 Use case ends.
-
-**Extensions**
-
-* 1a. The coworker does not exist.
-
-* 1a1. PingBook shows an error message.
-
-Use case ends.
-
-* 2a. The coworker has no scheduled meetings.
-
-* 2a1. PingBook informs the user that the coworker has no scheduled meetings.
-
-Use case ends.
-
-**Use case: UC17 - Detect meeting overlap**
-
-**MSS**
-
-1. User adds or edits a meeting.
-2. PingBook checks the meeting against the other meetings.
-3. PingBook detects that there is no overlap.
-4. PingBook saves the meeting.
-
-Use case ends.
-
-**Extensions**
-
-* 2a. The end time is not later than the start time.
-
-    * 2a1. PingBook shows an error and does not save the meeting.
-
-      Use case ends.
-
-* 3a. The meeting overlaps with one or more other meetings and the user did not use `force/`.
-
-    * 3a1. PingBook shows an error listing the conflicting meetings (at most three, then a count of the rest)
-      and does not save the meeting.
-
-    * 3a2. User changes the meeting time, or repeats the command with `force/`.
-
-      Use case resumes at step 2.
-
-* 3b. The meeting overlaps with other meetings and the user used `force/`.
-
-    * 3b1. PingBook saves the meeting and shows a warning listing the overlapping meetings.
-
-      Use case ends.
 
 **Design notes**
 
@@ -567,89 +496,6 @@ Use case ends.
   `excluded` so it is not compared with itself.
 * `force/` is a valueless flag parsed by `ParserUtil#parseForceFlag`. Overlaps are computed on demand and never
   stored, so the JSON format is unchanged and saved files that already contain overlaps still load.
-
-**Use case: UC18 - Receive meeting alert**
-
-**MSS**
-
-1. User has an upcoming meeting.
-2. PingBook detects that the meeting is approaching.
-3. PingBook displays an alert containing the meeting details.
-4. User views the alert.
-
-Use case ends.
-
-**Extensions**
-
-* 1a. There are no upcoming meetings.
-
-* 1a1. PingBook does not display an alert.
-
-Use case ends.
-
-**Use case: UC19 - Prioritise task**
-
-**MSS**
-
-1. User selects a task.
-2. User provides an importance level or tag for the task.
-3. PingBook assigns the importance level or tag to the task.
-4. PingBook displays the task with its assigned priority.
-
-Use case ends.
-
-**Extensions**
-
-* 2a. The importance level or tag is invalid.
-
-* 2a1. PingBook shows an error message.
-
-Use case ends.
-
-**Use case: UC20 - Record meeting outcome**
-
-**MSS**
-
-1. User selects a completed meeting.
-2. User provides the outcome of the meeting.
-3. User provides any decisions or follow-up actions.
-4. PingBook saves the meeting outcome.
-
-Use case ends.
-
-**Extensions**
-
-* 2a. The meeting outcome is empty.
-
-* 2a1. PingBook shows an error message.
-
-Use case ends.
-
-**Use case: UC21 - View client meeting history**
-
-**MSS**
-
-1. User selects a client.
-2. User requests to view the client's meeting history.
-3. PingBook displays the client's meetings in chronological order.
-4. User views the meeting history.
-
-Use case ends.
-
-**Extensions**
-
-* 1a. The client does not exist.
-
-* 1a1. PingBook shows an error message.
-
-Use case ends.
-
-* 3a. The client has no meeting history.
-
-* 3a1. PingBook informs the user that there are no previous meetings with the client.
-
-Use case ends.
-
 
 
 ### Non-Functional Requirements
