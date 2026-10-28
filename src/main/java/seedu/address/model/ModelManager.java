@@ -115,7 +115,8 @@ public class ModelManager implements Model {
     @Override
     public List<Meeting> getOverlappingMeetings(Meeting meeting, Meeting excluded) {
         requireNonNull(meeting);
-        List<Meeting> overlaps = sortedMeetings.stream()
+        List<Meeting> overlaps = new SortedList<>(addressBook.getMeetingList(), sortedMeetings.getComparator())
+                .stream()
                 .filter(other -> other != excluded && !other.equals(excluded))
                 .filter(meeting::overlapsWith)
                 .collect(Collectors.toList());
