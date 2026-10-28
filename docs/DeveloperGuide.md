@@ -512,8 +512,8 @@ with commands completing within 1 second under typical usage.
 
 ### Glossary
 
-* **Client**: A person whose contact information and meeting records are managed by the application
-* **Command alias**: A user-defined alternative name or abbreviation for an application command
+* **Client**: A person whose contact information are managed by the application
+* **Meeting**: A scheduled event with a name and time recorded by the application
 
 --------------------------------------------------------------------------------------------------------------------
 
