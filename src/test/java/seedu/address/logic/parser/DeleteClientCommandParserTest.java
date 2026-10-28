@@ -21,7 +21,7 @@ public class DeleteClientCommandParserTest {
     private DeleteClientCommandParser parser = new DeleteClientCommandParser();
 
     @Test
-    public void parse_validArgs_returnsDeleteCommand() {
+    public void parse_validArgs_returnsDeleteClientCommand() {
         assertParseSuccess(parser, "1", new DeleteClientCommand(INDEX_FIRST_PERSON));
     }
 
