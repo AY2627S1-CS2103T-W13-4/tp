@@ -147,6 +147,20 @@ public class EditMeetingCommandParserTest {
     }
 
     @Test
+    public void parse_forceFlagBeforeFields_success() {
+        EditMeetingDescriptor descriptor = new EditMeetingDescriptorBuilder().withName(VALID_NAME).build();
+
+        assertParseSuccess(parser, "1 force/" + NAME_DESC,
+                new EditMeetingCommand(Index.fromOneBased(1), descriptor, true));
+    }
+
+    @Test
+    public void parse_forceFlagOnly_notEdited() {
+        // force/ is a supported prefix, so it is not rejected as an invalid format; no field is edited though
+        assertParseFailure(parser, "1 force/", EditMeetingCommand.MESSAGE_NOT_EDITED);
+    }
+
+    @Test
     public void parse_forceFlagInvalid_failure() {
         assertParseFailure(parser, "1" + NAME_DESC + " force/now", Messages.MESSAGE_FORCE_TAKES_NO_VALUE);
         assertParseFailure(parser, "1" + NAME_DESC + " force/ force/",

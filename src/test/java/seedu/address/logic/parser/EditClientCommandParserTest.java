@@ -85,6 +85,11 @@ public class EditClientCommandParserTest {
     }
 
     @Test
+    public void parse_forceFlag_failure() {
+        assertParseFailure(parser, "1" + NAME_DESC_AMY + " force/", MESSAGE_INVALID_FORMAT);
+    }
+
+    @Test
     public void parse_invalidValue_failure() {
         assertParseFailure(parser, "1" + INVALID_NAME_DESC, Name.MESSAGE_CONSTRAINTS); // invalid name
         assertParseFailure(parser, "1" + INVALID_PHONE_DESC, Phone.MESSAGE_CONSTRAINTS); // invalid phone

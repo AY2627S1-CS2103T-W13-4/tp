@@ -46,6 +46,11 @@ public class ListMeetingCommandParserTest {
     }
 
     @Test
+    public void parse_forceFlag_failure() {
+        assertParseFailure(parser, " force/", MESSAGE_INVALID_FORMAT);
+    }
+
+    @Test
     public void parse_tags_success() {
         assertParseSuccess(parser, " t/urgent", new ListMeetingCommand(Clock.systemDefaultZone(),
                 Set.of(new Tag("urgent"))));
