@@ -1,6 +1,6 @@
+
 package seedu.address.logic.parser;
 
-import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 
@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import seedu.address.logic.Messages;
 import seedu.address.logic.commands.FindMeetingCommand;
 
 public class FindMeetingCommandParserTest {
@@ -15,13 +16,35 @@ public class FindMeetingCommandParserTest {
     private final FindMeetingCommandParser parser = new FindMeetingCommandParser();
 
     @Test
-    public void parse_validArgs_returnsFindCommand() {
-        assertParseSuccess(parser, "Project Review", new FindMeetingCommand(List.of("Project", "Review")));
+    public void parse_validArgs_returnsFindMeetingCommand() {
+        assertParseSuccess(parser, "project",
+                new FindMeetingCommand(List.of("project")));
+
+        assertParseSuccess(parser, "project review",
+                new FindMeetingCommand(List.of("project", "review")));
     }
 
     @Test
-    public void parse_prefixNotSupportedByCommand_throwsParseException() {
-        assertParseFailure(parser, "Project n/Review",
-                String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindMeetingCommand.MESSAGE_USAGE));
+    public void parse_surroundingWhitespace_returnsFindMeetingCommand() {
+        assertParseSuccess(parser, "  project review  ",
+                new FindMeetingCommand(List.of("project", "review")));
+    }
+
+    @Test
+    public void parse_multipleSpacesBetweenKeywords_returnsFindMeetingCommand() {
+        assertParseSuccess(parser, "project   review",
+                new FindMeetingCommand(List.of("project", "review")));
+    }
+
+    @Test
+    public void parse_emptyArgs_throwsParseException() {
+        assertParseFailure(parser, "",
+                String.format(Messages.MESSAGE_INVALID_COMMAND_FORMAT, FindMeetingCommand.MESSAGE_USAGE));
+    }
+
+    @Test
+    public void parse_whitespaceOnlyArgs_throwsParseException() {
+        assertParseFailure(parser, "   ",
+                String.format(Messages.MESSAGE_INVALID_COMMAND_FORMAT, FindMeetingCommand.MESSAGE_USAGE));
     }
 }
