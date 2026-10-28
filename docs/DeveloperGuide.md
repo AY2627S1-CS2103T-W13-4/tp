@@ -531,41 +531,99 @@ testers are expected to do more *exploratory* testing.
 
 1. Initial launch
 
-   1. Download the JAR file and copy it into an empty folder.
+   1. Prerequisite: Run PingBook in a folder without an existing data file.
 
-   1. Double-click the JAR file.<br>
-      Expected: The GUI opens with a set of sample contacts. The window size may not be optimal.
+   2. Test case: Launch the application.<br>
+      Expected: The GUI opens with the sample clients displayed.
 
-1. Saving window preferences
+2. Saving window preferences
 
-   1. Resize the window to an optimal size. Move the window to a different location. Close the window.
+   1. Resize and move the window, then close and relaunch PingBook.<br>
+      Expected: The latest window size and position are restored.
 
-   1. Relaunch the app by double-clicking the JAR file.<br>
-       Expected: The most recent window size and location are retained.
+### Adding a client
 
-1. _{ more test cases … }_
+1. Adding a valid client
 
-### Deleting a person
+   1. Test case: `addc n/Test Client p/91234567 e/test@example.com t/test`<br>
+      Expected: The client is added and displayed with the supplied tag.
 
-1. Deleting a person while all persons are being shown
+2. Rejecting invalid or duplicate clients
 
-   1. Prerequisites: List all persons using the `listc` command, with multiple persons in the list.
+   1. Test cases: `addc n/Test Client p/invalid e/test@example.com`, followed by the same valid `addc` command twice.<br>
+      Expected: Invalid data is rejected. The duplicate client is rejected and only one copy is stored.
 
-   1. Test case: `deletec 1`<br>
-      Expected: The first contact is deleted from the list. The status message shows the deleted contact's details.
+### Finding and filtering clients
 
-   1. Test case: `deletec 0`<br>
-      Expected: No person is deleted. The status message shows error details.
+1. Filtering clients by tags
 
-   1. Other incorrect delete commands to try: `deletec`, `deletec x`, `...` (where x is larger than the list size)<br>
-      Expected: Similar to previous.
+   1. Prerequisite: Add clients with different combinations of tags.
 
-1. _{ more test cases … }_
+   2. Test case: `listc t/friend t/colleague`<br>
+      Expected: Only clients containing both tags are displayed. Tag matching is case-insensitive.
 
-### Saving data
+2. Finding clients by name
 
-1. Dealing with missing/corrupted data files
+   1. Prerequisite: Add clients whose names contain different keywords.
 
-   1. _{Explain how to simulate missing or corrupted data files and state the expected behavior.}_
+   2. Test case: `findc alex david`<br>
+      Expected: Clients matching either keyword are displayed, ignoring case.
 
-1. _{ more test cases … }_
+### Deleting a client
+
+1. Deleting a client while all clients are being shown
+
+    1. Prerequisite: List all clients using the `listc` command, with multiple clients in the list.
+
+    2. Test case: `deletec 1`<br>
+       Expected: The first client is deleted from the list. The status message shows the deleted client's details.
+
+    3. Test cases: `deletec 0`, `deletec`, and `deletec x`<br>
+       Expected: No client is deleted. The status message shows error details.
+
+### Adding a meeting
+
+1. Validating and adding meetings
+
+   1. Test cases: Add a valid meeting, then try a missing field, an invalid date, and an end time earlier than the start time.<br>
+      Expected: The valid meeting is added. Each invalid command is rejected with an error message.
+
+2. Detecting meeting overlaps
+
+   1. Prerequisite: Add one meeting on a particular date.
+
+   2. Test cases: Add an overlapping meeting without `force/`, then repeat it with `force/`.<br>
+      Expected: The first command is rejected with the conflicting meeting listed. The second command saves the meeting and displays a warning.
+
+   3. Test case: Add a meeting that starts exactly when another meeting ends.<br>
+      Expected: The meeting is accepted because touching boundaries do not overlap.
+
+### Finding and filtering meetings
+
+1. Filtering and ordering meetings
+
+   1. Prerequisite: Add meetings with different tags, including one whose end time has passed and one whose end time is in the future.
+
+   2. Test cases: `listm`, `listm t/work`, and `listm t/work t/urgent`<br>
+      Expected: Meetings are filtered by all supplied tags. Meetings whose end time has not passed appear before meetings whose end time has passed.
+
+### Editing a meeting
+
+1. Editing a meeting
+
+   1. Prerequisite: Display meetings using `listm`.
+
+   2. Test cases: `editm 1 t/updated` and `editm 1 t/`<br>
+      Expected: The first command replaces the meeting's tags and the second removes all tags.
+
+### Deleting a meeting
+
+1. Deleting a meeting while all meetings are being shown
+
+   1. Prerequisite: List all meetings using the `listm` command, with multiple meetings in the list.
+
+   2. Test case: `deletem 1`<br>
+      Expected: The first meeting is deleted from the list. The status message shows the deleted meeting's details.
+
+   3. Test cases: `deletem 0`, `deletem`, and `deletem x`<br>
+      Expected: No meeting is deleted. The status message shows error details.
