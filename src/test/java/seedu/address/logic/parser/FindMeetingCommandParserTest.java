@@ -51,6 +51,6 @@ public class FindMeetingCommandParserTest {
     @Test
     public void parse_forceFlag_throwsParseException() {
         assertParseFailure(parser, "Project force/",
-                String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindMeetingCommand.MESSAGE_USAGE));
+                String.format(Messages.MESSAGE_INVALID_COMMAND_FORMAT, FindMeetingCommand.MESSAGE_USAGE));
     }
 }
