@@ -62,13 +62,14 @@ public class Person {
     }
 
     /**
-     * Checks if this person contains all tags of a set of tags.
+     * Checks if this person contains all tags of a set of tags. Matching is case-insensitive.
      * @param tagList The requested tags. Cannot be null or contain null items.
      * @return True if this person has all tags required.
      */
     public boolean hasAllTags(Set<Tag> tagList) {
         requireAllNonNull(tagList);
-        return tags.containsAll(tagList);
+        return tagList.stream().allMatch(requestedTag -> tags.stream().anyMatch(
+                personTag -> personTag.tagName.equalsIgnoreCase(requestedTag.tagName)));
     }
 
     /**

@@ -101,7 +101,7 @@ Shows a list of all persons in PingBook that match the given tags.
 Format: `listc [t/TAG]...`
 
 * `TAG` is optional and there can be multiple tags.
-* Tags are alphanumeric and case-sensitive.
+* Tags are alphanumeric and use case-insensitive matching.
 * The command will only accept `TAG` fields. Other fields such as `NAME`, `DATE` are rejected.
 * The command is case-sensitive. `listC` or `Listc` are considered invalid.
 * A person is shown only if they have all the tags given.

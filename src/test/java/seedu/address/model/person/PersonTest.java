@@ -70,6 +70,16 @@ public class PersonTest {
     }
 
     @Test
+    public void hasAllTags_ignoresTagNameCase() {
+        // requested tags differ in case -> returns true
+        assertTrue(BOB.hasAllTags(Set.of(new Tag(VALID_TAG_FRIEND.toUpperCase()),
+                new Tag(VALID_TAG_HUSBAND.toLowerCase()))));
+
+        // one requested tag is missing, regardless of case -> returns false
+        assertFalse(BOB.hasAllTags(Set.of(new Tag(VALID_TAG_FRIEND.toUpperCase()), new Tag("COLLEAGUE"))));
+    }
+
+    @Test
     public void hasAllTags_nullTags_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> BOB.hasAllTags(null));
 
