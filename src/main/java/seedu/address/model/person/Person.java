@@ -68,7 +68,8 @@ public class Person {
      */
     public boolean hasAllTags(Set<Tag> tagList) {
         requireAllNonNull(tagList);
-        return tags.containsAll(tagList);
+        return tagList.stream().allMatch(requestedTag -> tags.stream().anyMatch(
+                personTag -> personTag.tagName.equalsIgnoreCase(requestedTag.tagName)));
     }
 
     /**
