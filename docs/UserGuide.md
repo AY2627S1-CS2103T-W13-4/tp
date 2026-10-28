@@ -214,10 +214,12 @@ Format: `editc INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [t/TAG]... `
 * Existing values will be updated to the input values.
 * When editing tags, all of the person's existing tags are removed; adding tags is not cumulative.
 * To remove all of a person's tags, enter `t/` without a tag after it.
+* To remove a person's address, enter `a/` without an address after it. The person then has no address, as if they were added without one. Removing the address of a person who already has none has no effect.
 
 Examples:
 *  `editc 1 p/91234567 e/johndoe@example.com` Edits the phone number and email address of the 1st person to be `91234567` and `johndoe@example.com` respectively.
 *  `editc 2 n/Betsy Crower t/` Edits the name of the 2nd person to be `Betsy Crower` and clears all existing tags.
+*  `editc 3 a/` Removes the address of the 3rd person.
 
 ### Locating persons by name: `findc`
 

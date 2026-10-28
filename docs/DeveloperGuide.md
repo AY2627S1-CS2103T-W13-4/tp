@@ -509,6 +509,12 @@ Use case ends.
 
       Use case ends.
 
+* 3b. The user requests to remove the client's address (`a/` with no value) or all tags (`t/` with no value).
+
+    * 3b1. PingBook clears that field. Clearing an address that is already absent changes nothing.
+
+      Use case resumes at step 4.
+
 **Use case: UC11 - Tag client**
 
 **MSS**
