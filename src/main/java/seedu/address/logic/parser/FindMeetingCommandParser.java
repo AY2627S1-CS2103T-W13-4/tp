@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 import seedu.address.logic.commands.FindMeetingCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.meeting.MeetingName;
 
 /**
  * Parses input arguments and creates a new FindMeetingCommand object.
@@ -31,6 +32,13 @@ public class FindMeetingCommandParser implements Parser<FindMeetingCommand> {
         }
 
         String[] keywords = trimmedArgs.split("\\s+");
+
+        for (String keyword : keywords) {
+            if (!MeetingName.isValidName(keyword)) {
+                throw new ParseException(MeetingName.MESSAGE_CONSTRAINTS);
+            }
+        }
+
         return new FindMeetingCommand(Arrays.asList(keywords));
     }
 }
