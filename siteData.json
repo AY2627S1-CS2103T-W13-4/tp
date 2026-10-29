@@ -138,7 +138,7 @@
       "src": "index.md",
       "title": "",
       "headings": {
-        "addressbook-level-3": "AddressBook Level-3"
+        "pingbook": "PingBook"
       },
       "headingKeywords": {}
     },
@@ -146,7 +146,7 @@
       "src": "team/johndoe.md",
       "title": "John Doe's Project Portfolio Page",
       "headings": {
-        "project-addressbook-level-3": "Project: AddressBook Level 3"
+        "project-pingbook": "Project: PingBook"
       },
       "headingKeywords": {}
     }
