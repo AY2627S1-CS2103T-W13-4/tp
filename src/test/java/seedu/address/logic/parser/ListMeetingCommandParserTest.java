@@ -57,8 +57,23 @@ public class ListMeetingCommandParserTest {
         ListMeetingCommand multipleTags = new ListMeetingCommand(Clock.systemDefaultZone(),
                 Set.of(new Tag("urgent"), new Tag("work")));
         assertParseSuccess(parser, " t/urgent t/work", multipleTags);
-        assertParseSuccess(parser, "t/urgent\tt/work  ", multipleTags);
+        assertParseSuccess(parser, "  t/urgent  t/work  ", multipleTags);
+        assertParseSuccess(parser, " t/urgent t/work\t ", multipleTags);
         assertParseSuccess(parser, " t/URGENT t/urgent t/work", multipleTags);
+    }
+
+    @Test
+    public void parse_tagWithoutPrecedingSpace_throwsParseException() {
+        for (String arguments : new String[]{"t/urgent", "\tt/urgent", "\nt/urgent"}) {
+            assertParseFailure(parser, arguments, MESSAGE_INVALID_FORMAT);
+        }
+    }
+
+    @Test
+    public void parse_tagsSeparatedByTabOrNewline_throwsParseException() {
+        for (String arguments : new String[]{" t/urgent\tt/work", " t/urgent\nt/work"}) {
+            assertParseFailure(parser, arguments, Tag.MESSAGE_CONSTRAINTS);
+        }
     }
 
     @Test

@@ -101,6 +101,7 @@ Shows a list of all persons in PingBook that match the given tags.
 Format: `listc [t/TAG]...`
 
 * `TAG` is optional and there can be multiple tags.
+* Use spaces before each `t/TAG` argument. A tab alone cannot separate the arguments.
 * Tags are alphanumeric and use case-insensitive matching.
 * The command will only accept `TAG` fields. Other fields such as `NAME`, `DATE` are rejected.
 * The command is case-sensitive. `listC` or `Listc` are considered invalid.
@@ -152,6 +153,7 @@ Format: `listm [t/TAG]...`
   Matching uses complete tag names and ignores case: `t/urgent` matches `Urgent`, but does not match `urgentMeeting`.
 * Each invocation replaces the previous filter. Repeated tags do not change the results.
 * Tag names must contain only letters and digits. Empty tags (`listm t/`) are rejected.
+* Use spaces before each `t/TAG` argument. A tab alone cannot separate the arguments.
 * Leading and trailing whitespace is ignored. Other arguments such as `listm 1` and `listm --all` are rejected.
 * The command is case-sensitive. `Listm` and `LISTM` show `Unknown command. Did you mean "listm"?`.
 * Ongoing and upcoming meetings appear first, ordered by date and start time.
