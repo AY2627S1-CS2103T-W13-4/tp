@@ -98,6 +98,7 @@ public class AddMeetingCommandTest {
 
     @Test
     public void execute_duplicateMeetingWithDifferentTags_throwsCommandException() {
+        // EP: identical meeting identity with different tags is still a duplicate and must be rejected.
         Model model = new ModelManager();
         model.addMeeting(PROJECT_REVIEW);
         Meeting tagged = new Meeting(PROJECT_REVIEW.getName(), PROJECT_REVIEW.getDate(),

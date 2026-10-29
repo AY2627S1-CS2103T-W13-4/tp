@@ -38,6 +38,7 @@ public class JsonAdaptedMeetingTest {
 
     @Test
     public void toModelType_taggedMeeting_preservesTagsThroughJson() throws Exception {
+        // Round-trip testing: serializing and deserializing a tagged meeting must preserve its values and tags.
         Meeting tagged = new Meeting(CLIENT_REVIEW.getName(), CLIENT_REVIEW.getDate(),
                 CLIENT_REVIEW.getStartTime(), CLIENT_REVIEW.getEndTime(),
                 Set.of(new Tag("urgent"), new Tag("work")));
@@ -49,6 +50,7 @@ public class JsonAdaptedMeetingTest {
 
     @Test
     public void toModelType_missingOrNullTags_loadsUntaggedMeeting() throws Exception {
+        // EP: legacy JSON with an absent tags field and JSON with an explicit null both load as untagged meetings.
         String details = "{\"name\":\"Client Review\",\"date\":\"15/10/2026\","
                 + "\"startTime\":\"0900\",\"endTime\":\"1000\"";
         Meeting missingTags = JsonUtil.fromJsonString(details + "}", JsonAdaptedMeeting.class).toModelType();
@@ -60,6 +62,7 @@ public class JsonAdaptedMeetingTest {
 
     @Test
     public void toModelType_duplicateTags_storesOnce() throws Exception {
+        // EP: repeated identical tag entries must normalize to a single tag in the model.
         JsonAdaptedMeeting meeting = new JsonAdaptedMeeting(VALID_NAME, VALID_DATE, VALID_START_TIME, VALID_END_TIME,
                 List.of(new JsonAdaptedTag("urgent"), new JsonAdaptedTag("urgent")));
         assertEquals(Set.of(new Tag("urgent")), meeting.toModelType().getTags());
@@ -67,11 +70,13 @@ public class JsonAdaptedMeetingTest {
 
     @Test
     public void toModelType_invalidTags_throwsIllegalValueException() {
+        // EP: empty, punctuated, multiword and null tag names are invalid stored values.
         for (String invalidTag : Arrays.asList("", "urgent!", "very urgent", null)) {
             JsonAdaptedMeeting meeting = new JsonAdaptedMeeting(VALID_NAME, VALID_DATE, VALID_START_TIME,
                     VALID_END_TIME, List.of(new JsonAdaptedTag(invalidTag)));
             assertThrows(IllegalValueException.class, Tag.MESSAGE_CONSTRAINTS, meeting::toModelType);
         }
+        // EP: a null tag entry is invalid as well as an entry with a null tag name.
         JsonAdaptedMeeting nullTag = new JsonAdaptedMeeting(VALID_NAME, VALID_DATE, VALID_START_TIME,
                 VALID_END_TIME, Arrays.asList((JsonAdaptedTag) null));
         assertThrows(IllegalValueException.class, Tag.MESSAGE_CONSTRAINTS, nullTag::toModelType);

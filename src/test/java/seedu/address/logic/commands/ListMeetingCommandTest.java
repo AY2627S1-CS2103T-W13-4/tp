@@ -37,6 +37,7 @@ public class ListMeetingCommandTest {
 
     @Test
     public void execute_emptyList_success() {
+        // BVA (boundary value analysis): zero meetings is the minimum list size and must still show the meeting panel.
         CommandResult result = command.execute(model);
         assertEquals(ListMeetingCommand.MESSAGE_SUCCESS, result.getFeedbackToUser());
         assertTrue(result.isShowMeetings());
@@ -47,6 +48,7 @@ public class ListMeetingCommandTest {
 
     @Test
     public void execute_tagFilter_matchesAllTagsAndPreservesSorting() {
+        // EP: meetings with all requested tags match regardless of case; a meeting missing one tag is hidden.
         Meeting later = taggedMeeting("Later", "09/10/2026", "1400", "1500", "urgent", "work");
         Meeting hidden = taggedMeeting("Hidden", "08/10/2026", "0900", "1000", "urgent");
         Meeting finished = taggedMeeting("Finished", "07/10/2026", "0900", "1000", "urgent", "work");
@@ -65,6 +67,7 @@ public class ListMeetingCommandTest {
 
     @Test
     public void execute_newFilterReplacesPreviousAndPlainListClearsFilter() {
+        // State transition: replace one tag filter with another, then clear the filter with plain listm.
         Meeting urgent = taggedMeeting("Urgent", "08/10/2026", "1400", "1500", "urgent");
         Meeting work = taggedMeeting("Work", "09/10/2026", "1400", "1500", "work");
         List.of(urgent, work).forEach(model::addMeeting);
@@ -81,6 +84,7 @@ public class ListMeetingCommandTest {
 
     @Test
     public void execute_noMatches_displaysEmptyMeetingPanelWithCount() {
+        // BVA: zero matches from a non-empty source must show an empty meeting panel and report count zero.
         model.addMeeting(meeting("Untagged", "08/10/2026", "1400", "1500"));
         CommandResult result = new ListMeetingCommand(NOON, Set.of(new Tag("missing"))).execute(model);
         assertTrue(model.getMeetingList().isEmpty());
@@ -91,6 +95,7 @@ public class ListMeetingCommandTest {
 
     @Test
     public void equals_comparesFilterAndClock() {
+        // EP: equal filter and clock, changed filter, changed clock, null and another type.
         ListMeetingCommand filtered = new ListMeetingCommand(NOON, Set.of(new Tag("urgent")));
         assertEquals(filtered, filtered);
         assertEquals(filtered, new ListMeetingCommand(NOON, Set.of(new Tag("URGENT"))));
@@ -102,11 +107,13 @@ public class ListMeetingCommandTest {
 
     @Test
     public void execute_mixedMeetings_ordersEachGroupChronologically() {
+        // EP: ongoing and future meetings precede finished meetings; dates span different days and months.
         Meeting yesterday = meeting("Yesterday", "07/10/2026", "1000", "1100");
         Meeting lastMonth = meeting("Last month", "30/09/2026", "1000", "1100");
         Meeting tomorrow = meeting("Tomorrow", "09/10/2026", "0900", "1000");
         Meeting ongoing = meeting("Ongoing", "08/10/2026", "1130", "1230");
         Meeting afternoon = meeting("Afternoon", "08/10/2026", "1500", "1600");
+        // BVA: an end time exactly equal to now belongs to the finished group.
         Meeting endingNow = meeting("Ending now", "08/10/2026", "1100", "1200");
         List.of(yesterday, tomorrow, afternoon, lastMonth, endingNow, ongoing).forEach(model::addMeeting);
         model.addPerson(ALICE);
@@ -123,6 +130,7 @@ public class ListMeetingCommandTest {
 
     @Test
     public void execute_singleMeeting_showsMeeting() {
+        // BVA: one meeting is the smallest non-empty list and must be displayed unchanged.
         Meeting onlyMeeting = meeting("Only meeting", "08/10/2026", "1500", "1600");
         model.addMeeting(onlyMeeting);
         command.execute(model);
@@ -131,6 +139,7 @@ public class ListMeetingCommandTest {
 
     @Test
     public void execute_timeAdvances_refreshesFinishedGroup() {
+        // BVA: advancing the clock to exactly a meeting's end time moves it into the finished group.
         Meeting earlier = meeting("Earlier", "08/10/2026", "1300", "1400");
         Meeting later = meeting("Later", "08/10/2026", "1500", "1600");
         model.addMeeting(later);
@@ -145,6 +154,7 @@ public class ListMeetingCommandTest {
 
     @Test
     public void execute_timeAdvances_existingViewReceivesOrderUpdates() {
+        // BVA: at the exact end time, reordering must also notify observers of the existing view.
         Meeting earlier = meeting("Earlier", "08/10/2026", "1300", "1400");
         Meeting later = meeting("Later", "08/10/2026", "1500", "1600");
         List.of(later, earlier).forEach(model::addMeeting);
@@ -171,6 +181,7 @@ public class ListMeetingCommandTest {
 
     @Test
     public void execute_sameInstantDifferentZones_groupsUsingClockZone() {
+        // EP: the same instant in different clock zones gives different local times for grouping meetings.
         Meeting morning = meeting("Morning", "08/10/2026", "0900", "1000");
         Meeting afternoon = meeting("Afternoon", "08/10/2026", "1500", "1600");
         List.of(afternoon, morning).forEach(model::addMeeting);
@@ -187,6 +198,7 @@ public class ListMeetingCommandTest {
 
     @Test
     public void execute_equalDateAndTimes_ordersNamesIgnoringCase() {
+        // EP: equal dates and times require the name tie-breaker; mixed-case names expose case-sensitive sorting.
         Meeting beta = meeting("Beta", "08/10/2026", "1500", "1600");
         Meeting alpha = meeting("alpha", "08/10/2026", "1500", "1600");
         List.of(beta, alpha).forEach(model::addMeeting);
@@ -198,6 +210,7 @@ public class ListMeetingCommandTest {
 
     @Test
     public void execute_equalStartTimes_ordersByEndTimeThenName() {
+        // EP: equal starts with different end times, then equal start and end times with different names.
         Meeting beta = meeting("Beta", "08/10/2026", "1500", "1700");
         Meeting alpha = meeting("Alpha", "08/10/2026", "1500", "1700");
         Meeting shorter = meeting("Shorter", "08/10/2026", "1500", "1600");
@@ -208,6 +221,7 @@ public class ListMeetingCommandTest {
 
     @Test
     public void execute_sourceChanges_existingViewUpdates() {
+        // State transition: add, delete and reset the source while retaining the same observable view.
         Meeting later = meeting("Later", "08/10/2026", "1500", "1600");
         Meeting earlier = meeting("Earlier", "08/10/2026", "1300", "1400");
         model.addMeeting(later);
@@ -224,6 +238,7 @@ public class ListMeetingCommandTest {
 
     @Test
     public void execute_duplicateAlreadyRejected_displaysOneMeeting() {
+        // EP: case and spacing variants of the same meeting name are duplicates and must not create another row.
         Meeting meeting = meeting("Team meeting", "08/10/2026", "1500", "1600");
         model.addMeeting(meeting);
         Meeting duplicate = meeting(" TEAM   MEETING ", "08/10/2026", "1500", "1600");
@@ -234,6 +249,7 @@ public class ListMeetingCommandTest {
 
     @Test
     public void execute_nullModel_throwsNullPointerException() {
+        // EP: null model, clock and ordering time are invalid inputs to their respective operations.
         assertThrows(NullPointerException.class, () -> command.execute(null));
         assertThrows(NullPointerException.class, () -> new ListMeetingCommand(null));
         assertThrows(NullPointerException.class, () -> model.updateMeetingListOrder(null));

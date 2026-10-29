@@ -60,6 +60,7 @@ public class AddMeetingCommandParserTest {
 
     @Test
     public void parse_optionalTags_success() {
+        // EP: single, multiple and repeated tags, reordered prefixes and padded values are valid tag inputs.
         String details = NAME_DESC + DATE_DESC + START_TIME_DESC + END_TIME_DESC;
         Meeting singleTag = new Meeting(VALID_MEETING.getName(), VALID_MEETING.getDate(),
                 VALID_MEETING.getStartTime(), VALID_MEETING.getEndTime(), Set.of(new Tag("urgent")));
@@ -71,6 +72,7 @@ public class AddMeetingCommandParserTest {
         assertParseSuccess(parser, details + " t/urgent t/work", new AddMeetingCommand(multipleTags));
         assertParseSuccess(parser, " t/urgent" + NAME_DESC + DATE_DESC + " t/work"
                 + START_TIME_DESC + END_TIME_DESC, new AddMeetingCommand(multipleTags));
+        // EP: duplicate tag values are valid and collapse to one tag.
         assertParseSuccess(parser, details + " t/urgent t/urgent", new AddMeetingCommand(singleTag));
         assertParseSuccess(parser, details + " t/ urgent  ", new AddMeetingCommand(singleTag));
     }
@@ -85,6 +87,7 @@ public class AddMeetingCommandParserTest {
 
     @Test
     public void parse_invalidTags_failure() {
+        // EP: empty, blank, punctuated and multiword tags are invalid; a valid later tag must not mask an empty one.
         String details = NAME_DESC + DATE_DESC + START_TIME_DESC + END_TIME_DESC;
         assertParseFailure(parser, details + " t/", Tag.MESSAGE_CONSTRAINTS);
         assertParseFailure(parser, details + " t/   ", Tag.MESSAGE_CONSTRAINTS);

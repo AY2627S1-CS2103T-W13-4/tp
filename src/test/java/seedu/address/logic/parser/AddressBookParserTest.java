@@ -163,12 +163,14 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_listMeeting_success() throws Exception {
+        // EP: a bare listm command and one surrounded by whitespace both dispatch to the meeting command.
         assertTrue(parser.parseCommand("listm") instanceof ListMeetingCommand);
         assertTrue(parser.parseCommand(" \tlistm \t ") instanceof ListMeetingCommand);
     }
 
     @Test
     public void parseCommand_listMeetingWithArguments_throwsParseException() {
+        // EP: an unsupported flag and an unexpected positional index are invalid listm arguments.
         String message = String.format(MESSAGE_INVALID_COMMAND_FORMAT, ListMeetingCommand.MESSAGE_USAGE);
         assertThrows(ParseException.class, message, () -> parser.parseCommand("listm --all"));
         assertThrows(ParseException.class, message, () -> parser.parseCommand("listm 1"));
@@ -176,6 +178,7 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_listCommandsWithTabBeforeTag_throwsParseException() {
+        // EP: a tab before the first tag is an invalid separator for both listc and listm.
         String clientMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, ListClientCommand.MESSAGE_USAGE);
         String meetingMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, ListMeetingCommand.MESSAGE_USAGE);
 
@@ -185,6 +188,7 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_listMeetingWrongCase_suggestsCorrectCommand() {
+        // EP: mixed-case and uppercase spellings are invalid variants of the case-sensitive listm command.
         String message = ListMeetingCommand.MESSAGE_UNKNOWN_COMMAND;
         assertThrows(ParseException.class, message, () -> parser.parseCommand("Listm"));
         assertThrows(ParseException.class, message, () -> parser.parseCommand("LISTM"));

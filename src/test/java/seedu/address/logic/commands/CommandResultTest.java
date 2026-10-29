@@ -34,7 +34,7 @@ public class CommandResultTest {
         // different exit value -> returns false
         assertFalse(commandResult.equals(new CommandResult("feedback", false, true)));
 
-        // different displayed list -> returns false
+        // EP: identical feedback but a different displayed list makes command results unequal.
         assertFalse(commandResult.equals(new CommandResult("feedback", true)));
     }
 
@@ -66,6 +66,7 @@ public class CommandResultTest {
 
     @Test
     public void constructor_meetingResult_selectsMeetingList() {
+        // EP: meeting results versus default contact results; equivalent meeting results must also compare equally.
         CommandResult result = new CommandResult("Listed all meetings.", true);
         assertTrue(result.isShowMeetings());
         assertFalse(result.isShowHelp());

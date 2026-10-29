@@ -98,6 +98,7 @@ public class LogicManagerTest {
 
     @Test
     public void execute_listMeeting_sortsViewAndPreservesStoredOrder() throws Exception {
+        // Error guessing: reverse insertion order exposes accidental sorting of stored data instead of only the view.
         Meeting later = new Meeting(new MeetingName("Later"), new MeetingDate("09/10/2099"),
                 new MeetingTime("1500"), new MeetingTime("1600"));
         Meeting earlier = new Meeting(new MeetingName("Earlier"), new MeetingDate("08/10/2099"),

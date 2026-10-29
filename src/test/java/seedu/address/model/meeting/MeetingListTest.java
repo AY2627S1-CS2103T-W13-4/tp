@@ -55,6 +55,7 @@ public class MeetingListTest {
 
     @Test
     public void add_sameIdentityDifferentTags_throwsDuplicateMeetingException() {
+        // EP: an existing meeting with different tags still belongs to the duplicate-identity partition.
         MeetingList list = new MeetingList();
         Meeting meeting = createMeeting("Client Meeting", "15/10/2026", "0900", "1000");
         Meeting tagged = new Meeting(meeting.getName(), meeting.getDate(), meeting.getStartTime(),
@@ -68,6 +69,7 @@ public class MeetingListTest {
 
     @Test
     public void setMeetings_sameIdentityDifferentTags_rejectsAndPreservesExistingList() {
+        // EP: replacement data containing duplicate identities is invalid even when their tags differ.
         MeetingList list = new MeetingList();
         Meeting original = createMeeting("Original Meeting", "14/10/2026", "0900", "1000");
         list.add(original);
