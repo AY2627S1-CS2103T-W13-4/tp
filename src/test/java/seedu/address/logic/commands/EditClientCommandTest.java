@@ -131,7 +131,7 @@ public class EditClientCommandTest {
         EditClientCommand editClientCommand = new EditClientCommand(outOfBoundIndex, descriptor);
 
         assertCommandFailure(editClientCommand, model,
-                String.format(Messages.MESSAGE_INVALID_COMMAND_FORMAT, EditClientCommand.MESSAGE_USAGE));
+                String.format(Messages.MESSAGE_INVALID_PERSON_INDEX, EditClientCommand.MESSAGE_USAGE));
     }
 
     /**
@@ -149,7 +149,7 @@ public class EditClientCommandTest {
                 new EditPersonDescriptorBuilder().withName(VALID_NAME_BOB).build());
 
         assertCommandFailure(editClientCommand, model,
-                String.format(Messages.MESSAGE_INVALID_COMMAND_FORMAT, EditClientCommand.MESSAGE_USAGE));
+                String.format(Messages.MESSAGE_INVALID_PERSON_INDEX, EditClientCommand.MESSAGE_USAGE));
     }
 
     @Test

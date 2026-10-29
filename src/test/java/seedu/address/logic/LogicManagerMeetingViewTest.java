@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.Messages.MESSAGE_CONTACT_LIST_NOT_VISIBLE;
-import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static seedu.address.logic.Messages.MESSAGE_INVALID_MEETING_INDEX;
 import static seedu.address.logic.Messages.MESSAGE_MEETING_LIST_NOT_VISIBLE;
 import static seedu.address.logic.Messages.MESSAGE_UNKNOWN_COMMAND;
 import static seedu.address.logic.commands.CommandTestUtil.ADDRESS_DESC_AMY;
@@ -121,7 +121,7 @@ public class LogicManagerMeetingViewTest {
         assertTrue(logic.getMeetingList().isEmpty());
         assertEquals(List.of(hidden), addressBookStorage.readAddressBook().orElseThrow().getMeetingList());
         assertThrows(CommandException.class,
-                String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteMeetingCommand.MESSAGE_USAGE), () -> logic.execute(
+                String.format(MESSAGE_INVALID_MEETING_INDEX, DeleteMeetingCommand.MESSAGE_USAGE), () -> logic.execute(
                         DeleteMeetingCommand.COMMAND_WORD + " 1"));
 
         logic.execute(ListMeetingCommand.COMMAND_WORD);
@@ -247,7 +247,7 @@ public class LogicManagerMeetingViewTest {
         String originalFile = Files.readString(addressBookStorage.getAddressBookFilePath());
 
         assertThrows(CommandException.class,
-                String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteMeetingCommand.MESSAGE_USAGE), () -> logic.execute(
+                String.format(MESSAGE_INVALID_MEETING_INDEX, DeleteMeetingCommand.MESSAGE_USAGE), () -> logic.execute(
                         DeleteMeetingCommand.COMMAND_WORD + " 1"));
         assertEquals(originalSaveAttempts, addressBookStorage.saveAttempts);
         assertEquals(originalFile, Files.readString(addressBookStorage.getAddressBookFilePath()));

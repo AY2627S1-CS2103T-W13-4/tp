@@ -2,7 +2,7 @@ package seedu.address.logic.commands;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static seedu.address.logic.Messages.MESSAGE_INVALID_MEETING_INDEX;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
 
@@ -52,7 +52,7 @@ public class DeleteMeetingCommandTest {
         DeleteMeetingCommand command = new DeleteMeetingCommand(Index.fromOneBased(3));
 
         assertCommandFailure(command, model,
-                String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteMeetingCommand.MESSAGE_USAGE));
+                String.format(MESSAGE_INVALID_MEETING_INDEX, DeleteMeetingCommand.MESSAGE_USAGE));
     }
 
     @Test
@@ -61,7 +61,7 @@ public class DeleteMeetingCommandTest {
         DeleteMeetingCommand command = new DeleteMeetingCommand(Index.fromOneBased(1));
 
         assertCommandFailure(command, emptyModel,
-                String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteMeetingCommand.MESSAGE_USAGE));
+                String.format(MESSAGE_INVALID_MEETING_INDEX, DeleteMeetingCommand.MESSAGE_USAGE));
     }
 
     @Test

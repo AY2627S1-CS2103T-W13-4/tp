@@ -123,7 +123,7 @@ public class EditMeetingCommandTest {
                 new EditMeetingDescriptorBuilder().withName("Updated Meeting").build());
 
         assertCommandFailure(command, model,
-                String.format(Messages.MESSAGE_INVALID_COMMAND_FORMAT, EditMeetingCommand.MESSAGE_USAGE));
+                String.format(Messages.MESSAGE_INVALID_MEETING_INDEX, EditMeetingCommand.MESSAGE_USAGE));
     }
 
     @Test

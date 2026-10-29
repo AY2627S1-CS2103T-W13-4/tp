@@ -47,7 +47,7 @@ public class DeleteClientCommandTest {
         DeleteClientCommand deleteClientCommand = new DeleteClientCommand(outOfBoundIndex);
 
         assertCommandFailure(deleteClientCommand, model,
-                String.format(Messages.MESSAGE_INVALID_COMMAND_FORMAT, DeleteClientCommand.MESSAGE_USAGE));
+                String.format(Messages.MESSAGE_INVALID_PERSON_INDEX, DeleteClientCommand.MESSAGE_USAGE));
     }
 
     @Test
@@ -78,7 +78,7 @@ public class DeleteClientCommandTest {
         DeleteClientCommand deleteClientCommand = new DeleteClientCommand(outOfBoundIndex);
 
         assertCommandFailure(deleteClientCommand, model,
-                String.format(Messages.MESSAGE_INVALID_COMMAND_FORMAT, DeleteClientCommand.MESSAGE_USAGE));
+                String.format(Messages.MESSAGE_INVALID_PERSON_INDEX, DeleteClientCommand.MESSAGE_USAGE));
     }
 
     @Test

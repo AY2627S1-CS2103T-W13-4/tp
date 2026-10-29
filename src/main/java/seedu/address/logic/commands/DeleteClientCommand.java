@@ -37,7 +37,7 @@ public class DeleteClientCommand extends Command {
         List<Person> lastShownList = model.getFilteredPersonList();
 
         if (targetIndex.getZeroBased() >= lastShownList.size()) {
-            throw new CommandException(String.format(Messages.MESSAGE_INVALID_COMMAND_FORMAT, MESSAGE_USAGE));
+            throw new CommandException(String.format(Messages.MESSAGE_INVALID_PERSON_INDEX, MESSAGE_USAGE));
         }
 
         Person personToDelete = lastShownList.get(targetIndex.getZeroBased());

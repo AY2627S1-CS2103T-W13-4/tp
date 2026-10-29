@@ -85,7 +85,7 @@ public class EditMeetingCommand extends Command {
         List<Meeting> lastShownList = model.getMeetingList();
 
         if (index.getZeroBased() >= lastShownList.size()) {
-            throw new CommandException(String.format(Messages.MESSAGE_INVALID_COMMAND_FORMAT, MESSAGE_USAGE));
+            throw new CommandException(String.format(Messages.MESSAGE_INVALID_MEETING_INDEX, MESSAGE_USAGE));
         }
 
         Meeting meetingToEdit = lastShownList.get(index.getZeroBased());
