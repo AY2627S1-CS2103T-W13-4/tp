@@ -168,7 +168,7 @@ Format: `editc INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [t/TAG]... `
 * When editing tags, all of the contact's existing tags are removed; adding tags is not cumulative.
 * To remove all of a contact's tags, enter `t/` without a tag after it.
 * To remove a contact's address, enter `a/` without an address after it. The contact then has no address, as if they were added without one. Removing the address of a contact who already has none has no effect.
-* Any active `listc`/`findc` filter stays active after editing, so the displayed row numbers do not change.
+* Any active `listc`/`findc` filter stays active after editing.
   Editing a contact so that they no longer match the filter hides them from the displayed list, and the success message
   ends with a note saying so; run `listc` to show all contacts again.
 
