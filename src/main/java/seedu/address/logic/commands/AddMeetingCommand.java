@@ -84,6 +84,9 @@ public class AddMeetingCommand extends Command {
             feedback += "\n" + String.format(Messages.MESSAGE_MEETING_OVERLAP_WARNING,
                     Messages.formatOverlappingMeetings(overlaps));
         }
+        if (!model.getMeetingList().contains(toAdd)) {
+            feedback += "\n" + Messages.MESSAGE_MEETING_HIDDEN_BY_FILTER;
+        }
         return new CommandResult(feedback, true);
     }
 

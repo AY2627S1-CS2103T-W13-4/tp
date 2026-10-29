@@ -2,6 +2,8 @@ package seedu.address.logic.commands;
 
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
+import static seedu.address.logic.commands.CommandTestUtil.showPersonAtIndex;
+import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_PERSON;
 import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -35,6 +37,21 @@ public class AddClientCommandIntegrationTest {
 
         assertCommandSuccess(new AddClientCommand(validPerson), model,
                 String.format(AddClientCommand.MESSAGE_SUCCESS, Messages.format(validPerson)),
+                expectedModel);
+    }
+
+    @Test
+    public void execute_newPersonHiddenByFilter_successWithNote() {
+        showPersonAtIndex(model, INDEX_FIRST_PERSON);
+        Person validPerson = new PersonBuilder().build();
+
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+        showPersonAtIndex(expectedModel, INDEX_FIRST_PERSON);
+        expectedModel.addPerson(validPerson);
+
+        assertCommandSuccess(new AddClientCommand(validPerson), model,
+                String.format(AddClientCommand.MESSAGE_SUCCESS, Messages.format(validPerson))
+                        + "\n" + Messages.MESSAGE_PERSON_HIDDEN_BY_FILTER,
                 expectedModel);
     }
 
