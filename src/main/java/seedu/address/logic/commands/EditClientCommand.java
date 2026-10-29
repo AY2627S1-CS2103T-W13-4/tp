@@ -34,8 +34,8 @@ public class EditClientCommand extends Command {
 
     public static final String COMMAND_WORD = "editc";
 
-    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Edits the details of the person identified "
-            + "by the index number used in the displayed person list. "
+    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Edits the details of the contact identified "
+            + "by the index number used in the displayed contact list. "
             + "Existing values will be overwritten by the input values.\n"
             + "Use " + PREFIX_ADDRESS + " with no value to remove the address, "
             + "and " + PREFIX_TAG + " with no value to remove all tags.\n"
@@ -49,9 +49,9 @@ public class EditClientCommand extends Command {
             + PREFIX_PHONE + "91234567 "
             + PREFIX_EMAIL + "johndoe@example.com";
 
-    public static final String MESSAGE_EDIT_PERSON_SUCCESS = "Edited person: %1$s";
+    public static final String MESSAGE_EDIT_PERSON_SUCCESS = "Edited contact: %1$s";
     public static final String MESSAGE_NOT_EDITED = "At least one field to edit must be provided.";
-    public static final String MESSAGE_DUPLICATE_PERSON = "This person already exists in PingBook.";
+    public static final String MESSAGE_DUPLICATE_PERSON = "This contact already exists in PingBook.";
 
     private final Index index;
     private final EditPersonDescriptor editPersonDescriptor;

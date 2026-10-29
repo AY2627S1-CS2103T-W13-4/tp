@@ -17,12 +17,12 @@ public class Messages {
     public static final String MESSAGE_UNKNOWN_COMMAND = "Unknown command.";
     public static final String MESSAGE_INVALID_COMMAND_FORMAT = "Invalid command format!\n%1$s";
     public static final String MESSAGE_INVALID_MEETING_INDEX = "The meeting index provided is invalid!\n%1$s";
-    public static final String MESSAGE_INVALID_PERSON_INDEX = "The person index provided is invalid!\n%1$s";
+    public static final String MESSAGE_INVALID_PERSON_INDEX = "The contact index provided is invalid!\n%1$s";
     public static final String MESSAGE_CONTACT_LIST_NOT_VISIBLE =
             "Cannot edit or delete contacts while viewing meetings. Run listc to display contacts first.";
     public static final String MESSAGE_MEETING_LIST_NOT_VISIBLE =
-            "Cannot edit or delete meetings while viewing clients. Run listm to display meetings first.";
-    public static final String MESSAGE_PERSONS_LISTED_OVERVIEW = "%1$d person(s) listed!";
+            "Cannot edit or delete meetings while viewing contacts. Run listm to display meetings first.";
+    public static final String MESSAGE_PERSONS_LISTED_OVERVIEW = "%1$d contact(s) listed!";
     public static final String MESSAGE_DUPLICATE_FIELDS =
                 "Multiple values specified for the following single-valued field(s): ";
 
@@ -31,7 +31,7 @@ public class Messages {
     public static final String MESSAGE_MEETING_OVERLAP_WARNING =
             "Warning: this meeting overlaps with: %1$s.";
     public static final String MESSAGE_PERSON_HIDDEN_BY_FILTER =
-            "Note: this person is hidden by the current filter. Run listc to show all persons.";
+            "Note: this contact is hidden by the current filter. Run listc to show all contacts.";
     public static final String MESSAGE_MEETING_HIDDEN_BY_FILTER =
             "Note: this meeting is hidden by the current filter. Run listm to show all meetings.";
     public static final String MESSAGE_FORCE_TAKES_NO_VALUE = "force/ does not take a value.";

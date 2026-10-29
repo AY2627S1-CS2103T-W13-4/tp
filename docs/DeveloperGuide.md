@@ -89,7 +89,7 @@ The **API** of this component is specified in [`Ui.java`](https://github.com/AY2
 
 <puml src="diagrams/UiClassDiagram.puml" alt="Structure of the UI Component"/>
 
-The UI consists of a `MainWindow` and its parts, such as `CommandBox`, `ResultDisplay`, `PersonListPanel`, `MeetingListPanel`, and `StatusBarFooter`. The `PersonListPanel` and `MeetingListPanel` display clients and meetings respectively, using `PersonCard` and `MeetingCard` to represent individual entries. All of these, including `MainWindow`, inherit from the abstract `UiPart` class, which captures common behavior among classes that represent visible GUI parts.
+The UI consists of a `MainWindow` and its parts, such as `CommandBox`, `ResultDisplay`, `PersonListPanel`, `MeetingListPanel`, and `StatusBarFooter`. The `PersonListPanel` and `MeetingListPanel` display contacts and meetings respectively, using `PersonCard` and `MeetingCard` to represent individual entries. All of these, including `MainWindow`, inherit from the abstract `UiPart` class, which captures common behavior among classes that represent visible GUI parts.
 
 The `UI` component uses the JavaFX UI framework. The layouts of these UI parts are defined in matching `.fxml` files in `src/main/resources/view`. For example, [`MainWindow.fxml`](https://github.com/AY2627S1-CS2103T-W13-4/tp/tree/master/src/main/resources/view/MainWindow.fxml) specifies the layout of [`MainWindow`](https://github.com/AY2627S1-CS2103T-W13-4/tp/tree/master/src/main/java/seedu/address/ui/MainWindow.java).
 
@@ -145,9 +145,9 @@ How the parsing works:
 
 The `Model` component is implemented by `ModelManager`. It:
 
-* stores PingBook's clients and meetings in the `AddressBook` data class. Clients are represented by `Person` objects in a `UniquePersonList`, while meetings are represented by `Meeting` objects in a `MeetingList`.
+* stores PingBook's contacts and meetings in the `AddressBook` data class. Contacts are represented by `Person` objects in a `UniquePersonList`, while meetings are represented by `Meeting` objects in a `MeetingList`.
 * represents each `Meeting` with a `MeetingName`, a `MeetingDate`, two `MeetingTime` values (`startTime` and `endTime`), and zero or more `Tag` objects.
-* exposes clients selected by the current filter through `getFilteredPersonList()` as an unmodifiable `ObservableList<Person>` view that the UI can observe.
+* exposes contacts selected by the current filter through `getFilteredPersonList()` as an unmodifiable `ObservableList<Person>` view that the UI can observe.
 * maintains `filteredMeetings`, a `FilteredList<Meeting>` over the stored meeting list, and `sortedMeetings`, a `SortedList<Meeting>` over that filtered view. `updateFilteredMeetingList(...)` changes the filter, while `updateMeetingListOrder(...)` changes the display order without reordering stored meetings.
 * exposes `sortedMeetings` through `getMeetingList()` as an unmodifiable `ObservableList<Meeting>`. The UI receives this observable view through the `Logic` component and updates when its contents or order change.
 * stores a `UserPrefs` object that represents the user’s preferences (currently, just the GUI settings). This is exposed to the outside as a `ReadOnlyUserPrefs` object.
@@ -162,7 +162,7 @@ The `Model` component is implemented by `ModelManager`. It:
 
 The `Storage` component,
 * can save both address book data and user preference data in JSON format, and read them back into corresponding objects.
-* saves clients and meetings (including their tags) together in the address book JSON file, as the `persons` and `meetings` arrays. Data files without `meetings` or meeting `tags` still load.
+* saves contacts and meetings (including their tags) together in the address book JSON file, as the `persons` and `meetings` arrays. Data files without `meetings` or meeting `tags` still load.
 * is implemented by `StorageManager`, which delegates the actual JSON file access to `JsonAddressBookStorage` and `JsonUserPrefsStorage` (one class per data file).
 * depends on some classes in the `Model` component (because the `Storage` component's job is to save/retrieve objects that belong to the `Model`)
 
@@ -202,39 +202,39 @@ Classes used by multiple components are in the `seedu.address.commons` package.
 
 Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unlikely to have) - `*`
 
-| Priority | As a …          | I want to …                                                          | So that I can…                                             |
-|----------|-----------------|----------------------------------------------------------------------|------------------------------------------------------------|
-| `* * *`  | secretary       | view a list of clients                                               | keep track of clients                                      |
-| `* * *`  | secretary       | add clients with their email, mobile number, and name                | record clients' information                                |
-| `* * *`  | secretary       | delete clients                                                       | keep the list free of information that is no longer useful |
-| `* * *`  | secretary       | view a list of meetings                                              | focus entirely on immediate priorities                     |
-| `* * *`  | secretary       | add meetings with their date and time                                | record meetings                                            |
-| `* * *`  | secretary       | delete meetings                                                      | remove canceled meetings                                   |
-| `* *`    | secretary       | edit client and meeting information                                  | keep client and meeting details up to date                 |
-| `* *`    | secretary       | search for a client or meeting by name                               | find the clients or meetings I want                        |
-| `* *`    | secretary       | add tags to clients and meetings                                     | filter or search for groups of clients or meetings easily  |
-| `* *`    | secretary       | be warned when meeting schedules overlap, and override               | know about clashes but still schedule when intended        |
-| `* *`    | secretary       | clear all clients and meetings                                       | remove outdated information quickly                        |
-| `* *`    | first-time user | see a help guide containing all commands                             | know how to use the app                                    |
-| `*`      | first-time user | **Proposed:** add command aliases                                    | type frequently used commands quickly                      |
-| `*`      | secretary       | **Proposed:** see a client's meeting history                         | know when we last met                                      |
-| `*`      | secretary       | **Proposed:** record meeting outcomes after a meeting                | remember what happened during the meeting                  |
-| `*`      | secretary       | **Proposed:** view recently or frequently contacted clients          | easily find clients I am likely looking for                |
-| `*`      | secretary       | **Proposed:** view when I am free                                    | know when to schedule a meeting                            |
-| `*`      | secretary       | **Proposed:** add multiple emails and mobile numbers for each client | track clients with multiple contact details                |
-| `*`      | secretary       | **Proposed:** view tasks for the day                                 | focus on immediate priorities                              |
-| `*`      | secretary       | **Proposed:** add recurring tasks                                    | avoid adding the same task every time                      |
+| Priority | As a …          | I want to …                                                           | So that I can…                                             |
+|----------|-----------------|-----------------------------------------------------------------------|------------------------------------------------------------|
+| `* * *`  | secretary       | view a list of contacts                                               | keep track of contacts                                     |
+| `* * *`  | secretary       | add contacts with their email, mobile number, and name                | record contacts' information                               |
+| `* * *`  | secretary       | delete contacts                                                       | keep the list free of information that is no longer useful |
+| `* * *`  | secretary       | view a list of meetings                                               | focus entirely on immediate priorities                     |
+| `* * *`  | secretary       | add meetings with their date and time                                 | record meetings                                            |
+| `* * *`  | secretary       | delete meetings                                                       | remove canceled meetings                                   |
+| `* *`    | secretary       | edit contact and meeting information                                  | keep contact and meeting details up to date                |
+| `* *`    | secretary       | search for a contact or meeting by name                               | find the contacts or meetings I want                       |
+| `* *`    | secretary       | add tags to contacts and meetings                                     | filter or search for groups of contacts or meetings easily |
+| `* *`    | secretary       | be warned when meeting schedules overlap, and override                | know about clashes but still schedule when intended        |
+| `* *`    | secretary       | clear all contacts and meetings                                       | remove outdated information quickly                        |
+| `* *`    | first-time user | see a help guide containing all commands                              | know how to use the app                                    |
+| `*`      | first-time user | **Proposed:** add command aliases                                     | type frequently used commands quickly                      |
+| `*`      | secretary       | **Proposed:** see a contact's meeting history                         | know when we last met                                      |
+| `*`      | secretary       | **Proposed:** record meeting outcomes after a meeting                 | remember what happened during the meeting                  |
+| `*`      | secretary       | **Proposed:** view recently or frequently contacted contacts          | easily find contacts I am likely looking for               |
+| `*`      | secretary       | **Proposed:** view when I am free                                     | know when to schedule a meeting                            |
+| `*`      | secretary       | **Proposed:** add multiple emails and mobile numbers for each contact | track contacts with multiple contact details               |
+| `*`      | secretary       | **Proposed:** view tasks for the day                                  | focus on immediate priorities                              |
+| `*`      | secretary       | **Proposed:** add recurring tasks                                     | avoid adding the same task every time                      |
 
 ### Use cases
 
 (For all use cases below, the **System** is the `PingBook` and the **Actor** is the `user`, unless specified otherwise)
 
-**Use case: UC1 - View and filter clients**
+**Use case: UC1 - View and filter contacts**
 
 **MSS**
 
-1. User requests to view clients, optionally providing one or more tags.
-2. PingBook displays the clients matching all supplied tags.
+1. User requests to view contacts, optionally providing one or more tags.
+2. PingBook displays the contacts matching all supplied tags.
 
 Use case ends.
 
@@ -246,12 +246,12 @@ Use case ends.
 
       Use case ends.
 
-**Use case: UC2 - Add client**
+**Use case: UC2 - Add contact**
 
 **MSS**
 
 1. User provides a name, phone number, email address, and optionally an address and tags.
-2. PingBook adds the new client.
+2. PingBook adds the new contact.
 
 Use case ends.
 
@@ -263,18 +263,18 @@ Use case ends.
 
       Use case ends.
 
-* 2a. The client already exists.
+* 2a. The contact already exists.
 
-    * 2a1. PingBook shows an error message and does not add the client.
+    * 2a1. PingBook shows an error message and does not add the contact.
 
       Use case ends.
 
-**Use case: UC3 - Edit client**
+**Use case: UC3 - Edit contact**
 
 **MSS**
 
-1. User requests to edit a client using its displayed index and provides one or more fields to edit.
-2. PingBook replaces the supplied name, phone number, email address, address, or tags. A blank `a/` or `t/` removes the client's address or all tags instead.
+1. User requests to edit a contact using its displayed index and provides one or more fields to edit.
+2. PingBook replaces the supplied name, phone number, email address, address, or tags. A blank `a/` or `t/` removes the contact's address or all tags instead.
 
 Use case ends.
 
@@ -298,18 +298,18 @@ Use case ends.
 
       Use case ends.
 
-* 2a. The edited client duplicates another client.
+* 2a. The edited contact duplicates another contact.
 
-    * 2a1. PingBook shows an error message and does not edit the client.
+    * 2a1. PingBook shows an error message and does not edit the contact.
 
       Use case ends.
 
-**Use case: UC4 - Delete client**
+**Use case: UC4 - Delete contact**
 
 **MSS**
 
-1. User requests to delete a client using its displayed index.
-2. PingBook deletes the selected client.
+1. User requests to delete a contact using its displayed index.
+2. PingBook deletes the selected contact.
 
 Use case ends.
 
@@ -327,12 +327,12 @@ Use case ends.
 
       Use case ends.
 
-**Use case: UC5 - Find client**
+**Use case: UC5 - Find contact**
 
 **MSS**
 
 1. User provides one or more name keywords.
-2. PingBook displays clients whose names contain any of the keywords, ignoring case.
+2. PingBook displays contacts whose names contain any of the keywords, ignoring case.
 
 Use case ends.
 
@@ -497,7 +497,7 @@ Use case ends.
 **MSS**
 
 1. User requests to clear PingBook.
-2. PingBook removes all clients and meetings.
+2. PingBook removes all contacts and meetings.
 
 Use case ends.
 
@@ -523,18 +523,18 @@ Use case ends.
 ### Non-Functional Requirements
 
 1.  PingBook should run on Windows, macOS, and Linux with Java 25 installed, from a single JAR file without an installer or an internet connection.
-2.  PingBook should support at least 1000 clients and 1000 meetings,
+2.  PingBook should support at least 1000 contacts and 1000 meetings,
 with commands completing within 1 second under typical usage.
 3.  A user with above average typing speed for regular English text (i.e. not code, not system admin commands) should be able to accomplish most of the tasks faster using commands than using the mouse.
-4.  Client and meeting data should be stored in a human-editable text file. 
-5.  Client contact details and meeting information should remain on the user's computer. PingBook should not transmit them to a remote server or require an online account.
+4.  Contact and meeting data should be stored in a human-editable text file. 
+5.  Contact details and meeting information should remain on the user's computer. PingBook should not transmit them to a remote server or require an online account.
 6.  All functions should remain usable at a screen resolution of 1280 × 720 with 150% scaling. At 1920 × 1080 with 100% or 125% scaling, controls and information should not overlap or be cut off.
 7.  Command results, validation errors, and meeting status should be communicated in text, so users do not have to rely on colours or icons alone to understand them.
 
 
 ### Glossary
 
-* **Client**: A person whose contact information are managed by the application
+* **Contact (Client)**: A person whose contact information are managed by the application
 * **Meeting**: A scheduled event with a name and time recorded by the application
 * **Command alias**: A user-defined alternative name or abbreviation for an application command
 
@@ -557,52 +557,52 @@ testers are expected to do more *exploratory* testing.
    1. Prerequisite: Run PingBook in a folder without an existing data file.
 
    2. Test case: Launch the application.<br>
-      Expected: The GUI opens with the sample clients displayed.
+      Expected: The GUI opens with the sample contacts displayed.
 
 2. Saving window preferences
 
    1. Resize and move the window, then close and relaunch PingBook.<br>
       Expected: The latest window size and position are restored.
 
-### Adding a client
+### Adding a contact
 
-1. Adding a valid client
+1. Adding a valid contact
 
-   1. Test case: `addc n/Test Client p/91234567 e/test@example.com t/test`<br>
-      Expected: The client is added and displayed with the supplied tag.
+   1. Test case: `addc n/Test contact p/91234567 e/test@example.com t/test`<br>
+      Expected: The contact is added and displayed with the supplied tag.
 
-2. Rejecting invalid or duplicate clients
+2. Rejecting invalid or duplicate contacts
 
-   1. Test cases: `addc n/Test Client p/invalid e/test@example.com`, followed by the same valid `addc` command twice.<br>
-      Expected: Invalid data is rejected. The duplicate client is rejected and only one copy is stored.
+   1. Test cases: `addc n/Test contact p/invalid e/test@example.com`, followed by the same valid `addc` command twice.<br>
+      Expected: Invalid data is rejected. The duplicate contact is rejected and only one copy is stored.
 
-### Finding and filtering clients
+### Finding and filtering contacts
 
-1. Filtering clients by tags
+1. Filtering contacts by tags
 
-   1. Prerequisite: Add clients with different combinations of tags.
+   1. Prerequisite: Add contacts with different combinations of tags.
 
    2. Test case: `listc t/friend t/colleague`<br>
-      Expected: Only clients containing both tags are displayed. Tag matching is case-insensitive.
+      Expected: Only contacts containing both tags are displayed. Tag matching is case-insensitive.
 
-2. Finding clients by name
+2. Finding contacts by name
 
-   1. Prerequisite: Add clients whose names contain different keywords.
+   1. Prerequisite: Add contacts whose names contain different keywords.
 
    2. Test case: `findc alex david`<br>
-      Expected: Clients matching either keyword are displayed, ignoring case.
+      Expected: Contacts matching either keyword are displayed, ignoring case.
 
-### Deleting a client
+### Deleting a contact
 
-1. Deleting a client while all clients are being shown
+1. Deleting a contact while all contacts are being shown
 
-    1. Prerequisite: List all clients using the `listc` command, with multiple clients in the list.
+    1. Prerequisite: List all contacts using the `listc` command, with multiple contacts in the list.
 
     2. Test case: `deletec 1`<br>
-       Expected: The first client is deleted from the list. The status message shows the deleted client's details.
+       Expected: The first contact is deleted from the list. The status message shows the deleted contact's details.
 
     3. Test cases: `deletec 0`, `deletec`, and `deletec x`<br>
-       Expected: No client is deleted. The status message shows error details.
+       Expected: No contact is deleted. The status message shows error details.
 
 ### Adding a meeting
 
