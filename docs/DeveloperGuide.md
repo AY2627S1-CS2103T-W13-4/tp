@@ -597,7 +597,7 @@ testers are expected to do more *exploratory* testing.
    2. Test cases: Add an overlapping meeting without `force/`, then repeat it with `force/`.<br>
       Expected: The first command is rejected with the conflicting meeting listed. The second command saves the meeting and displays a warning.
 
-   3. Test case: Add a meeting that starts exactly when another meeting ends.<br>
+   3. Test case: Add a meeting that starts exactly when another meeting ends, without overlapping with any other meetings.<br>
       Expected: The meeting is accepted because touching boundaries do not overlap.
 
 ### Finding and filtering meetings
@@ -613,7 +613,7 @@ testers are expected to do more *exploratory* testing.
 
 1. Editing a meeting
 
-   1. Prerequisite: Display meetings using `listm`.
+   1. Prerequisite: Display meetings using `listm` and ensure that the first meeting displayed does not overlap with other meetings.
 
    2. Test cases: `editm 1 t/updated` and `editm 1 t/`<br>
       Expected: The first command replaces the meeting's tags and the second removes all tags.
