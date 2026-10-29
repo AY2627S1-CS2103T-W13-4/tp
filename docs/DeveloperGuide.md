@@ -118,17 +118,20 @@ How the parsing works:
 * All `XYZCommandParser` classes, such as `AddClientCommandParser` and `DeleteClientCommandParser`, implement the `Parser` interface so they can be treated similarly where appropriate, for example during testing.
 
 ### Model component
-**API** : [`Model.java`](https://github.com/AY2627S1-CS2103T-W13-4/tp/tree/master/src/main/java/seedu/address/model/Model.java)
+**API** : [`Model.java`](https://github.com/AY2627S1-CS2103T-W13-4/tp/blob/master/src/main/java/seedu/address/model/Model.java)
 
 <puml src="diagrams/ModelClassDiagram.puml" width="1000" />
 
-[Open the full-size model diagram](diagrams/ModelClassDiagram.png)
+[Open the full-size model diagram](diagrams/ModelClassDiagram.png){no-validation}
 
 
-The `Model` component,
+The `Model` component is implemented by `ModelManager`. It:
 
-* stores the address book data i.e., all `Person` objects (which are contained in a `UniquePersonList` object).
-* stores the `Person` objects selected by the current filter, such as search results, in a separate _filtered_ list. It exposes this list as an unmodifiable `ObservableList<Person>` that the UI can observe and bind to, so the UI updates when the list changes.
+* stores PingBook's clients and meetings in the `AddressBook` data class. Clients are represented by `Person` objects in a `UniquePersonList`, while meetings are represented by `Meeting` objects in a `MeetingList`.
+* represents each `Meeting` with a `MeetingName`, a `MeetingDate`, two `MeetingTime` values (`startTime` and `endTime`), and zero or more `Tag` objects.
+* exposes clients selected by the current filter through `getFilteredPersonList()` as an unmodifiable `ObservableList<Person>` view that the UI can observe.
+* maintains `filteredMeetings`, a `FilteredList<Meeting>` over the stored meeting list, and `sortedMeetings`, a `SortedList<Meeting>` over that filtered view. `updateFilteredMeetingList(...)` changes the filter, while `updateMeetingListOrder(...)` changes the display order without reordering stored meetings.
+* exposes `sortedMeetings` through `getMeetingList()` as an unmodifiable `ObservableList<Meeting>`. The UI receives this observable view through the `Logic` component and updates when its contents or order change.
 * stores a `UserPrefs` object that represents the user’s preferences (currently, just the GUI settings). This is exposed to the outside as a `ReadOnlyUserPrefs` object.
 * does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components)
 
