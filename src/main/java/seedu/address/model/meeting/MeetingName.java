@@ -11,7 +11,8 @@ import java.util.Locale;
 public class MeetingName {
 
     public static final String MESSAGE_CONSTRAINTS =
-            "Invalid name. Names should only contain alphabetic characters, spaces, hyphens or apostrophes.";
+            "Invalid name. Names must contain at least one alphabetic character "
+            + "and may only contain alphabetic characters, spaces, hyphens or apostrophes.";
 
     private static final String VALIDATION_REGEX = "[A-Za-z' -]+";
 
