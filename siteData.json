@@ -50,9 +50,6 @@
         "model-component": "Model component",
         "storage-component": "Storage component",
         "common-classes": "Common classes",
-        "implementation": "Implementation",
-        "proposed-undo-redo-feature": "[Proposed] Undo/redo feature",
-        "proposed-data-archiving": "[Proposed] Data archiving",
         "documentation-logging-testing-dev-ops": "Documentation, logging, testing, dev-ops",
         "appendix-requirements": "Appendix: Requirements",
         "product-scope": "Product scope",
@@ -62,8 +59,13 @@
         "glossary": "Glossary",
         "appendix-instructions-for-manual-testing": "Appendix: Instructions for manual testing",
         "launch-and-shutdown": "Launch and shutdown",
-        "deleting-a-person": "Deleting a person",
-        "saving-data": "Saving data"
+        "adding-a-client": "Adding a client",
+        "finding-and-filtering-clients": "Finding and filtering clients",
+        "deleting-a-client": "Deleting a client",
+        "adding-a-meeting": "Adding a meeting",
+        "finding-and-filtering-meetings": "Finding and filtering meetings",
+        "editing-a-meeting": "Editing a meeting",
+        "deleting-a-meeting": "Deleting a meeting"
       },
       "headingKeywords": {}
     },
