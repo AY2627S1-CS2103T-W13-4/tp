@@ -22,22 +22,22 @@ PingBook is designed for secretaries and sales representatives who:
 
 The 1.4 version of PingBook will support:
 
-| Feature        | Command                                                                          |
-|----------------|----------------------------------------------------------------------------------|
-| Add a client   | `addc n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [t/TAG]...`                      |
-| Delete a client | `deletec CLIENT_INDEX`                                                           |
-| Edit a client  | `editc INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]...`         |
-| List clients   | `listc [t/TAG]...`                                                               |
-| Add a meeting  | `addm n/NAME d/DATE st/START_TIME et/END_TIME [t/TAG]...`                        |
-| Delete a meeting | `deletem MEETING_INDEX`                                                          |
-| Edit a meeting | `editm MEETING_INDEX [n/NAME] [d/DATE] [st/START_TIME] [et/END_TIME] [t/TAG]...` |
-| List meetings  | `listm [t/TAG]...`                                         |
+| Feature           | Command                                                                          |
+|-------------------|----------------------------------------------------------------------------------|
+| Add a client      | `addc n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [t/TAG]...`                      |
+| Delete a client   | `deletec CLIENT_INDEX`                                                           |
+| Edit a client     | `editc INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]...`         |
+| List clients      | `listc [t/TAG]...`                                                               |
+| Add a meeting     | `addm n/NAME d/DATE st/START_TIME et/END_TIME [t/TAG]...`                        |
+| Delete a meeting  | `deletem MEETING_INDEX`                                                          |
+| Edit a meeting    | `editm MEETING_INDEX [n/NAME] [d/DATE] [st/START_TIME] [et/END_TIME] [t/TAG]...` |
+| List meetings     | `listm [t/TAG]...`                                                               |
+| Clear all entries | `clear`                                                                          |
 
 Features being considered for later versions include:
 
-* tagging, pinning and searching for clients
+* pinning clients
 * storing multiple phone numbers and emails per client
-* warnings when meetings clash
 * recurring meetings
 * finding free time slots and viewing the schedule for a given day
 * recording meeting outcomes and viewing a client's meeting history
