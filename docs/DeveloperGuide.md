@@ -122,7 +122,7 @@ How the parsing works:
 
 <puml src="diagrams/ModelClassDiagram.puml" width="1000" />
 
-[Open the full-size model diagram](diagrams/ModelClassDiagram.puml)
+[Open the full-size model diagram](diagrams/ModelClassDiagram.png)
 
 
 The `Model` component,
