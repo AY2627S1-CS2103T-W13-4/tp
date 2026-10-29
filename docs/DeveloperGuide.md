@@ -69,6 +69,10 @@ The `Main` component consists of the [`Main`](https://github.com/AY2627S1-CS2103
 
 `Main` is the entry point of the app. Unlike `MainApp`, it does not extend the JavaFX `Application` class. This avoids the JavaFX launcher error that would otherwise occur because PingBook does not use JavaFX through the Java module system. `Main` delegates the launch to `MainApp` by calling `Application.launch(MainApp.class, args)`.
 
+The sequence diagram below shows how `Main` launches PingBook and how `MainApp` initializes and starts the other components.
+
+<puml src="diagrams/MainSequenceDiagram.puml" alt="Initialization of PingBook by the Main component" />
+
 `MainApp` extends `Application` and coordinates the app's lifecycle. During `init()`, it initializes and connects the components in the following order:
 
 1. It loads the user preferences from `preferences.json`. If the file is missing or cannot be loaded, it uses default preferences instead and attempts to save them to the file.

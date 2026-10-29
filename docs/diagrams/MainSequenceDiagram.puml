@@ -1,0 +1,63 @@
+@startuml
+!include style.puml
+skinparam ArrowFontStyle plain
+
+participant "<<class>>\nMain" as Main #696969
+participant "<<class>>\nApplication" as Application #696969
+participant ":MainApp" as MainApp #696969
+participant "storage:StorageManager" as Storage STORAGE_COLOR
+participant "model:ModelManager" as Model MODEL_COLOR
+participant "logic:LogicManager" as Logic LOGIC_COLOR
+participant "ui:UiManager" as Ui UI_COLOR
+
+[-> Main : main(args)
+
+Main -> Application : launch(MainApp, ...)
+
+create MainApp
+Application -> MainApp : MainApp()
+activate MainApp
+MainApp --> Application
+deactivate MainApp
+
+Application -> MainApp : init()
+activate MainApp
+
+create Storage
+MainApp -> Storage : StorageManager(...)
+activate Storage
+Storage --> MainApp
+deactivate Storage
+
+create Model
+MainApp -> Model : ModelManager(...)
+activate Model
+Model --> MainApp
+deactivate Model
+
+create Logic
+MainApp -> Logic : LogicManager(...)
+activate Logic
+Logic --> MainApp
+deactivate Logic
+
+create Ui
+MainApp -> Ui : UiManager(...)
+activate Ui
+Ui --> MainApp
+deactivate Ui
+
+MainApp --> Application
+deactivate MainApp
+
+Application -> MainApp : start(primaryStage)
+activate MainApp
+
+MainApp -> Ui : start(primaryStage)
+activate Ui
+Ui --> MainApp
+deactivate Ui
+
+MainApp --> Application
+deactivate MainApp
+@enduml
