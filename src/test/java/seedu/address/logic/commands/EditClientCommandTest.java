@@ -116,9 +116,11 @@ public class EditClientCommandTest {
         EditClientCommand editClientCommand = new EditClientCommand(INDEX_FIRST_PERSON,
                 new EditPersonDescriptorBuilder().withName(VALID_NAME_BOB).build());
 
-        editClientCommand.execute(model);
+        CommandResult result = editClientCommand.execute(model);
 
         // the edited person no longer matches the active filter, and other persons are not revealed
+        assertEquals(String.format(EditClientCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson))
+                + "\n" + Messages.MESSAGE_PERSON_HIDDEN_BY_FILTER, result.getFeedbackToUser());
         assertTrue(model.hasPerson(editedPerson));
         assertEquals(0, model.getFilteredPersonList().size());
     }

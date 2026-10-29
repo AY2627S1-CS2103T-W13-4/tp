@@ -165,15 +165,16 @@ public class LogicManagerMeetingViewTest {
     }
 
     @Test
-    public void execute_addAfterFiltering_clearsFilterAndShowsNewMeeting() throws Exception {
-        model.addMeeting(taggedMeeting("Review", "08/10/2099"));
+    public void execute_addAfterFiltering_keepsFilterAndSavesNewMeeting() throws Exception {
+        Meeting urgent = taggedMeeting("Review", "08/10/2099");
+        model.addMeeting(urgent);
         logic.execute(ListMeetingCommand.COMMAND_WORD + " t/urgent");
         CommandResult result = logic.execute(AddMeetingCommand.COMMAND_WORD
                 + " n/Added d/10/10/2099 st/1400 et/1500");
 
         assertTrue(result.isShowMeetings());
-        assertEquals(3, logic.getMeetingList().size());
-        assertEquals("Added", logic.getMeetingList().get(2).getName().name);
+        assertEquals(List.of(urgent), logic.getMeetingList());
+        assertEquals(3, model.getAddressBook().getMeetingList().size());
         assertEquals(model.getAddressBook(), addressBookStorage.readAddressBook().orElseThrow());
     }
 

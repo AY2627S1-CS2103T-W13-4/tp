@@ -83,7 +83,11 @@ public class EditClientCommand extends Command {
         }
 
         model.setPerson(personToEdit, editedPerson);
-        return new CommandResult(String.format(MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson)));
+        String feedback = String.format(MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson));
+        if (!model.getFilteredPersonList().contains(editedPerson)) {
+            feedback += "\n" + Messages.MESSAGE_PERSON_HIDDEN_BY_FILTER;
+        }
+        return new CommandResult(feedback);
     }
 
     /**

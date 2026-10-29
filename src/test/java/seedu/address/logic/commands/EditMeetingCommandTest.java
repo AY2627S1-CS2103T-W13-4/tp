@@ -9,6 +9,7 @@ import static seedu.address.testutil.Assert.assertThrows;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,6 +23,7 @@ import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
 import seedu.address.model.meeting.Meeting;
+import seedu.address.model.meeting.MeetingContainsTagsPredicate;
 import seedu.address.model.meeting.MeetingDate;
 import seedu.address.model.meeting.MeetingName;
 import seedu.address.model.meeting.MeetingTime;
@@ -87,6 +89,25 @@ public class EditMeetingCommandTest {
                 String.format(EditMeetingCommand.MESSAGE_EDIT_MEETING_SUCCESS, editedMeeting), true);
 
         assertCommandSuccess(command, model, expectedResult, expectedModel);
+    }
+
+    @Test
+    public void execute_editHidesMeetingFromFilteredList_successWithNote() {
+        Predicate<Meeting> urgentOnly = new MeetingContainsTagsPredicate(Set.of(new Tag("urgent")));
+        model.updateFilteredMeetingList(urgentOnly);
+        Meeting editedMeeting = meeting("Project Review", "08/10/2026", "1400", "1500");
+        EditMeetingCommand command = new EditMeetingCommand(FIRST_INDEX,
+                new EditMeetingDescriptorBuilder().withTags().build());
+
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+        expectedModel.updateFilteredMeetingList(urgentOnly);
+        expectedModel.setMeeting(firstMeeting, editedMeeting);
+        CommandResult expectedResult = new CommandResult(
+                String.format(EditMeetingCommand.MESSAGE_EDIT_MEETING_SUCCESS, editedMeeting)
+                        + "\n" + Messages.MESSAGE_MEETING_HIDDEN_BY_FILTER, true);
+
+        assertCommandSuccess(command, model, expectedResult, expectedModel);
+        assertTrue(model.getMeetingList().isEmpty());
     }
 
     @Test

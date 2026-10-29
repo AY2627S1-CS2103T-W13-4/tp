@@ -130,13 +130,33 @@ public class ModelManagerTest {
     }
 
     @Test
-    public void addMeeting_clearsFilterSoNewMeetingIsVisible() {
+    public void addMeeting_keepsActiveFilter() {
         Meeting first = meeting("First", "25/10/2026", "1400", "1500");
         Meeting second = meeting("Second", "26/10/2026", "1400", "1500");
+        Meeting tagged = new Meeting(second.getName(), second.getDate(), new MeetingTime("1600"),
+                new MeetingTime("1700"), Set.of(new Tag("urgent")));
         modelManager.addMeeting(first);
-        modelManager.updateFilteredMeetingList(meeting -> false);
+        modelManager.updateFilteredMeetingList(new MeetingContainsTagsPredicate(Set.of(new Tag("urgent"))));
+
+        // a meeting that does not match the filter is saved but stays hidden
         modelManager.addMeeting(second);
-        assertEquals(List.of(first, second), modelManager.getMeetingList());
+        assertTrue(modelManager.getMeetingList().isEmpty());
+        assertEquals(List.of(first, second), modelManager.getAddressBook().getMeetingList());
+
+        // a meeting that matches the filter is displayed
+        modelManager.addMeeting(tagged);
+        assertEquals(List.of(tagged), modelManager.getMeetingList());
+    }
+
+    @Test
+    public void addPerson_keepsActiveFilter() {
+        modelManager.addPerson(ALICE);
+        modelManager.updateFilteredPersonList(person -> person.isSamePerson(ALICE));
+
+        // a person that does not match the filter is saved but stays hidden
+        modelManager.addPerson(BENSON);
+        assertEquals(List.of(ALICE), modelManager.getFilteredPersonList());
+        assertTrue(modelManager.hasPerson(BENSON));
     }
 
     @Test

@@ -89,6 +89,9 @@ Format: `addc n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [t/TAG]... `
 **Tip:** A person can have any number of tags, including zero. The address is optional and can be left out.
 </box>
 
+Any active `listc`/`findc` filter stays active after adding. If the new person does not match the filter, they are
+saved but hidden, and the success message ends with a note saying so; run `listc` to show all persons.
+
 Examples:
 * `addc n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01`
 * `addc n/Mary Lim p/87654321 e/marylim@example.com t/premium` (no address)
@@ -131,7 +134,8 @@ Format: `addm n/NAME d/DATE st/START_TIME et/END_TIME [t/TAG]... [force/]`
 * Tags are optional. Use one `t/TAG` per tag; tag names must contain only letters and digits, with no spaces.
   Repeated identical tags are stored once. Tag names are case-sensitive, as with client tags.
 * Tags appear on the meeting card and are saved with the meeting. Older saved meetings without tags still load normally.
-* Adding a meeting clears any active meeting filter so the new meeting is visible.
+* Any active `listm` tag filter stays active after adding. If the new meeting does not match the filter, it is saved
+  but hidden, and the success message ends with a note saying so; run `listm` to show all meetings.
 * A meeting is considered a duplicate if its name, date, start time, and end time are the same as those of an
   existing meeting, regardless of tags. Name comparison is case-insensitive, and repeated spaces in names are ignored.
 
@@ -195,6 +199,8 @@ Format: `editm MEETING_INDEX [n/NAME] [d/DATE] [st/START_TIME] [et/END_TIME] [t/
 * The edited meeting must still end after it starts, and it is checked for overlaps with the other meetings (not
   with its own previous version) in the same way as `addm`. Add `force/` to save an overlapping edit anyway.
 * Editing a meeting's date or time may move it to a different position in the sorted meeting list.
+* Any active `listm` tag filter stays active after editing. An edit that makes the meeting stop matching the filter hides it,
+  and the success message ends with a note saying so; run `listm` to show all meetings.
 
 Examples:
 * `editm 1 d/25/10/2026` changes only the date of the 1st displayed meeting.
@@ -215,7 +221,8 @@ Format: `editc INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [t/TAG]... `
 * When editing tags, all of the person's existing tags are removed; adding tags is not cumulative.
 * To remove all of a person's tags, enter `t/` without a tag after it.
 * Any active `listc`/`findc` filter stays active after editing, so the displayed row numbers do not change.
-  Editing a person so that they no longer match the filter hides them from the displayed list; run `listc` to show all persons again.
+  Editing a person so that they no longer match the filter hides them from the displayed list, and the success message
+  ends with a note saying so; run `listc` to show all persons again.
 
 Examples:
 *  `editc 1 p/91234567 e/johndoe@example.com` Edits the phone number and email address of the 1st person to be `91234567` and `johndoe@example.com` respectively.

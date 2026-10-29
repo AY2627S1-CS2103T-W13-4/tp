@@ -9,6 +9,7 @@ import static seedu.address.testutil.Assert.assertThrows;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.junit.jupiter.api.Test;
 
@@ -17,6 +18,7 @@ import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.meeting.Meeting;
+import seedu.address.model.meeting.MeetingContainsTagsPredicate;
 import seedu.address.model.meeting.MeetingDate;
 import seedu.address.model.meeting.MeetingName;
 import seedu.address.model.meeting.MeetingTime;
@@ -52,6 +54,37 @@ public class AddMeetingCommandTest {
                 String.format(AddMeetingCommand.MESSAGE_SUCCESS, PROJECT_REVIEW), true);
 
         assertCommandSuccess(new AddMeetingCommand(PROJECT_REVIEW), model, expectedResult, expectedModel);
+    }
+
+    @Test
+    public void execute_newMeetingHiddenByFilter_successWithNote() {
+        Predicate<Meeting> urgentOnly = new MeetingContainsTagsPredicate(Set.of(new Tag("urgent")));
+        Model model = new ModelManager();
+        model.updateFilteredMeetingList(urgentOnly);
+        Model expectedModel = new ModelManager();
+        expectedModel.updateFilteredMeetingList(urgentOnly);
+        expectedModel.addMeeting(PROJECT_REVIEW);
+        CommandResult expectedResult = new CommandResult(
+                String.format(AddMeetingCommand.MESSAGE_SUCCESS, PROJECT_REVIEW)
+                        + "\n" + Messages.MESSAGE_MEETING_HIDDEN_BY_FILTER, true);
+
+        assertCommandSuccess(new AddMeetingCommand(PROJECT_REVIEW), model, expectedResult, expectedModel);
+    }
+
+    @Test
+    public void execute_newMeetingMatchingFilter_successWithoutNote() {
+        Meeting urgent = new Meeting(PROJECT_REVIEW.getName(), PROJECT_REVIEW.getDate(),
+                PROJECT_REVIEW.getStartTime(), PROJECT_REVIEW.getEndTime(), Set.of(new Tag("urgent")));
+        Predicate<Meeting> urgentOnly = new MeetingContainsTagsPredicate(Set.of(new Tag("urgent")));
+        Model model = new ModelManager();
+        model.updateFilteredMeetingList(urgentOnly);
+        Model expectedModel = new ModelManager();
+        expectedModel.updateFilteredMeetingList(urgentOnly);
+        expectedModel.addMeeting(urgent);
+        CommandResult expectedResult = new CommandResult(
+                String.format(AddMeetingCommand.MESSAGE_SUCCESS, urgent), true);
+
+        assertCommandSuccess(new AddMeetingCommand(urgent), model, expectedResult, expectedModel);
     }
 
     @Test

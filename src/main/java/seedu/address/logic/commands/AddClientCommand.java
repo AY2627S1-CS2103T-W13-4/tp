@@ -57,7 +57,11 @@ public class AddClientCommand extends Command {
         }
 
         model.addPerson(toAdd);
-        return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(toAdd)));
+        String feedback = String.format(MESSAGE_SUCCESS, Messages.format(toAdd));
+        if (!model.getFilteredPersonList().contains(toAdd)) {
+            feedback += "\n" + Messages.MESSAGE_PERSON_HIDDEN_BY_FILTER;
+        }
+        return new CommandResult(feedback);
     }
 
     @Override

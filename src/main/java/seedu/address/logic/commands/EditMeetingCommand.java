@@ -111,6 +111,9 @@ public class EditMeetingCommand extends Command {
             feedback += "\n" + String.format(Messages.MESSAGE_MEETING_OVERLAP_WARNING,
                     Messages.formatOverlappingMeetings(overlaps));
         }
+        if (!model.getMeetingList().contains(editedMeeting)) {
+            feedback += "\n" + Messages.MESSAGE_MEETING_HIDDEN_BY_FILTER;
+        }
         return new CommandResult(feedback, true);
     }
 
