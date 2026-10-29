@@ -256,7 +256,7 @@ Use case ends.
 **MSS**
 
 1. User requests to edit a client using its displayed index and provides one or more fields to edit.
-2. PingBook replaces the supplied name, phone number, email address, address, or tags.
+2. PingBook replaces the supplied name, phone number, email address, address, or tags. A blank `a/` or `t/` removes the client's address or all tags instead.
 
 Use case ends.
 
@@ -274,7 +274,7 @@ Use case ends.
 
       Use case ends.
 
-* 1c. No field is provided or a supplied field is invalid.
+* 1c. No field is provided, a supplied field is invalid (see "Field formats" in the User Guide), or a single-valued prefix is repeated.
 
     * 1c1. PingBook shows an error message.
 
