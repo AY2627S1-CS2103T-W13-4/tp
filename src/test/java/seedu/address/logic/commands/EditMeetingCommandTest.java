@@ -182,6 +182,34 @@ public class EditMeetingCommandTest {
     }
 
     @Test
+    public void execute_editOverlapsMeetingHiddenByFilterWithoutForce_failure() {
+        Meeting hidden = meeting("Personal Call", "08/10/2026", "1600", "1700", "personal");
+        model.addMeeting(hidden);
+        model.updateFilteredMeetingList(new MeetingContainsTagsPredicate(Set.of(new Tag("work"))));
+        EditMeetingDescriptor descriptor = new EditMeetingDescriptorBuilder()
+                .withStartTime("1600").withEndTime("1700").build();
+        EditMeetingCommand command = new EditMeetingCommand(FIRST_INDEX, descriptor);
+
+        assertCommandFailure(command, model, String.format(Messages.MESSAGE_MEETING_OVERLAP,
+                Messages.formatOverlappingMeetings(List.of(hidden))));
+    }
+
+    @Test
+    public void execute_editOverlapsMeetingHiddenByFilterWithForce_success() throws Exception {
+        Meeting hidden = meeting("Personal Call", "08/10/2026", "1600", "1700", "personal");
+        model.addMeeting(hidden);
+        model.updateFilteredMeetingList(new MeetingContainsTagsPredicate(Set.of(new Tag("work"))));
+        EditMeetingDescriptor descriptor = new EditMeetingDescriptorBuilder()
+                .withStartTime("1600").withEndTime("1700").build();
+
+        CommandResult result = new EditMeetingCommand(FIRST_INDEX, descriptor, true).execute(model);
+
+        assertTrue(result.getFeedbackToUser().contains(
+                String.format(Messages.MESSAGE_MEETING_OVERLAP_WARNING,
+                        Messages.formatOverlappingMeetings(List.of(hidden)))));
+    }
+
+    @Test
     public void execute_editOverlapsOtherMeetingWithoutForce_failure() {
         EditMeetingDescriptor descriptor = new EditMeetingDescriptorBuilder()
                 .withDate("09/10/2026").withStartTime("0930").withEndTime("1030").build();

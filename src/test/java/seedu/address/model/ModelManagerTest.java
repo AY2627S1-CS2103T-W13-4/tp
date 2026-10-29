@@ -216,4 +216,17 @@ public class ModelManagerTest {
         assertEquals(List.of(other), modelManager.getOverlappingMeetings(candidate, existing));
         assertThrows(NullPointerException.class, () -> modelManager.getOverlappingMeetings(null, null));
     }
+
+    @Test
+    public void getOverlappingMeetings_ignoresDisplayFilter() {
+        Meeting visible = new Meeting(new MeetingName("Visible"), new MeetingDate("15/10/2026"),
+                new MeetingTime("0900"), new MeetingTime("1000"), Set.of(new Tag("work")));
+        Meeting hidden = new Meeting(new MeetingName("Hidden"), new MeetingDate("15/10/2026"),
+                new MeetingTime("0930"), new MeetingTime("1030"), Set.of(new Tag("personal")));
+        modelManager.addMeeting(visible);
+        modelManager.addMeeting(hidden);
+        modelManager.updateFilteredMeetingList(new MeetingContainsTagsPredicate(Set.of(new Tag("work"))));
+
+        assertEquals(List.of(hidden), modelManager.getOverlappingMeetings(visible, visible));
+    }
 }
