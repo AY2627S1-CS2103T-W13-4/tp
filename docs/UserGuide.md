@@ -261,7 +261,7 @@ Format: `deletem MEETING_INDEX`
 * The command is case-sensitive. Only `deletem` in lowercase is accepted. `DeleteM` and other variations show `Unknown command.`.
 * The index refers to the index number shown in the displayed meeting list.
 * The index **must be a positive integer** 1, 2, 3, ...
-* Invalid index show `The index is invalid.`.
+* Invalid indexes display `Invalid commmand format!` followed by the usage instructions for the command.
 * `deletem` can only be executed when the meeting list is shown. Run `listm` before attempting to delete meetings.
 
 Examples:
