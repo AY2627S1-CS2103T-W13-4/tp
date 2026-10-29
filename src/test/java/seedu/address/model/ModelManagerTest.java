@@ -93,6 +93,7 @@ public class ModelManagerTest {
 
     @Test
     public void updateFilteredMeetingList_keepsStorageAndContactsUnchanged() {
+        // EP: matching and non-matching meetings share the source; filtering must not alter stored data or contacts.
         Meeting hidden = meeting("Hidden", "25/10/2026", "0900", "1000");
         Meeting visible = new Meeting(hidden.getName(), hidden.getDate(), new MeetingTime("1400"),
                 new MeetingTime("1500"), Set.of(new Tag("urgent")));
@@ -107,11 +108,13 @@ public class ModelManagerTest {
         assertEquals(original, modelManager.getAddressBook());
         assertEquals(List.of(ALICE), modelManager.getFilteredPersonList());
         assertThrows(UnsupportedOperationException.class, () -> modelManager.getMeetingList().clear());
+        // EP: a null predicate is invalid, unlike a valid predicate producing no matches.
         assertThrows(NullPointerException.class, () -> modelManager.updateFilteredMeetingList(null));
     }
 
     @Test
     public void updateFilteredMeetingList_existingViewReflectsTagEditsAndDeletion() {
+        // State transition: adding and removing matching tags, then deleting the meeting, updates the existing view.
         Meeting untagged = meeting("Review", "25/10/2026", "1400", "1500");
         Meeting tagged = new Meeting(untagged.getName(), untagged.getDate(), untagged.getStartTime(),
                 untagged.getEndTime(), Set.of(new Tag("urgent")));
@@ -131,6 +134,7 @@ public class ModelManagerTest {
 
     @Test
     public void addMeeting_clearsFilterSoNewMeetingIsVisible() {
+        // State transition: adding a meeting resets a filter that previously hid every meeting.
         Meeting first = meeting("First", "25/10/2026", "1400", "1500");
         Meeting second = meeting("Second", "26/10/2026", "1400", "1500");
         modelManager.addMeeting(first);

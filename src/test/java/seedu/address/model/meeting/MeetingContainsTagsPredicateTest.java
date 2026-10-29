@@ -15,8 +15,10 @@ import seedu.address.model.tag.Tag;
 public class MeetingContainsTagsPredicateTest {
     @Test
     public void test_requiresAllWholeTagsIgnoringCase() {
+        // EP: all tags present, one missing, a substring-only match and no tags; only complete matches pass.
         MeetingContainsTagsPredicate predicate = new MeetingContainsTagsPredicate(Set.of(new Tag("urgent"),
                 new Tag("WORK")));
+        // EP: extra tags and different letter case still satisfy all requested whole tags.
         assertTrue(predicate.test(meeting(Set.of(new Tag("Urgent"), new Tag("work"), new Tag("extra")))));
         assertFalse(predicate.test(meeting(Set.of(new Tag("urgent")))));
         assertFalse(predicate.test(meeting(Set.of(new Tag("urgentMeeting"), new Tag("work")))));
@@ -25,11 +27,13 @@ public class MeetingContainsTagsPredicateTest {
 
     @Test
     public void test_doesNotMatchMeetingName() {
+        // Error guessing: a matching word in the meeting name must not be mistaken for a matching tag.
         assertFalse(new MeetingContainsTagsPredicate(Set.of(new Tag("Urgent"))).test(meeting(Set.of())));
     }
 
     @Test
     public void test_emptyFilter_matchesEveryMeeting() {
+        // BVA: zero requested tags must match both untagged and tagged meetings.
         MeetingContainsTagsPredicate predicate = new MeetingContainsTagsPredicate(Set.of());
         assertTrue(predicate.isEmpty());
         assertTrue(predicate.test(meeting(Set.of())));
@@ -38,6 +42,7 @@ public class MeetingContainsTagsPredicateTest {
 
     @Test
     public void constructor_copiesRequestedTags() {
+        // Error guessing: clearing the caller-owned set after construction exposes a missing defensive copy.
         Set<Tag> tags = new HashSet<>(Set.of(new Tag("urgent")));
         MeetingContainsTagsPredicate predicate = new MeetingContainsTagsPredicate(tags);
         tags.clear();
@@ -47,6 +52,7 @@ public class MeetingContainsTagsPredicateTest {
 
     @Test
     public void nullArguments_throwNullPointerException() {
+        // EP: a null tag set, a null element and a null meeting are separate invalid inputs.
         assertThrows(NullPointerException.class, () -> new MeetingContainsTagsPredicate(null));
         Set<Tag> tags = new HashSet<>();
         tags.add(null);
@@ -56,6 +62,7 @@ public class MeetingContainsTagsPredicateTest {
 
     @Test
     public void equalsAndHashCode_ignoreTagCaseOrderAndRepetition() {
+        // EP: case, order and repetition variants are equivalent; different tag sets, null and another type are not.
         MeetingContainsTagsPredicate predicate = new MeetingContainsTagsPredicate(Set.of(new Tag("urgent"),
                 new Tag("work")));
         MeetingContainsTagsPredicate equivalent = new MeetingContainsTagsPredicate(Set.of(new Tag("WORK"),

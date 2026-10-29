@@ -77,6 +77,7 @@ public class LogicManagerMeetingViewTest {
 
     @Test
     public void execute_deleteWhileShowingMeetings_rejectsWithoutChangingDataOrSaving() throws Exception {
+        // State transition: listing meetings hides contacts, so deleting a contact must be rejected without saving.
         logic.execute(ListMeetingCommand.COMMAND_WORD);
 
         assertContactCommandRejected("  " + DeleteClientCommand.COMMAND_WORD + " 1  ");
@@ -84,6 +85,7 @@ public class LogicManagerMeetingViewTest {
 
     @Test
     public void execute_addTaggedMeeting_displaysAndPersistsTags() throws Exception {
+        // Round-trip testing: tags added through the command must survive display refresh and storage reload.
         CommandResult result = logic.execute(AddMeetingCommand.COMMAND_WORD
                 + " n/Project Review d/08/10/2099 st/1400 et/1500 t/urgent t/work");
         Meeting added = model.getAddressBook().getMeetingList().get(1);
@@ -103,6 +105,7 @@ public class LogicManagerMeetingViewTest {
 
     @Test
     public void execute_filteredDeletion_usesDisplayedOrderAndKeepsHiddenMeetings() throws Exception {
+        // State transition: repeated deletion empties the filtered view while hidden meetings remain stored.
         Meeting hidden = model.getMeetingList().get(0);
         Meeting later = taggedMeeting("Later", "10/10/2099");
         Meeting earlier = taggedMeeting("Earlier", "08/10/2099");
@@ -120,6 +123,7 @@ public class LogicManagerMeetingViewTest {
         logic.execute(DeleteMeetingCommand.COMMAND_WORD + " 1");
         assertTrue(logic.getMeetingList().isEmpty());
         assertEquals(List.of(hidden), addressBookStorage.readAddressBook().orElseThrow().getMeetingList());
+        // BVA: index 1 is invalid once the filtered view has zero rows, even with hidden meetings stored.
         assertThrows(CommandException.class, MESSAGE_INVALID_MEETING_INDEX, () ->
                 logic.execute(DeleteMeetingCommand.COMMAND_WORD + " 1"));
 
@@ -129,6 +133,7 @@ public class LogicManagerMeetingViewTest {
 
     @Test
     public void execute_filteredEdit_usesDisplayedIndexAndRechecksTags() throws Exception {
+        // State transition: changing or clearing tags moves the edited meeting out of the active filter.
         Meeting hidden = model.getMeetingList().get(0);
         model.addMeeting(taggedMeeting("Review", "08/10/2099"));
         logic.execute(ListMeetingCommand.COMMAND_WORD + " t/urgent");
@@ -149,6 +154,7 @@ public class LogicManagerMeetingViewTest {
 
     @Test
     public void execute_invalidFilter_preservesDisplayAndSavedData() throws Exception {
+        // EP: an empty tag is invalid; parse failure must preserve the current view, guard and saved data.
         Meeting urgent = taggedMeeting("Review", "08/10/2099");
         model.addMeeting(urgent);
         logic.execute(ListMeetingCommand.COMMAND_WORD + " t/urgent");
@@ -166,6 +172,7 @@ public class LogicManagerMeetingViewTest {
 
     @Test
     public void execute_addAfterFiltering_clearsFilterAndShowsNewMeeting() throws Exception {
+        // State transition: adding an untagged meeting while filtering resets the filter and shows all meetings.
         model.addMeeting(taggedMeeting("Review", "08/10/2099"));
         logic.execute(ListMeetingCommand.COMMAND_WORD + " t/urgent");
         CommandResult result = logic.execute(AddMeetingCommand.COMMAND_WORD
@@ -184,6 +191,7 @@ public class LogicManagerMeetingViewTest {
 
     @Test
     public void execute_deleteAfterListMeeting_usesSortedDisplayIndex() throws Exception {
+        // Error guessing: insertion order differs from display order, exposing deletion through the wrong index.
         Meeting later = model.getMeetingList().get(0);
         Meeting earlier = new Meeting(new MeetingName("Earlier meeting"), new MeetingDate("07/10/2099"),
                 new MeetingTime("1500"), new MeetingTime("1600"));
@@ -234,6 +242,7 @@ public class LogicManagerMeetingViewTest {
 
     @Test
     public void execute_deleteLastMeeting_keepsMeetingPanelAndContactGuard() throws Exception {
+        // BVA: deleting the sole meeting changes the list size from one to zero; index 1 then becomes invalid.
         logic.execute(ListMeetingCommand.COMMAND_WORD);
 
         CommandResult result = logic.execute(DeleteMeetingCommand.COMMAND_WORD + " 1");
@@ -269,6 +278,7 @@ public class LogicManagerMeetingViewTest {
 
     @Test
     public void execute_deleteAfterFindAndListMeeting_rejectsHiddenFilteredContact() throws Exception {
+        // State transition: a previously filtered contact list becomes hidden after listm, so deletion is blocked.
         logic.execute(FindClientCommand.COMMAND_WORD + " Bob");
         logic.execute(ListMeetingCommand.COMMAND_WORD);
         assertEquals(List.of(BOB), model.getFilteredPersonList());
@@ -278,6 +288,7 @@ public class LogicManagerMeetingViewTest {
 
     @Test
     public void execute_editAfterFindAndListMeeting_rejectsHiddenFilteredContact() throws Exception {
+        // State transition: a previously filtered contact list becomes hidden after listm, so editing is blocked.
         logic.execute(FindClientCommand.COMMAND_WORD + " Bob");
         logic.execute(ListMeetingCommand.COMMAND_WORD);
         assertEquals(List.of(BOB), model.getFilteredPersonList());
@@ -287,6 +298,7 @@ public class LogicManagerMeetingViewTest {
 
     @Test
     public void execute_listAfterMeetings_allowsDeleteFromAllContacts() throws Exception {
+        // State transition: listc restores all contacts and permits deletion; returning to listm blocks it again.
         logic.execute(FindClientCommand.COMMAND_WORD + " Bob");
         logic.execute(ListMeetingCommand.COMMAND_WORD);
         assertContactCommandRejected(DeleteClientCommand.COMMAND_WORD + " 1");
@@ -304,6 +316,7 @@ public class LogicManagerMeetingViewTest {
 
     @Test
     public void execute_findAfterMeetings_allowsEditUsingVisibleFilteredIndex() throws Exception {
+        // State transition: findc switches from meetings to filtered contacts; index 1 must refer to visible Bob.
         logic.execute(ListMeetingCommand.COMMAND_WORD);
 
         CommandResult result = logic.execute(FindClientCommand.COMMAND_WORD + " Bob");
@@ -318,6 +331,7 @@ public class LogicManagerMeetingViewTest {
 
     @Test
     public void execute_helpWhileShowingMeetings_keepsContactCommandsBlocked() throws Exception {
+        // State transition: help must leave the meeting view active and contact edits and deletions blocked.
         logic.execute(ListMeetingCommand.COMMAND_WORD);
 
         assertTrue(logic.execute(HelpCommand.COMMAND_WORD).isShowHelp());
@@ -328,6 +342,7 @@ public class LogicManagerMeetingViewTest {
 
     @Test
     public void execute_errorsWhileShowingMeetings_keepsContactCommandsBlocked() throws Exception {
+        // EP: parse errors and command errors must both leave the meeting view and contact guard unchanged.
         logic.execute(ListMeetingCommand.COMMAND_WORD);
 
         assertThrows(ParseException.class, MESSAGE_UNKNOWN_COMMAND, () -> logic.execute("unknown"));
@@ -342,6 +357,8 @@ public class LogicManagerMeetingViewTest {
 
     @Test
     public void execute_failedListSave_keepsMeetingGuardUntilListSucceeds() throws Exception {
+        // Error guessing: inject a save failure during a switch to contacts; only a successful retry may lift the
+        // guard.
         logic.execute(ListMeetingCommand.COMMAND_WORD);
         addressBookStorage.failNextSave = true;
 
@@ -356,6 +373,7 @@ public class LogicManagerMeetingViewTest {
 
     @Test
     public void execute_failedListMeetingSave_keepsContactsAccessible() throws Exception {
+        // Error guessing: a failed save during a switch to meetings must not block the still-visible contacts.
         logic.execute(ListClientCommand.COMMAND_WORD);
         addressBookStorage.failNextSave = true;
 
@@ -368,6 +386,7 @@ public class LogicManagerMeetingViewTest {
 
     @Test
     public void execute_emptyMeetingList_stillBlocksContactCommands() throws Exception {
+        // BVA: zero meetings still selects the meeting panel, so contact commands must remain blocked.
         model.deleteMeeting(model.getMeetingList().get(0));
 
         assertTrue(logic.execute(ListMeetingCommand.COMMAND_WORD).isShowMeetings());

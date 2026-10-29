@@ -61,11 +61,13 @@ public class MeetingTest {
 
     @Test
     public void constructor_withoutTags_createsEmptyTagSet() {
+        // BVA: omitting optional tags produces a tag set of size zero.
         assertTrue(createMeeting().getTags().isEmpty());
     }
 
     @Test
     public void constructor_tags_defensivelyCopiesSet() {
+        // Error guessing: mutating the original tag set must not change an already constructed meeting.
         Set<Tag> tags = new HashSet<>(Set.of(new Tag("urgent")));
         Meeting meeting = new Meeting(VALID_NAME, VALID_DATE, VALID_START_TIME, VALID_END_TIME, tags);
         tags.clear();
@@ -74,6 +76,7 @@ public class MeetingTest {
 
     @Test
     public void constructor_nullTags_throwsNullPointerException() {
+        // EP: a null tag set and a set containing null are distinct invalid inputs.
         assertThrows(NullPointerException.class, () ->
                 new Meeting(VALID_NAME, VALID_DATE, VALID_START_TIME, VALID_END_TIME, null));
         Set<Tag> tags = new HashSet<>();
@@ -84,6 +87,7 @@ public class MeetingTest {
 
     @Test
     public void getTags_cannotModifySet() {
+        // Error guessing: clearing the exposed tag set must fail rather than mutate the meeting.
         Meeting meeting = new Meeting(VALID_NAME, VALID_DATE, VALID_START_TIME, VALID_END_TIME,
                 Set.of(new Tag("urgent")));
         assertThrows(UnsupportedOperationException.class, () -> meeting.getTags().clear());
@@ -91,6 +95,7 @@ public class MeetingTest {
 
     @Test
     public void isSameMeeting_ignoresTagsButComparesIdentityFields() {
+        // EP: changing tags preserves identity; changing each identity field independently must break the match.
         Meeting meeting = createMeeting();
         Meeting tagged = new Meeting(VALID_NAME, VALID_DATE, VALID_START_TIME, VALID_END_TIME,
                 Set.of(new Tag("urgent")));
@@ -110,6 +115,7 @@ public class MeetingTest {
 
     @Test
     public void equalsAndHashCode_includeTagsRegardlessOfOrder() {
+        // EP: equal tag sets share equality and hash codes; different or absent tags make meetings unequal.
         Meeting first = new Meeting(VALID_NAME, VALID_DATE, VALID_START_TIME, VALID_END_TIME,
                 Set.of(new Tag("urgent"), new Tag("work")));
         Meeting second = new Meeting(VALID_NAME, VALID_DATE, VALID_START_TIME, VALID_END_TIME,
@@ -124,6 +130,7 @@ public class MeetingTest {
 
     @Test
     public void toString_withTags_displaysSortedTags() {
+        // Error guessing: supplying tags in reverse lexical order exposes output that depends on set iteration order.
         Meeting meeting = new Meeting(VALID_NAME, VALID_DATE, VALID_START_TIME, VALID_END_TIME,
                 Set.of(new Tag("work"), new Tag("urgent")));
         assertEquals("Client Meeting 15/10/2026 from 0900 to 1000 Tags: [urgent] [work]", meeting.toString());

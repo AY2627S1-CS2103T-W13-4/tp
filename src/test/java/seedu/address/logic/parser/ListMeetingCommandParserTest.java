@@ -23,12 +23,14 @@ public class ListMeetingCommandParserTest {
 
     @Test
     public void parse_noArguments_success() throws Exception {
+        // EP (equivalence partitioning): empty and whitespace-only arguments both request an unfiltered list.
         assertTrue(parser.parse("") instanceof ListMeetingCommand);
         assertTrue(parser.parse(" \t \n ") instanceof ListMeetingCommand);
     }
 
     @Test
     public void parse_argumentsOrFlags_throwsParseException() {
+        // EP: positional text, unsupported flags or fields, a malformed prefix and text before a tag are invalid.
         String expectedMessage = MESSAGE_INVALID_FORMAT;
         assertThrows(ParseException.class, expectedMessage, () -> parser.parse(" 1"));
         assertThrows(ParseException.class, expectedMessage, () -> parser.parse(" --all"));
@@ -52,6 +54,7 @@ public class ListMeetingCommandParserTest {
 
     @Test
     public void parse_tags_success() {
+        // EP: single and multiple tags are valid; spacing and case variants must preserve the requested filter.
         assertParseSuccess(parser, " t/urgent", new ListMeetingCommand(Clock.systemDefaultZone(),
                 Set.of(new Tag("urgent"))));
         ListMeetingCommand multipleTags = new ListMeetingCommand(Clock.systemDefaultZone(),
@@ -59,11 +62,13 @@ public class ListMeetingCommandParserTest {
         assertParseSuccess(parser, " t/urgent t/work", multipleTags);
         assertParseSuccess(parser, "  t/urgent  t/work  ", multipleTags);
         assertParseSuccess(parser, " t/urgent t/work\t ", multipleTags);
+        // EP: repeated tags with different letter case represent one requested tag.
         assertParseSuccess(parser, " t/URGENT t/urgent t/work", multipleTags);
     }
 
     @Test
     public void parse_tagWithoutPrecedingSpace_throwsParseException() {
+        // EP: a missing separator, tab or newline before the first tag cannot replace a literal space.
         for (String arguments : new String[]{"t/urgent", "\tt/urgent", "\nt/urgent"}) {
             assertParseFailure(parser, arguments, MESSAGE_INVALID_FORMAT);
         }
@@ -71,6 +76,7 @@ public class ListMeetingCommandParserTest {
 
     @Test
     public void parse_tagsSeparatedByTabOrNewline_throwsParseException() {
+        // EP: tabs and newlines between tags are invalid separators and remain part of the invalid tag value.
         for (String arguments : new String[]{" t/urgent\tt/work", " t/urgent\nt/work"}) {
             assertParseFailure(parser, arguments, Tag.MESSAGE_CONSTRAINTS);
         }
@@ -78,6 +84,7 @@ public class ListMeetingCommandParserTest {
 
     @Test
     public void parse_invalidTags_throwsParseException() {
+        // EP: empty, blank, punctuated, multiword and malformed tag values are invalid, even beside a valid tag.
         for (String arguments : new String[]{" t/", " t/  ", " t/urgent!", " t/very urgent",
             " t/ t/work", " t/urgent r/Review", " t/urgent --all"}) {
             assertThrows(ParseException.class, Tag.MESSAGE_CONSTRAINTS, () -> parser.parse(arguments));
@@ -86,6 +93,7 @@ public class ListMeetingCommandParserTest {
 
     @Test
     public void parse_null_throwsNullPointerException() {
+        // EP: null arguments are invalid, unlike an empty string requesting all meetings.
         assertThrows(NullPointerException.class, () -> parser.parse(null));
     }
 }

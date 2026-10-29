@@ -111,6 +111,7 @@ public class JsonAddressBookStorageTest {
 
     @Test
     public void readAndSaveAddressBook_withMeetingTags_preservesTagsAfterReloadAndOverwrite() throws Exception {
+        // Round-trip testing: reload tagged data, then overwrite it with untagged data to expose stale persisted tags.
         Path filePath = testFolder.resolve("TaggedMeetings.json");
         AddressBook addressBook = new AddressBook();
         Meeting tagged = new Meeting(CLIENT_REVIEW.getName(), CLIENT_REVIEW.getDate(),
