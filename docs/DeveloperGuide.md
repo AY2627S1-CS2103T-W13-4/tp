@@ -118,27 +118,22 @@ How the parsing works:
 * All `XYZCommandParser` classes, such as `AddClientCommandParser` and `DeleteClientCommandParser`, implement the `Parser` interface so they can be treated similarly where appropriate, for example during testing.
 
 ### Model component
-**API** : [`Model.java`](https://github.com/AY2627S1-CS2103T-W13-4/tp/tree/master/src/main/java/seedu/address/model/Model.java)
+**API** : [`Model.java`](https://github.com/AY2627S1-CS2103T-W13-4/tp/blob/master/src/main/java/seedu/address/model/Model.java)
 
 <puml src="diagrams/ModelClassDiagram.puml" width="1000" />
 
-[Open the full-size model diagram](diagrams/ModelClassDiagram.png)
+[Open the full-size model diagram](diagrams/ModelClassDiagram.png){no-validation}
 
 
-The `Model` component,
+The `Model` component is implemented by `ModelManager`. It:
 
-* stores the address book data i.e., all `Person` objects (which are contained in a `UniquePersonList` object).
-* stores the `Person` objects selected by the current filter, such as search results, in a separate _filtered_ list. It exposes this list as an unmodifiable `ObservableList<Person>` that the UI can observe and bind to, so the UI updates when the list changes.
+* stores PingBook's clients and meetings in the `AddressBook` data class. Clients are represented by `Person` objects in a `UniquePersonList`, while meetings are represented by `Meeting` objects in a `MeetingList`.
+* represents each `Meeting` with a `MeetingName`, a `MeetingDate`, two `MeetingTime` values (`startTime` and `endTime`), and zero or more `Tag` objects.
+* exposes clients selected by the current filter through `getFilteredPersonList()` as an unmodifiable `ObservableList<Person>` view that the UI can observe.
+* maintains `filteredMeetings`, a `FilteredList<Meeting>` over the stored meeting list, and `sortedMeetings`, a `SortedList<Meeting>` over that filtered view. `updateFilteredMeetingList(...)` changes the filter, while `updateMeetingListOrder(...)` changes the display order without reordering stored meetings.
+* exposes `sortedMeetings` through `getMeetingList()` as an unmodifiable `ObservableList<Meeting>`. The UI receives this observable view through the `Logic` component and updates when its contents or order change.
 * stores a `UserPrefs` object that represents the user’s preferences (currently, just the GUI settings). This is exposed to the outside as a `ReadOnlyUserPrefs` object.
 * does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components)
-
-
-<box type="info" seamless>
-
-**Note:** The alternative, arguably more object-oriented, design below keeps a unique list of tags in `AddressBook`, and each `Person` references tags from that list. This lets `AddressBook` maintain one `Tag` object per unique tag instead of each `Person` holding its own `Tag` objects.<br>
-
-<puml src="diagrams/BetterModelClassDiagram.puml" width="450" />
-</box>
 
 
 ### Storage component
@@ -156,106 +151,6 @@ The `Storage` component,
 ### Common classes
 
 Classes used by multiple components are in the `seedu.address.commons` package.
-
---------------------------------------------------------------------------------------------------------------------
-
-## **Implementation**
-
-This section describes some noteworthy details on how certain features are implemented.
-
-### \[Proposed\] Undo/redo feature
-
-#### Proposed Implementation
-
-The proposed undo/redo mechanism is facilitated by `VersionedAddressBook`. It extends `AddressBook` with an undo/redo history, stored internally as an `addressBookStateList` and `currentStatePointer`. Additionally, it implements the following operations:
-
-* `VersionedAddressBook#commit()` -- Saves the current address book state in its history.
-* `VersionedAddressBook#undo()` -- Restores the previous address book state from its history.
-* `VersionedAddressBook#redo()` -- Restores a previously undone address book state from its history.
-
-These operations are exposed in the `Model` interface as `Model#commitAddressBook()`, `Model#undoAddressBook()` and `Model#redoAddressBook()` respectively.
-
-Given below is an example usage scenario and how the undo/redo mechanism behaves at each step.
-
-Step 1. The user launches the application for the first time. The `VersionedAddressBook` will be initialized with the initial address book state, and the `currentStatePointer` pointing to that single address book state.
-
-<puml src="diagrams/UndoRedoState0.puml" alt="UndoRedoState0" />
-
-Step 2. The user executes `delete 5` command to delete the 5th person in the address book. The `delete` command calls `Model#commitAddressBook()`, causing the modified state of the address book after the `delete 5` command executes to be saved in the `addressBookStateList`, and the `currentStatePointer` is shifted to the newly inserted address book state.
-
-<puml src="diagrams/UndoRedoState1.puml" alt="UndoRedoState1" />
-
-Step 3. The user executes `add n/David …​` to add a new person. The `add` command also calls `Model#commitAddressBook()`, causing another modified address book state to be saved into the `addressBookStateList`.
-
-<puml src="diagrams/UndoRedoState2.puml" alt="UndoRedoState2" />
-
-<box type="info" seamless>
-
-**Note:** If a command fails its execution, it will not call `Model#commitAddressBook()`, so the address book state will not be saved into the `addressBookStateList`.
-</box>
-
-Step 4. The user now decides that adding the person was a mistake, and decides to undo that action by executing the `undo` command. The `undo` command will call `Model#undoAddressBook()`, which will shift the `currentStatePointer` once to the left, pointing it to the previous address book state, and restores the address book to that state.
-
-<puml src="diagrams/UndoRedoState3.puml" alt="UndoRedoState3" />
-
-
-<box type="info" seamless>
-
-**Note:** If the `currentStatePointer` is at index 0, pointing to the initial AddressBook state, then there are no previous AddressBook states to restore. The `undo` command uses `Model#canUndoAddressBook()` to check if this is the case. If so, it will return an error to the user rather
-than attempting to perform the undo.
-</box>
-
-The following sequence diagram shows how an undo operation goes through the `Logic` component:
-
-<puml src="diagrams/UndoSequenceDiagram-Logic.puml" alt="UndoSequenceDiagram-Logic" />
-
-<box type="info" seamless>
-
-**Note:** The lifeline for `UndoCommand` should end at the destroy marker (X), but due to a limitation of PlantUML, it continues to the end of the diagram.
-</box>
-
-Similarly, how an undo operation goes through the `Model` component is shown below:
-
-<puml src="diagrams/UndoSequenceDiagram-Model.puml" alt="UndoSequenceDiagram-Model" />
-
-The `redo` command does the opposite — it calls `Model#redoAddressBook()`, which shifts the `currentStatePointer` once to the right, pointing to the previously undone state, and restores the address book to that state.
-
-<box type="info" seamless>
-
-**Note:** If the `currentStatePointer` is at index `addressBookStateList.size() - 1`, pointing to the latest address book state, then there are no undone AddressBook states to restore. The `redo` command uses `Model#canRedoAddressBook()` to check if this is the case. If so, it will return an error to the user rather than attempting to perform the redo.
-</box>
-
-Step 5. The user then decides to execute the command `list`. Commands that do not modify the address book, such as `list`, will usually not call `Model#commitAddressBook()`, `Model#undoAddressBook()` or `Model#redoAddressBook()`. Thus, the `addressBookStateList` remains unchanged.
-
-<puml src="diagrams/UndoRedoState4.puml" alt="UndoRedoState4" />
-
-Step 6. The user executes `clear`, which calls `Model#commitAddressBook()`. Since the `currentStatePointer` is not pointing at the end of the `addressBookStateList`, all address book states after the `currentStatePointer` will be purged. Reason: It no longer makes sense to redo the `add n/David …` command. This is the behavior that most modern desktop applications follow.
-
-<puml src="diagrams/UndoRedoState5.puml" alt="UndoRedoState5" />
-
-The following activity diagram summarizes what happens when a user executes a new command:
-
-<puml src="diagrams/CommitActivityDiagram.puml" width="250" />
-
-#### Design considerations:
-
-**Aspect: How undo & redo execute:**
-
-* **Alternative 1 (current choice):** Saves the entire address book.
-  * Pros: Easy to implement.
-  * Cons: May have performance issues in terms of memory usage.
-
-* **Alternative 2:** Individual command knows how to undo/redo by
-  itself.
-  * Pros: Will use less memory (e.g. for `delete`, just save the person being deleted).
-  * Cons: We must ensure that the implementation of each individual command is correct.
-
-_{more aspects and alternatives to be added}_
-
-### \[Proposed\] Data archiving
-
-_{Explain here how the data archiving feature will be implemented}_
-
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -289,382 +184,313 @@ _{Explain here how the data archiving feature will be implemented}_
 
 Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unlikely to have) - `*`
 
-| Priority | As a …          | I want to …                                              | So that I can…                                                |
-|----------|-----------------|----------------------------------------------------------|---------------------------------------------------------------|
-| `* * *`  | secretary       | view a list of clients                                   | keep track of clients                                         |
-| `* * *`  | secretary       | add clients with their email, mobile number, and name    | record clients' information                                   |
-| `* * *`  | secretary       | delete clients                                           | keep the list free of information that is no longer useful    |
-| `* * *`  | secretary       | delete meetings                                          | remove canceled meetings                                      |
-| `* * *`  | secretary       | add meetings with their time, place, and attendees       | record meetings                                               |
-| `* * *`  | secretary       | view a list of meetings                                  | focus entirely on immediate priorities                        |
-| `* * *`  | first-time user | see a help guide containing all commands                 | know how to use the app                                       |
-| `* * *`  | first-time user | see a client's meeting history                           | know when we last met                                         |
-| `* * *`  | first-time user | add command aliases                                      | type frequently used commands quickly                         |
-| `* * *`  | first-time user | record meeting outcomes after a meeting                  | remember what happened during the meeting                     |
-| `* * *`  | first-time user | search for a client by name, company, or number          | find the clients I want                                       |
-| `* * *`  | first-time user | be warned when meeting schedules overlap, and override  | know about clashes but still schedule when intended           |
-| `* *`    | secretary       | add tags to clients                                      | filter or search for groups of clients easily                 |
-| `* *`    | secretary       | mark clients as favorite or pinned                       | easily access important clients                               |
-| `* *`    | secretary       | view recently or frequently contacted clients            | easily find clients I am likely looking for                   |
-| `* *`    | secretary       | edit client information                                  | keep client details up to date                                |
-| `* *`    | secretary       | view when I am free                                      | know when to schedule a meeting                               |
-| `* *`    | secretary       | add multiple emails and mobile numbers for each client   | track clients with multiple contact details                   |
-| `* *`    | secretary       | view tasks for the day                                   | focus on immediate priorities                                 |
-| `* *`    | secretary       | add recurring tasks                                      | avoid adding the same task every time                         |
+| Priority | As a …          | I want to …                                                          | So that I can…                                             |
+|----------|-----------------|----------------------------------------------------------------------|------------------------------------------------------------|
+| `* * *`  | secretary       | view a list of clients                                               | keep track of clients                                      |
+| `* * *`  | secretary       | add clients with their email, mobile number, and name                | record clients' information                                |
+| `* * *`  | secretary       | delete clients                                                       | keep the list free of information that is no longer useful |
+| `* * *`  | secretary       | view a list of meetings                                              | focus entirely on immediate priorities                     |
+| `* * *`  | secretary       | add meetings with their date and time                                | record meetings                                            |
+| `* * *`  | secretary       | delete meetings                                                      | remove canceled meetings                                   |
+| `* *`    | secretary       | edit client and meeting information                                  | keep client and meeting details up to date                 |
+| `* *`    | secretary       | search for a client or meeting by name                               | find the clients or meetings I want                        |
+| `* *`    | secretary       | add tags to clients and meetings                                     | filter or search for groups of clients or meetings easily  |
+| `* *`    | secretary       | be warned when meeting schedules overlap, and override               | know about clashes but still schedule when intended        |
+| `* *`    | secretary       | clear all clients and meetings                                       | remove outdated information quickly                        |
+| `* *`    | first-time user | see a help guide containing all commands                             | know how to use the app                                    |
+| `*`      | first-time user | **Proposed:** add command aliases                                    | type frequently used commands quickly                      |
+| `*`      | secretary       | **Proposed:** see a client's meeting history                         | know when we last met                                      |
+| `*`      | secretary       | **Proposed:** record meeting outcomes after a meeting                | remember what happened during the meeting                  |
+| `*`      | secretary       | **Proposed:** view recently or frequently contacted clients          | easily find clients I am likely looking for                |
+| `*`      | secretary       | **Proposed:** view when I am free                                    | know when to schedule a meeting                            |
+| `*`      | secretary       | **Proposed:** add multiple emails and mobile numbers for each client | track clients with multiple contact details                |
+| `*`      | secretary       | **Proposed:** view tasks for the day                                 | focus on immediate priorities                              |
+| `*`      | secretary       | **Proposed:** add recurring tasks                                    | avoid adding the same task every time                      |
 
 ### Use cases
 
 (For all use cases below, the **System** is the `PingBook` and the **Actor** is the `user`, unless specified otherwise)
 
-**Use case: UC1 - View clients**
+**Use case: UC1 - View and filter clients**
 
 **MSS**
 
-1.  User requests to view clients.
-2.  PingBook shows a list of clients.
+1. User requests to view clients, optionally providing one or more tags.
+2. PingBook displays the clients matching all supplied tags.
 
-    Use case ends.
+Use case ends.
+
+**Extensions**
+
+* 1a. A supplied tag is invalid or empty.
+
+    * 1a1. PingBook shows an error message.
+
+      Use case ends.
 
 **Use case: UC2 - Add client**
 
 **MSS**
 
-1.  User provides name, phone number, and email for a new client.
-2.  PingBook adds the new client.
+1. User provides a name, phone number, email address, and optionally an address and tags.
+2. PingBook adds the new client.
 
 Use case ends.
 
-
 **Extensions**
 
-* 1a. There is a missing field.
-
-    * 1a1. PingBook shows an error message.
-  
-      Use case ends.
-
-**Use case: UC3 - Delete client**
-
-**MSS**
-
-1.  User requests to delete a client.
-2.  PingBook asks the user for confirmation.
-3.  User confirms to delete.
-4.  PingBook deletes the client.
-
-    Use case ends.
-
-**Extensions**
-
-* 1a. The client does not exist.
+* 1a. A required field is missing or a supplied field is invalid.
 
     * 1a1. PingBook shows an error message.
 
       Use case ends.
 
-* 3a. The user does not confirm.
+* 2a. The client already exists.
 
-     Use case ends.
+    * 2a1. PingBook shows an error message and does not add the client.
 
-**Use case: UC4 - View meetings**
+      Use case ends.
 
-**MSS**
-
-1.  User requests to view meetings.
-2.  PingBook shows a list of meetings.
-
-    Use case ends.
-
-**Use case: UC5 - Add meeting**
+**Use case: UC3 - Edit client**
 
 **MSS**
 
-1.  User provides name, starting time, and ending time for a new meeting.
-2.  PingBook adds the new meeting.
+1. User requests to edit a client using its displayed index and provides one or more fields to edit.
+2. PingBook replaces the supplied name, phone number, email address, address, or tags. A blank `a/` or `t/` removes the client's address or all tags instead.
 
-    Use case ends.
+Use case ends.
 
 **Extensions**
 
-* 1a. There is a missing field.
+* 1a. The contacts panel is not active.
 
     * 1a1. PingBook shows an error message.
 
       Use case ends.
 
-* 1b. Starting or ending time is invalid.
+* 1b. The index is invalid.
 
     * 1b1. PingBook shows an error message.
 
       Use case ends.
 
-* 1c. Starting time is after the ending time.
+* 1c. No field is provided, a supplied field is invalid (see "Field formats" in the User Guide), or a single-valued prefix is repeated.
 
     * 1c1. PingBook shows an error message.
 
       Use case ends.
 
-**Use case: UC6 - Delete meeting**
+* 2a. The edited client duplicates another client.
+
+    * 2a1. PingBook shows an error message and does not edit the client.
+
+      Use case ends.
+
+**Use case: UC4 - Delete client**
 
 **MSS**
 
-1.  User requests to delete a meeting.
-2.  PingBook asks the user for confirmation.
-3.  User confirms to delete.
-4.  PingBook deletes the meeting.
+1. User requests to delete a client using its displayed index.
+2. PingBook deletes the selected client.
 
-    Use case ends.
+Use case ends.
 
 **Extensions**
 
-* 1a. The meeting does not exist.
+* 1a. The contacts panel is not active.
 
     * 1a1. PingBook shows an error message.
 
       Use case ends.
 
-* 3a. The user does not confirm.
-
-  Use case ends.
-
-**Use case: UC7 - Tag client**
-
-**MSS**
-
-1.  User requests to add a tag to a client.
-2.  PingBook adds a tag to the client.
-
-    Use case ends.
-
-**Extensions**
-
-* 1a. The client does not exist.
-
-    * 1a1. PingBook shows an error message.
-
-      Use case ends.
-
-* 1b. Tag is not provided or empty.
+* 1b. The index is invalid.
 
     * 1b1. PingBook shows an error message.
 
       Use case ends.
 
-**Use case: UC8 - Pin client**
+**Use case: UC5 - Find client**
 
 **MSS**
 
-1.  User requests to pin a client.
-2.  PingBook pins the client.
+1. User provides one or more name keywords.
+2. PingBook displays clients whose names contain any of the keywords, ignoring case.
 
-    Use case ends.
+Use case ends.
 
 **Extensions**
 
-* 1a. The client does not exist.
+* 1a. There are no name keywords provided.
 
     * 1a1. PingBook shows an error message.
 
       Use case ends.
 
-**Use case: UC9 - Sort clients based on a criterion**
+**Use case: UC6 - View and filter meetings**
 
 **MSS**
 
-1.  User requests to sort a client based on a criterion.
-2.  PingBook displays a list of clients sorted based on the criterion.
+1. User requests to view meetings, optionally providing one or more tags.
+2. PingBook displays the meetings matching all supplied tags, ordering meetings whose end time has not passed before those whose end time has passed.
 
-    Use case ends.
+Use case ends.
 
 **Extensions**
 
-* 1a. Criterion is not provided, empty, or not defined by PingBook.
+* 1a. A supplied tag is invalid.
 
     * 1a1. PingBook shows an error message.
 
       Use case ends.
 
-**Use case: UC10 - Edit client**
+**Use case: UC7 - Add meeting**
 
 **MSS**
 
-1.  User requests to edit a client.
-2.  PingBook displays the client to be edited.
-3.  User requests to edit the fields. 
-4.  PingBook edits the fields.
+1. User provides a name, date, starting time, ending time, and optionally tags for a new meeting.
+2. PingBook validates the meeting and saves it.
 
-    Use case ends.
+Use case ends.
 
 **Extensions**
 
-* 1a. The client does not exist.
+* 1a. A required field is missing, a supplied field is invalid, or the ending time is not later than the starting time.
 
     * 1a1. PingBook shows an error message.
 
       Use case ends.
 
-* 3a. The fields requested for edit are invalid (they break the field rules in the User Guide's "Field formats"), repeat a single-valued prefix, or are empty.
+* 2a. The meeting is a duplicate of an existing meeting.
 
-    * 3a1. PingBook shows an error message.
+    * 2a1. PingBook shows an error message and does not save the meeting.
 
       Use case ends.
 
-* 3b. The user requests to remove the client's address (`a/` with no value) or all tags (`t/` with no value).
+* 2b. The meeting overlaps an existing meeting and `force/` was not provided.
 
-    * 3b1. PingBook clears that field. Clearing an address that is already absent changes nothing.
+    * 2b1. PingBook shows an error message and does not save the meeting.
 
-      Use case resumes at step 4.
+      Use case ends.
 
-**Use case: UC11 - Tag client**
+* 2c. The meeting overlaps an existing meeting and `force/` was provided.
 
-**MSS**
+    * 2c1. PingBook saves the meeting and shows a warning listing the overlaps.
 
-1. User selects a client.
-2. User provides a tag for the client.
-3. PingBook adds the tag to the client.
+      Use case ends.
 
-Use case ends.
-
-**Use case: UC12 - Add contact details**
+**Use case: UC8 - Edit meeting**
 
 **MSS**
 
-1. User selects a client.
-2. User provides an email address or phone number for the client.
-3. PingBook adds the contact detail to the client.
+1. User requests to edit a meeting using its displayed index and provides one or more fields to edit.
+2. PingBook replaces the supplied name, date, times, or tags and keeps unspecified fields unchanged.
 
 Use case ends.
 
 **Extensions**
 
-* 2a. The contact detail is invalid.
+* 1a. The meetings panel is not active.
 
-* 2a1. PingBook shows an error message.
+    * 1a1. PingBook shows an error message.
 
-Use case ends.
+      Use case ends.
 
-* 2b. The contact detail already exists for the client.
+* 1b. The index is invalid.
 
-* 2b1. PingBook shows an error message.
+    * 1b1. PingBook shows an error message.
 
-Use case ends.
+      Use case ends.
 
-**Use case: UC13 - View prioritised client list**
+* 1c. No field is provided, a supplied field is invalid, or the ending time is not later than the starting time.
+
+    * 1c1. PingBook shows an error message.
+
+      Use case ends.
+
+* 2a. The edited meeting is a duplicate of another meeting.
+
+    * 2a1. PingBook shows an error message and does not edit the meeting.
+
+      Use case ends.
+
+* 2b. The edited meeting overlaps another meeting and `force/` was not provided.
+
+    * 2b1. PingBook shows an error message and does not edit the meeting.
+
+      Use case ends.
+
+* 2c. The edited meeting overlaps another meeting and `force/` was provided.
+
+    * 2c1. PingBook edits the meeting and shows a warning listing the overlaps.
+
+      Use case ends.
+
+**Use case: UC9 - Delete meeting**
 
 **MSS**
 
-1. User requests to view the client list.
-2. PingBook displays the clients, with recently contacted clients at the top.
+1. User requests to delete a meeting using its displayed index.
+2. PingBook deletes the selected meeting.
 
 Use case ends.
 
 **Extensions**
 
-* 2a. A client has no contact history.
+* 1a. The meetings panel is not active.
 
-* 2a1. PingBook places the client according to the available information.
+    * 1a1. PingBook shows an error message.
+
+      Use case ends.
+
+* 1b. The index is invalid.
+
+    * 1b1. PingBook shows an error message.
+
+      Use case ends.
+
+**Use case: UC10 - Find meeting**
+
+**MSS**
+
+1. User provides one or more name keywords.
+2. PingBook displays meetings whose names contain any of the keywords, ignoring case.
 
 Use case ends.
 
-**Use case: UC14 - View user guide**
+**Extensions**
+
+* 1a. There are no name keywords provided.
+
+    * 1a1. PingBook shows an error message.
+
+      Use case ends.
+
+**Use case: UC11 - View user guide**
 
 **MSS**
 
 1. User requests to view the user guide.
-2. PingBook displays a guide containing the basic commands.
-3. User reads the guide.
+2. PingBook displays the help window containing a link to the user guide.
 
 Use case ends.
 
-**Extensions**
-
-* 1a. The user guide is unavailable.
-
-* 1a1. PingBook shows an error message.
-
-Use case ends.
-
-**Use case: UC15 - Create command alias**
+**Use case: UC12 - Clear entries**
 
 **MSS**
 
-1. User provides an existing command and a new alias.
-2. PingBook creates the alias for the command.
-3. User can use the alias to execute the command.
+1. User requests to clear PingBook.
+2. PingBook removes all clients and meetings.
 
 Use case ends.
 
-**Extensions**
-
-* 1a. The command does not exist.
-
-* 1a1. PingBook shows an error message.
-
-Use case ends.
-
-* 1b. The alias is already in use.
-
-* 1b1. PingBook shows an error message.
-
-Use case ends.
-
-**Use case: UC16 - View coworker's meetings**
+**Use case: UC13 - Exit application**
 
 **MSS**
 
-1. User provides the name of a coworker.
-2. PingBook displays the coworker's scheduled meetings.
-3. User views the coworker's schedule.
+1. User requests to exit PingBook.
+2. PingBook closes the application.
 
 Use case ends.
-
-**Extensions**
-
-* 1a. The coworker does not exist.
-
-* 1a1. PingBook shows an error message.
-
-Use case ends.
-
-* 2a. The coworker has no scheduled meetings.
-
-* 2a1. PingBook informs the user that the coworker has no scheduled meetings.
-
-Use case ends.
-
-**Use case: UC17 - Detect meeting overlap**
-
-**MSS**
-
-1. User adds or edits a meeting.
-2. PingBook checks the meeting against the other meetings.
-3. PingBook detects that there is no overlap.
-4. PingBook saves the meeting.
-
-Use case ends.
-
-**Extensions**
-
-* 2a. The end time is not later than the start time.
-
-    * 2a1. PingBook shows an error and does not save the meeting.
-
-      Use case ends.
-
-* 3a. The meeting overlaps with one or more other meetings and the user did not use `force/`.
-
-    * 3a1. PingBook shows an error listing the conflicting meetings (at most three, then a count of the rest)
-      and does not save the meeting.
-
-    * 3a2. User changes the meeting time, or repeats the command with `force/`.
-
-      Use case resumes at step 2.
-
-* 3b. The meeting overlaps with other meetings and the user used `force/`.
-
-    * 3b1. PingBook saves the meeting and shows a warning listing the overlapping meetings.
-
-      Use case ends.
 
 **Design notes**
 
@@ -674,89 +500,6 @@ Use case ends.
   `excluded` so it is not compared with itself.
 * `force/` is a valueless flag parsed by `ParserUtil#parseForceFlag`. Overlaps are computed on demand and never
   stored, so the JSON format is unchanged and saved files that already contain overlaps still load.
-
-**Use case: UC18 - Receive meeting alert**
-
-**MSS**
-
-1. User has an upcoming meeting.
-2. PingBook detects that the meeting is approaching.
-3. PingBook displays an alert containing the meeting details.
-4. User views the alert.
-
-Use case ends.
-
-**Extensions**
-
-* 1a. There are no upcoming meetings.
-
-* 1a1. PingBook does not display an alert.
-
-Use case ends.
-
-**Use case: UC19 - Prioritise task**
-
-**MSS**
-
-1. User selects a task.
-2. User provides an importance level or tag for the task.
-3. PingBook assigns the importance level or tag to the task.
-4. PingBook displays the task with its assigned priority.
-
-Use case ends.
-
-**Extensions**
-
-* 2a. The importance level or tag is invalid.
-
-* 2a1. PingBook shows an error message.
-
-Use case ends.
-
-**Use case: UC20 - Record meeting outcome**
-
-**MSS**
-
-1. User selects a completed meeting.
-2. User provides the outcome of the meeting.
-3. User provides any decisions or follow-up actions.
-4. PingBook saves the meeting outcome.
-
-Use case ends.
-
-**Extensions**
-
-* 2a. The meeting outcome is empty.
-
-* 2a1. PingBook shows an error message.
-
-Use case ends.
-
-**Use case: UC21 - View client meeting history**
-
-**MSS**
-
-1. User selects a client.
-2. User requests to view the client's meeting history.
-3. PingBook displays the client's meetings in chronological order.
-4. User views the meeting history.
-
-Use case ends.
-
-**Extensions**
-
-* 1a. The client does not exist.
-
-* 1a1. PingBook shows an error message.
-
-Use case ends.
-
-* 3a. The client has no meeting history.
-
-* 3a1. PingBook informs the user that there are no previous meetings with the client.
-
-Use case ends.
-
 
 
 ### Non-Functional Requirements
@@ -773,7 +516,8 @@ with commands completing within 1 second under typical usage.
 
 ### Glossary
 
-* **Client**: A person whose contact information and meeting records are managed by the application
+* **Client**: A person whose contact information are managed by the application
+* **Meeting**: A scheduled event with a name and time recorded by the application
 * **Command alias**: A user-defined alternative name or abbreviation for an application command
 
 --------------------------------------------------------------------------------------------------------------------
@@ -792,41 +536,99 @@ testers are expected to do more *exploratory* testing.
 
 1. Initial launch
 
-   1. Download the JAR file and copy it into an empty folder.
+   1. Prerequisite: Run PingBook in a folder without an existing data file.
 
-   1. Double-click the JAR file.<br>
-      Expected: The GUI opens with a set of sample contacts. The window size may not be optimal.
+   2. Test case: Launch the application.<br>
+      Expected: The GUI opens with the sample clients displayed.
 
-1. Saving window preferences
+2. Saving window preferences
 
-   1. Resize the window to an optimal size. Move the window to a different location. Close the window.
+   1. Resize and move the window, then close and relaunch PingBook.<br>
+      Expected: The latest window size and position are restored.
 
-   1. Relaunch the app by double-clicking the JAR file.<br>
-       Expected: The most recent window size and location are retained.
+### Adding a client
 
-1. _{ more test cases … }_
+1. Adding a valid client
 
-### Deleting a person
+   1. Test case: `addc n/Test Client p/91234567 e/test@example.com t/test`<br>
+      Expected: The client is added and displayed with the supplied tag.
 
-1. Deleting a person while all persons are being shown
+2. Rejecting invalid or duplicate clients
 
-   1. Prerequisites: List all persons using the `listc` command, with multiple persons in the list.
+   1. Test cases: `addc n/Test Client p/invalid e/test@example.com`, followed by the same valid `addc` command twice.<br>
+      Expected: Invalid data is rejected. The duplicate client is rejected and only one copy is stored.
 
-   1. Test case: `deletec 1`<br>
-      Expected: The first contact is deleted from the list. The status message shows the deleted contact's details.
+### Finding and filtering clients
 
-   1. Test case: `deletec 0`<br>
-      Expected: No person is deleted. The status message shows error details.
+1. Filtering clients by tags
 
-   1. Other incorrect delete commands to try: `deletec`, `deletec x`, `...` (where x is larger than the list size)<br>
-      Expected: Similar to previous.
+   1. Prerequisite: Add clients with different combinations of tags.
 
-1. _{ more test cases … }_
+   2. Test case: `listc t/friend t/colleague`<br>
+      Expected: Only clients containing both tags are displayed. Tag matching is case-insensitive.
 
-### Saving data
+2. Finding clients by name
 
-1. Dealing with missing/corrupted data files
+   1. Prerequisite: Add clients whose names contain different keywords.
 
-   1. _{Explain how to simulate missing or corrupted data files and state the expected behavior.}_
+   2. Test case: `findc alex david`<br>
+      Expected: Clients matching either keyword are displayed, ignoring case.
 
-1. _{ more test cases … }_
+### Deleting a client
+
+1. Deleting a client while all clients are being shown
+
+    1. Prerequisite: List all clients using the `listc` command, with multiple clients in the list.
+
+    2. Test case: `deletec 1`<br>
+       Expected: The first client is deleted from the list. The status message shows the deleted client's details.
+
+    3. Test cases: `deletec 0`, `deletec`, and `deletec x`<br>
+       Expected: No client is deleted. The status message shows error details.
+
+### Adding a meeting
+
+1. Validating and adding meetings
+
+   1. Test cases: Add a valid meeting, then try a missing field, an invalid date, and an end time earlier than the start time.<br>
+      Expected: The valid meeting is added. Each invalid command is rejected with an error message.
+
+2. Detecting meeting overlaps
+
+   1. Prerequisite: Add one meeting on a particular date.
+
+   2. Test cases: Add an overlapping meeting without `force/`, then repeat it with `force/`.<br>
+      Expected: The first command is rejected with the conflicting meeting listed. The second command saves the meeting and displays a warning.
+
+   3. Test case: Add a meeting that starts exactly when another meeting ends, without overlapping with any other meetings.<br>
+      Expected: The meeting is accepted because touching boundaries do not overlap.
+
+### Finding and filtering meetings
+
+1. Filtering and ordering meetings
+
+   1. Prerequisite: Add meetings with different tags, including one whose end time has passed and one whose end time is in the future.
+
+   2. Test cases: `listm`, `listm t/work`, and `listm t/work t/urgent`<br>
+      Expected: Meetings are filtered by all supplied tags. Meetings whose end time has not passed appear before meetings whose end time has passed.
+
+### Editing a meeting
+
+1. Editing a meeting
+
+   1. Prerequisite: Display meetings using `listm` and ensure that the first meeting displayed does not overlap with other meetings.
+
+   2. Test cases: `editm 1 t/updated` and `editm 1 t/`<br>
+      Expected: The first command replaces the meeting's tags and the second removes all tags.
+
+### Deleting a meeting
+
+1. Deleting a meeting while all meetings are being shown
+
+   1. Prerequisite: List all meetings using the `listm` command, with multiple meetings in the list.
+
+   2. Test case: `deletem 1`<br>
+      Expected: The first meeting is deleted from the list. The status message shows the deleted meeting's details.
+
+   3. Test cases: `deletem 0`, `deletem`, and `deletem x`<br>
+      Expected: No meeting is deleted. The status message shows error details.

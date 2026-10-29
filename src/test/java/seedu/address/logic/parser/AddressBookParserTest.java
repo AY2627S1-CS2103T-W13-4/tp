@@ -172,6 +172,15 @@ public class AddressBookParserTest {
     }
 
     @Test
+    public void parseCommand_listCommandsWithTabBeforeTag_throwsParseException() {
+        String clientMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, ListClientCommand.MESSAGE_USAGE);
+        String meetingMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, ListMeetingCommand.MESSAGE_USAGE);
+
+        assertThrows(ParseException.class, clientMessage, () -> parser.parseCommand("listc\tt/work"));
+        assertThrows(ParseException.class, meetingMessage, () -> parser.parseCommand("listm\tt/work"));
+    }
+
+    @Test
     public void parseCommand_listMeetingWrongCase_suggestsCorrectCommand() {
         String message = ListMeetingCommand.MESSAGE_UNKNOWN_COMMAND;
         assertThrows(ParseException.class, message, () -> parser.parseCommand("Listm"));

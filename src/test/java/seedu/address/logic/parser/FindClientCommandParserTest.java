@@ -44,4 +44,9 @@ public class FindClientCommandParserTest {
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindClientCommand.MESSAGE_USAGE));
     }
 
+    @Test
+    public void parse_invalidKeyword_throwsParseException() {
+        assertParseFailure(parser, "aa-''''#",
+                seedu.address.model.person.Name.MESSAGE_CONSTRAINTS);
+    }
 }

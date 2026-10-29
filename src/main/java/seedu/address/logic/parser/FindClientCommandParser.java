@@ -6,6 +6,7 @@ import java.util.List;
 
 import seedu.address.logic.commands.FindClientCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.person.Name;
 import seedu.address.model.person.NameContainsKeywordsPredicate;
 
 /**
@@ -28,6 +29,12 @@ public class FindClientCommandParser implements Parser<FindClientCommand> {
         }
 
         String[] nameKeywords = trimmedArgs.split("\\s+");
+
+        for (String keyword : nameKeywords) {
+            if (!Name.isValidName(keyword)) {
+                throw new ParseException(Name.MESSAGE_CONSTRAINTS);
+            }
+        }
 
         return new FindClientCommand(new NameContainsKeywordsPredicate(List.of(nameKeywords)));
     }
