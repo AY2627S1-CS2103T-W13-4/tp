@@ -16,8 +16,8 @@ public class Messages {
 
     public static final String MESSAGE_UNKNOWN_COMMAND = "Unknown command.";
     public static final String MESSAGE_INVALID_COMMAND_FORMAT = "Invalid command format!\n%1$s";
-    public static final String MESSAGE_INVALID_PERSON_DISPLAYED_INDEX = "The person index provided is invalid.";
-    public static final String MESSAGE_INVALID_MEETING_INDEX = "The index is invalid.";
+    public static final String MESSAGE_INVALID_MEETING_INDEX = "The meeting index provided is invalid!\n%1$s";
+    public static final String MESSAGE_INVALID_PERSON_INDEX = "The person index provided is invalid!\n%1$s";
     public static final String MESSAGE_CONTACT_LIST_NOT_VISIBLE =
             "Cannot edit or delete contacts while viewing meetings. Run listc to display contacts first.";
     public static final String MESSAGE_MEETING_LIST_NOT_VISIBLE =

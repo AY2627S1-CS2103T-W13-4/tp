@@ -120,8 +120,9 @@ public class LogicManagerMeetingViewTest {
         logic.execute(DeleteMeetingCommand.COMMAND_WORD + " 1");
         assertTrue(logic.getMeetingList().isEmpty());
         assertEquals(List.of(hidden), addressBookStorage.readAddressBook().orElseThrow().getMeetingList());
-        assertThrows(CommandException.class, MESSAGE_INVALID_MEETING_INDEX, () ->
-                logic.execute(DeleteMeetingCommand.COMMAND_WORD + " 1"));
+        assertThrows(CommandException.class,
+                String.format(MESSAGE_INVALID_MEETING_INDEX, DeleteMeetingCommand.MESSAGE_USAGE), () -> logic.execute(
+                        DeleteMeetingCommand.COMMAND_WORD + " 1"));
 
         logic.execute(ListMeetingCommand.COMMAND_WORD);
         assertEquals(List.of(hidden), logic.getMeetingList());
@@ -246,7 +247,8 @@ public class LogicManagerMeetingViewTest {
         String originalFile = Files.readString(addressBookStorage.getAddressBookFilePath());
 
         assertThrows(CommandException.class,
-                MESSAGE_INVALID_MEETING_INDEX, () -> logic.execute(DeleteMeetingCommand.COMMAND_WORD + " 1"));
+                String.format(MESSAGE_INVALID_MEETING_INDEX, DeleteMeetingCommand.MESSAGE_USAGE), () -> logic.execute(
+                        DeleteMeetingCommand.COMMAND_WORD + " 1"));
         assertEquals(originalSaveAttempts, addressBookStorage.saveAttempts);
         assertEquals(originalFile, Files.readString(addressBookStorage.getAddressBookFilePath()));
         assertContactCommandRejected(DeleteClientCommand.COMMAND_WORD + " 1");

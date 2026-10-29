@@ -51,7 +51,8 @@ public class DeleteMeetingCommandTest {
     public void execute_invalidIndex_throwsCommandException() {
         DeleteMeetingCommand command = new DeleteMeetingCommand(Index.fromOneBased(3));
 
-        assertCommandFailure(command, model, MESSAGE_INVALID_MEETING_INDEX);
+        assertCommandFailure(command, model,
+                String.format(MESSAGE_INVALID_MEETING_INDEX, DeleteMeetingCommand.MESSAGE_USAGE));
     }
 
     @Test
@@ -59,7 +60,8 @@ public class DeleteMeetingCommandTest {
         Model emptyModel = new ModelManager();
         DeleteMeetingCommand command = new DeleteMeetingCommand(Index.fromOneBased(1));
 
-        assertCommandFailure(command, emptyModel, MESSAGE_INVALID_MEETING_INDEX);
+        assertCommandFailure(command, emptyModel,
+                String.format(MESSAGE_INVALID_MEETING_INDEX, DeleteMeetingCommand.MESSAGE_USAGE));
     }
 
     @Test
