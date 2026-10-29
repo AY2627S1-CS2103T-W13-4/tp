@@ -28,8 +28,7 @@ public class ListMeetingCommandParser implements Parser<ListMeetingCommand> {
         if (args.isBlank()) {
             return new ListMeetingCommand();
         }
-        ArgumentMultimap arguments = ArgumentTokenizer.tokenize(
-                " " + args.strip().replaceAll("\\s+", " "), CliSyntax.getAllPrefixes());
+        ArgumentMultimap arguments = ArgumentTokenizer.tokenize(args, CliSyntax.getAllPrefixes());
         if (!arguments.getPreamble().isEmpty() || !arguments.containsOnlyPrefixes(PREFIX_TAG)) {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, ListMeetingCommand.MESSAGE_USAGE));
         }
