@@ -527,7 +527,7 @@ Use case ends.
 with commands completing within 1 second under typical usage.
 3.  A user with above average typing speed for regular English text (i.e. not code, not system admin commands) should be able to accomplish most of the tasks faster using commands than using the mouse.
 4.  Contact and meeting data should be stored in a human-editable text file. 
-5.  Contact contact details and meeting information should remain on the user's computer. PingBook should not transmit them to a remote server or require an online account.
+5.  Contact details and meeting information should remain on the user's computer. PingBook should not transmit them to a remote server or require an online account.
 6.  All functions should remain usable at a screen resolution of 1280 × 720 with 150% scaling. At 1920 × 1080 with 100% or 125% scaling, controls and information should not overlap or be cut off.
 7.  Command results, validation errors, and meeting status should be communicated in text, so users do not have to rely on colours or icons alone to understand them.
 
