@@ -4,47 +4,47 @@
 
 # PingBook
 
-**PingBook is a desktop app for secretaries and sales representatives to manage their clients and meetings in one place.**
+**PingBook is a desktop app for secretaries and sales representatives to manage their contacts and meetings in one place.**
 It is optimised for use via a Command Line Interface (CLI), while still having the benefits of a Graphical User Interface (GUI).
 
 Secretaries juggle many contacts at once, and those contacts are often scattered across spreadsheets, notebooks and memory.
-PingBook gives them a fast, reliable place to find the right client in seconds and keep track of who they are meeting and when.
+PingBook gives them a fast, reliable place to find the right contact in seconds and keep track of who they are meeting and when.
 
 ## Target user
 
 PingBook is designed for secretaries and sales representatives who:
 
-* support several managers or clients and keep adjusting schedules throughout the day
-* need to look up client contact details quickly
+* support several managers or contacts and keep adjusting schedules throughout the day
+* need to look up contact details quickly
 * are comfortable typing short commands and prefer that to clicking through menus
 
 ## Features
 
 The 1.5 version of PingBook will support:
 
-| Feature           | Command                                                                          |
-|-------------------|----------------------------------------------------------------------------------|
-| Add a client      | `addc n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [t/TAG]...`                      |
-| Delete a client   | `deletec CLIENT_INDEX`                                                           |
-| Edit a client     | `editc INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]...`         |
-| Find clients      | `findc KEYWORD [MORE_KEYWORDS]...`                                               |
-| List clients      | `listc [t/TAG]...`                                                               |
-| Add a meeting     | `addm n/NAME d/DATE st/START_TIME et/END_TIME [t/TAG]...`                        |
-| Delete a meeting  | `deletem MEETING_INDEX`                                                          |
-| Edit a meeting    | `editm MEETING_INDEX [n/NAME] [d/DATE] [st/START_TIME] [et/END_TIME] [t/TAG]...` |
-| Find meetings     | `findm KEYWORD [MORE_KEYWORDS]...`                                               |
-| List meetings     | `listm [t/TAG]...`                                                               |
-| Clear all entries | `clear`                                                                          |
-| Help              | `help`                                                                           |
-| Exit              | `exit`                                                                           |
+| Feature           | Command                                                                  |
+|-------------------|--------------------------------------------------------------------------|
+| Add a contact     | `addc n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [t/TAG]...`              |
+| Delete a contact  | `deletec INDEX`                                                          |
+| Edit a contact    | `editc INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]...` |
+| Find contacts     | `findc KEYWORD [MORE_KEYWORDS]...`                                       |
+| List contacts     | `listc [t/TAG]...`                                                       |
+| Add a meeting     | `addm n/NAME d/DATE st/START_TIME et/END_TIME [t/TAG]...`                |
+| Delete a meeting  | `deletem INDEX`                                                          |
+| Edit a meeting    | `editm INDEX [n/NAME] [d/DATE] [st/START_TIME] [et/END_TIME] [t/TAG]...` |
+| Find meetings     | `findm KEYWORD [MORE_KEYWORDS]...`                                       |
+| List meetings     | `listm [t/TAG]...`                                                       |
+| Clear all entries | `clear`                                                                  |
+| Help              | `help`                                                                   |
+| Exit              | `exit`                                                                   |
 
 Features being considered for later versions include:
 
-* pinning clients
-* storing multiple phone numbers and emails per client
+* pinning contacts
+* storing multiple phone numbers and emails per contact
 * recurring meetings
 * finding free time slots and viewing the schedule for a given day
-* recording meeting outcomes and viewing a client's meeting history
+* recording meeting outcomes and viewing a contact's meeting history
 
 ## Documentation
 

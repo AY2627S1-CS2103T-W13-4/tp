@@ -208,7 +208,7 @@ Examples:
 * `editm 3 t/urgent t/work` replaces all tags of the 3rd displayed meeting with `urgent` and `work`.
 * `editm 1 t/` removes all tags from the 1st displayed meeting.
 
-### Listing and filtering clients: `listc`
+### Listing and filtering contacts: `listc`
 
 Shows a list of all persons in PingBook that match the given tags.
 
@@ -380,18 +380,18 @@ Furthermore, certain edits can cause PingBook to behave in unexpected ways (e.g.
 
 ## Command summary
 
-Action     | Format, Examples
------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-**Help**   | `help`
-**Add client**    | `addc n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [t/TAG]... ` <br> e.g., `addc n/James Ho p/22224444 e/jamesho@example.com a/123, Clementi Rd, 1234665 t/friend t/colleague`
-**Add meeting**    | `addm n/NAME d/DATE st/START_TIME et/END_TIME [t/TAG]... [force/]` <br> e.g., `addm n/John Doe d/20/09/2026 st/1430 et/1530 t/work`
-**Edit client**   | `editc INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]... `<br> e.g., `editc 2 n/James Lee e/jameslee@example.com`
-**Edit meeting** | `editm MEETING_INDEX [n/NAME] [d/DATE] [st/START_TIME] [et/END_TIME] [t/TAG]... [force/]`<br> e.g., `editm 2 d/25/10/2026 st/1500 et/1600 t/urgent`
-**List clients**   | `listc [t/TAG]...`<br> e.g., `listc t/colleague t/friend`
-**List meetings** | `listm [t/TAG]...`<br> e.g., `listm t/urgent t/work`
-**Find clients**   | `findc KEYWORD [MORE_KEYWORDS]`<br> e.g., `findc James Jake`
-**Find meetings**   | `findm KEYWORD [MORE_KEYWORDS]`<br> e.g., `findm Project Review`
-**Delete client** | `deletec CLIENT_INDEX`<br> e.g., `deletec 3`
-**Delete meeting** | `deletem MEETING_INDEX`<br> e.g., `deletem 3`
-**Clear**  | `clear`
-**Exit**  | `exit`
+| Action             | Format, Examples                                                                                                                                                            |
+|--------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Help**           | `help`                                                                                                                                                                      |
+| **Add contact**    | `addc n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [t/TAG]... ` <br> e.g., `addc n/James Ho p/22224444 e/jamesho@example.com a/123, Clementi Rd, 1234665 t/friend t/colleague` |
+| **Add meeting**    | `addm n/NAME d/DATE st/START_TIME et/END_TIME [t/TAG]... [force/]` <br> e.g., `addm n/John Doe d/20/09/2026 st/1430 et/1530 t/work`                                         |
+| **Edit contact**   | `editc INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]... `<br> e.g., `editc 2 n/James Lee e/jameslee@example.com`                                            |
+| **Edit meeting**   | `editm INDEX [n/NAME] [d/DATE] [st/START_TIME] [et/END_TIME] [t/TAG]... [force/]`<br> e.g., `editm 2 d/25/10/2026 st/1500 et/1600 t/urgent`                                 |
+| **List contacts**  | `listc [t/TAG]...`<br> e.g., `listc t/colleague t/friend`                                                                                                                   |
+| **List meetings**  | `listm [t/TAG]...`<br> e.g., `listm t/urgent t/work`                                                                                                                        |
+| **Find contacts**  | `findc KEYWORD [MORE_KEYWORDS]`<br> e.g., `findc James Jake`                                                                                                                |
+| **Find meetings**  | `findm KEYWORD [MORE_KEYWORDS]`<br> e.g., `findm Project Review`                                                                                                            |
+| **Delete contact** | `deletec INDEX`<br> e.g., `deletec 3`                                                                                                                                       |
+| **Delete meeting** | `deletem INDEX`<br> e.g., `deletem 3`                                                                                                                                       |
+| **Clear**          | `clear`                                                                                                                                                                     |
+| **Exit**           | `exit`                                                                                                                                                                      |
