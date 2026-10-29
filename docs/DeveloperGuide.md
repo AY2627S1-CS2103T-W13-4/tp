@@ -35,9 +35,7 @@ The following provides a quick overview of the main components and their interac
 
 **Main components of the architecture**
 
-**`Main`** (consisting of classes [`Main`](https://github.com/AY2627S1-CS2103T-W13-4/tp/tree/master/src/main/java/seedu/address/Main.java) and [`MainApp`](https://github.com/AY2627S1-CS2103T-W13-4/tp/tree/master/src/main/java/seedu/address/MainApp.java)) is in charge of the app launch and shut down.
-* At app launch, it initializes the other components in the correct sequence, and connects them up with each other.
-* At shut down, it shuts down the other components and invokes cleanup methods where necessary.
+**`Main`** (consisting of classes [`Main`](https://github.com/AY2627S1-CS2103T-W13-4/tp/tree/master/src/main/java/seedu/address/Main.java) and [`MainApp`](https://github.com/AY2627S1-CS2103T-W13-4/tp/tree/master/src/main/java/seedu/address/MainApp.java)) manages the app's launch, initialization, and shutdown. See the [Main component](#main-component) section for details.
 
 The bulk of the app's work is done by the following four components:
 
@@ -64,6 +62,26 @@ For example, the `Logic` component defines its API in `Logic.java` and implement
 <puml src="diagrams/ComponentManagers.puml" width="300" />
 
 The sections below give more details of each component.
+
+### Main component
+
+The `Main` component consists of the [`Main`](https://github.com/AY2627S1-CS2103T-W13-4/tp/tree/master/src/main/java/seedu/address/Main.java) and [`MainApp`](https://github.com/AY2627S1-CS2103T-W13-4/tp/tree/master/src/main/java/seedu/address/MainApp.java) classes. It is responsible for launching PingBook, initializing and connecting the other components, starting the UI, and saving the user preferences when the app shuts down.
+
+`Main` is the entry point of the app. Unlike `MainApp`, it does not extend the JavaFX `Application` class. This avoids the JavaFX launcher error that would otherwise occur because PingBook does not use JavaFX through the Java module system. `Main` delegates the launch to `MainApp` by calling `Application.launch(MainApp.class, args)`.
+
+The sequence diagram below shows how `Main` launches PingBook and how `MainApp` initializes and starts the other components.
+
+<puml src="diagrams/MainSequenceDiagram.puml" alt="Initialization of PingBook by the Main component" />
+
+`MainApp` extends `Application` and coordinates the app's lifecycle. During `init()`, it initializes and connects the components in the following order:
+
+1. It loads the user preferences from `preferences.json`. If the file is missing or cannot be loaded, it uses default preferences instead and attempts to save them to the file.
+1. It creates the `Storage` component using storage objects for `preferences.json` and `data/addressbook.json`.
+1. It creates the `Model` component using the user preferences and the address book data from `Storage`. If the address book data file is missing, it uses sample data; if the file cannot be loaded, it uses an empty address book.
+1. It creates the `Logic` component using `Model` and `Storage`.
+1. It creates the `UI` component using `Logic` and the address book data file path from `Storage`.
+
+After initialization, JavaFX calls `start(Stage)`, which starts the `UI` with the primary stage. When the app shuts down, JavaFX calls `stop()`, which saves the latest user preferences from `Model` through `Storage`.
 
 ### UI component
 
