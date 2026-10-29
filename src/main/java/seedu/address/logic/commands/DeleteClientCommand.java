@@ -12,7 +12,7 @@ import seedu.address.model.Model;
 import seedu.address.model.person.Person;
 
 /**
- * Deletes a person identified using its displayed index from the address book.
+ * Deletes a person identified using its displayed index from PingBook.
  */
 public class DeleteClientCommand extends Command {
 
@@ -37,7 +37,7 @@ public class DeleteClientCommand extends Command {
         List<Person> lastShownList = model.getFilteredPersonList();
 
         if (targetIndex.getZeroBased() >= lastShownList.size()) {
-            throw new CommandException(Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
+            throw new CommandException(String.format(Messages.MESSAGE_INVALID_PERSON_INDEX, MESSAGE_USAGE));
         }
 
         Person personToDelete = lastShownList.get(targetIndex.getZeroBased());

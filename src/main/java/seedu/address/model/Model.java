@@ -92,7 +92,7 @@ public interface Model {
     /**
      * Adds the given meeting.
      * {@code meeting} must not already exist in the address book.
-     * Clears the meeting filter so the new meeting is visible.
+     * The active meeting filter is kept, so the new meeting is displayed only if it matches.
      */
     void addMeeting(Meeting meeting);
 

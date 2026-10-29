@@ -53,4 +53,10 @@ public class FindMeetingCommandParserTest {
         assertParseFailure(parser, "Project force/",
                 String.format(Messages.MESSAGE_INVALID_COMMAND_FORMAT, FindMeetingCommand.MESSAGE_USAGE));
     }
+
+    @Test
+    public void parse_invalidKeyword_throwsParseException() {
+        assertParseFailure(parser, "aa@#",
+                seedu.address.model.meeting.MeetingName.MESSAGE_CONSTRAINTS);
+    }
 }

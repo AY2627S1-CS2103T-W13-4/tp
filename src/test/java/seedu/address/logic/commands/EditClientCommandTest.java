@@ -73,6 +73,40 @@ public class EditClientCommandTest {
     }
 
     @Test
+    public void execute_removeAddressUnfilteredList_success() {
+        Person personToEdit = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        Person editedPerson = new PersonBuilder(personToEdit).withoutAddress().build();
+
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withoutAddress().build();
+        EditClientCommand editClientCommand = new EditClientCommand(INDEX_FIRST_PERSON, descriptor);
+
+        String expectedMessage = String.format(EditClientCommand.MESSAGE_EDIT_PERSON_SUCCESS,
+                Messages.format(editedPerson));
+
+        Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
+        expectedModel.setPerson(personToEdit, editedPerson);
+
+        assertCommandSuccess(editClientCommand, model, expectedMessage, expectedModel);
+    }
+
+    @Test
+    public void execute_removeAddressFromPersonWithoutAddress_success() {
+        Person personToEdit = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        Person personWithoutAddress = new PersonBuilder(personToEdit).withoutAddress().build();
+        model.setPerson(personToEdit, personWithoutAddress);
+
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withoutAddress().build();
+        EditClientCommand editClientCommand = new EditClientCommand(INDEX_FIRST_PERSON, descriptor);
+
+        String expectedMessage = String.format(EditClientCommand.MESSAGE_EDIT_PERSON_SUCCESS,
+                Messages.format(personWithoutAddress));
+
+        Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
+
+        assertCommandSuccess(editClientCommand, model, expectedMessage, expectedModel);
+    }
+
+    @Test
     public void execute_noFieldSpecifiedUnfilteredList_success() {
         EditClientCommand editClientCommand = new EditClientCommand(INDEX_FIRST_PERSON, new EditPersonDescriptor());
         Person editedPerson = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
@@ -90,17 +124,39 @@ public class EditClientCommandTest {
         showPersonAtIndex(model, INDEX_FIRST_PERSON);
 
         Person personInFilteredList = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
-        Person editedPerson = new PersonBuilder(personInFilteredList).withName(VALID_NAME_BOB).build();
+        Person editedPerson = new PersonBuilder(personInFilteredList).withPhone(VALID_PHONE_BOB).build();
         EditClientCommand editClientCommand = new EditClientCommand(INDEX_FIRST_PERSON,
-                new EditPersonDescriptorBuilder().withName(VALID_NAME_BOB).build());
+                new EditPersonDescriptorBuilder().withPhone(VALID_PHONE_BOB).build());
 
         String expectedMessage = String.format(EditClientCommand.MESSAGE_EDIT_PERSON_SUCCESS,
                 Messages.format(editedPerson));
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
-        expectedModel.setPerson(model.getFilteredPersonList().get(0), editedPerson);
+        showPersonAtIndex(expectedModel, INDEX_FIRST_PERSON);
+        expectedModel.setPerson(expectedModel.getFilteredPersonList().get(0), editedPerson);
 
         assertCommandSuccess(editClientCommand, model, expectedMessage, expectedModel);
+        // the filter is preserved, so only the edited person is still displayed
+        assertEquals(1, model.getFilteredPersonList().size());
+        assertEquals(editedPerson, model.getFilteredPersonList().get(0));
+    }
+
+    @Test
+    public void execute_editHidesPersonFromFilteredList_filterRemainsActive() throws Exception {
+        showPersonAtIndex(model, INDEX_FIRST_PERSON);
+
+        Person personInFilteredList = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        Person editedPerson = new PersonBuilder(personInFilteredList).withName(VALID_NAME_BOB).build();
+        EditClientCommand editClientCommand = new EditClientCommand(INDEX_FIRST_PERSON,
+                new EditPersonDescriptorBuilder().withName(VALID_NAME_BOB).build());
+
+        CommandResult result = editClientCommand.execute(model);
+
+        // the edited person no longer matches the active filter, and other persons are not revealed
+        assertEquals(String.format(EditClientCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(editedPerson))
+                + "\n" + Messages.MESSAGE_PERSON_HIDDEN_BY_FILTER, result.getFeedbackToUser());
+        assertTrue(model.hasPerson(editedPerson));
+        assertEquals(0, model.getFilteredPersonList().size());
     }
 
     @Test
@@ -130,7 +186,8 @@ public class EditClientCommandTest {
         EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withName(VALID_NAME_BOB).build();
         EditClientCommand editClientCommand = new EditClientCommand(outOfBoundIndex, descriptor);
 
-        assertCommandFailure(editClientCommand, model, Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
+        assertCommandFailure(editClientCommand, model,
+                String.format(Messages.MESSAGE_INVALID_PERSON_INDEX, EditClientCommand.MESSAGE_USAGE));
     }
 
     /**
@@ -147,7 +204,8 @@ public class EditClientCommandTest {
         EditClientCommand editClientCommand = new EditClientCommand(outOfBoundIndex,
                 new EditPersonDescriptorBuilder().withName(VALID_NAME_BOB).build());
 
-        assertCommandFailure(editClientCommand, model, Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
+        assertCommandFailure(editClientCommand, model,
+                String.format(Messages.MESSAGE_INVALID_PERSON_INDEX, EditClientCommand.MESSAGE_USAGE));
     }
 
     @Test

@@ -85,7 +85,7 @@ public class EditMeetingCommand extends Command {
         List<Meeting> lastShownList = model.getMeetingList();
 
         if (index.getZeroBased() >= lastShownList.size()) {
-            throw new CommandException(Messages.MESSAGE_INVALID_MEETING_INDEX);
+            throw new CommandException(String.format(Messages.MESSAGE_INVALID_MEETING_INDEX, MESSAGE_USAGE));
         }
 
         Meeting meetingToEdit = lastShownList.get(index.getZeroBased());
@@ -110,6 +110,9 @@ public class EditMeetingCommand extends Command {
         if (!overlaps.isEmpty()) {
             feedback += "\n" + String.format(Messages.MESSAGE_MEETING_OVERLAP_WARNING,
                     Messages.formatOverlappingMeetings(overlaps));
+        }
+        if (!model.getMeetingList().contains(editedMeeting)) {
+            feedback += "\n" + Messages.MESSAGE_MEETING_HIDDEN_BY_FILTER;
         }
         return new CommandResult(feedback, true);
     }

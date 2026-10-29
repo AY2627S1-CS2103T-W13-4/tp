@@ -123,9 +123,11 @@ public class LogicManagerMeetingViewTest {
         logic.execute(DeleteMeetingCommand.COMMAND_WORD + " 1");
         assertTrue(logic.getMeetingList().isEmpty());
         assertEquals(List.of(hidden), addressBookStorage.readAddressBook().orElseThrow().getMeetingList());
+
         // BVA: index 1 is invalid once the filtered view has zero rows, even with hidden meetings stored.
-        assertThrows(CommandException.class, MESSAGE_INVALID_MEETING_INDEX, () ->
-                logic.execute(DeleteMeetingCommand.COMMAND_WORD + " 1"));
+        assertThrows(CommandException.class,
+                String.format(MESSAGE_INVALID_MEETING_INDEX, DeleteMeetingCommand.MESSAGE_USAGE), () -> logic.execute(
+                        DeleteMeetingCommand.COMMAND_WORD + " 1"));
 
         logic.execute(ListMeetingCommand.COMMAND_WORD);
         assertEquals(List.of(hidden), logic.getMeetingList());
@@ -171,16 +173,17 @@ public class LogicManagerMeetingViewTest {
     }
 
     @Test
-    public void execute_addAfterFiltering_clearsFilterAndShowsNewMeeting() throws Exception {
-        // State transition: adding an untagged meeting while filtering resets the filter and shows all meetings.
-        model.addMeeting(taggedMeeting("Review", "08/10/2099"));
+    public void execute_addAfterFiltering_keepsFilterAndSavesNewMeeting() throws Exception {
+        // State transition: adding an untagged meeting preserves the active filter and saves the new meeting.
+        Meeting urgent = taggedMeeting("Review", "08/10/2099");
+        model.addMeeting(urgent);
         logic.execute(ListMeetingCommand.COMMAND_WORD + " t/urgent");
         CommandResult result = logic.execute(AddMeetingCommand.COMMAND_WORD
                 + " n/Added d/10/10/2099 st/1400 et/1500");
 
         assertTrue(result.isShowMeetings());
-        assertEquals(3, logic.getMeetingList().size());
-        assertEquals("Added", logic.getMeetingList().get(2).getName().name);
+        assertEquals(List.of(urgent), logic.getMeetingList());
+        assertEquals(3, model.getAddressBook().getMeetingList().size());
         assertEquals(model.getAddressBook(), addressBookStorage.readAddressBook().orElseThrow());
     }
 
@@ -255,7 +258,8 @@ public class LogicManagerMeetingViewTest {
         String originalFile = Files.readString(addressBookStorage.getAddressBookFilePath());
 
         assertThrows(CommandException.class,
-                MESSAGE_INVALID_MEETING_INDEX, () -> logic.execute(DeleteMeetingCommand.COMMAND_WORD + " 1"));
+                String.format(MESSAGE_INVALID_MEETING_INDEX, DeleteMeetingCommand.MESSAGE_USAGE), () -> logic.execute(
+                        DeleteMeetingCommand.COMMAND_WORD + " 1"));
         assertEquals(originalSaveAttempts, addressBookStorage.saveAttempts);
         assertEquals(originalFile, Files.readString(addressBookStorage.getAddressBookFilePath()));
         assertContactCommandRejected(DeleteClientCommand.COMMAND_WORD + " 1");

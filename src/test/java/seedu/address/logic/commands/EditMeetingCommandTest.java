@@ -9,6 +9,7 @@ import static seedu.address.testutil.Assert.assertThrows;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,6 +23,7 @@ import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
 import seedu.address.model.meeting.Meeting;
+import seedu.address.model.meeting.MeetingContainsTagsPredicate;
 import seedu.address.model.meeting.MeetingDate;
 import seedu.address.model.meeting.MeetingName;
 import seedu.address.model.meeting.MeetingTime;
@@ -90,6 +92,25 @@ public class EditMeetingCommandTest {
     }
 
     @Test
+    public void execute_editHidesMeetingFromFilteredList_successWithNote() {
+        Predicate<Meeting> urgentOnly = new MeetingContainsTagsPredicate(Set.of(new Tag("urgent")));
+        model.updateFilteredMeetingList(urgentOnly);
+        Meeting editedMeeting = meeting("Project Review", "08/10/2026", "1400", "1500");
+        EditMeetingCommand command = new EditMeetingCommand(FIRST_INDEX,
+                new EditMeetingDescriptorBuilder().withTags().build());
+
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+        expectedModel.updateFilteredMeetingList(urgentOnly);
+        expectedModel.setMeeting(firstMeeting, editedMeeting);
+        CommandResult expectedResult = new CommandResult(
+                String.format(EditMeetingCommand.MESSAGE_EDIT_MEETING_SUCCESS, editedMeeting)
+                        + "\n" + Messages.MESSAGE_MEETING_HIDDEN_BY_FILTER, true);
+
+        assertCommandSuccess(command, model, expectedResult, expectedModel);
+        assertTrue(model.getMeetingList().isEmpty());
+    }
+
+    @Test
     public void execute_sameValues_success() {
         EditMeetingDescriptor descriptor = new EditMeetingDescriptorBuilder(firstMeeting).build();
         EditMeetingCommand command = new EditMeetingCommand(FIRST_INDEX, descriptor);
@@ -122,7 +143,8 @@ public class EditMeetingCommandTest {
         EditMeetingCommand command = new EditMeetingCommand(Index.fromOneBased(3),
                 new EditMeetingDescriptorBuilder().withName("Updated Meeting").build());
 
-        assertCommandFailure(command, model, Messages.MESSAGE_INVALID_MEETING_INDEX);
+        assertCommandFailure(command, model,
+                String.format(Messages.MESSAGE_INVALID_MEETING_INDEX, EditMeetingCommand.MESSAGE_USAGE));
     }
 
     @Test
@@ -158,6 +180,34 @@ public class EditMeetingCommandTest {
         Set<Tag> tagSet = Stream.of(tags).map(Tag::new).collect(Collectors.toSet());
         return new Meeting(new MeetingName(name), new MeetingDate(date),
                 new MeetingTime(startTime), new MeetingTime(endTime), tagSet);
+    }
+
+    @Test
+    public void execute_editOverlapsMeetingHiddenByFilterWithoutForce_failure() {
+        Meeting hidden = meeting("Personal Call", "08/10/2026", "1600", "1700", "personal");
+        model.addMeeting(hidden);
+        model.updateFilteredMeetingList(new MeetingContainsTagsPredicate(Set.of(new Tag("work"))));
+        EditMeetingDescriptor descriptor = new EditMeetingDescriptorBuilder()
+                .withStartTime("1600").withEndTime("1700").build();
+        EditMeetingCommand command = new EditMeetingCommand(FIRST_INDEX, descriptor);
+
+        assertCommandFailure(command, model, String.format(Messages.MESSAGE_MEETING_OVERLAP,
+                Messages.formatOverlappingMeetings(List.of(hidden))));
+    }
+
+    @Test
+    public void execute_editOverlapsMeetingHiddenByFilterWithForce_success() throws Exception {
+        Meeting hidden = meeting("Personal Call", "08/10/2026", "1600", "1700", "personal");
+        model.addMeeting(hidden);
+        model.updateFilteredMeetingList(new MeetingContainsTagsPredicate(Set.of(new Tag("work"))));
+        EditMeetingDescriptor descriptor = new EditMeetingDescriptorBuilder()
+                .withStartTime("1600").withEndTime("1700").build();
+
+        CommandResult result = new EditMeetingCommand(FIRST_INDEX, descriptor, true).execute(model);
+
+        assertTrue(result.getFeedbackToUser().contains(
+                String.format(Messages.MESSAGE_MEETING_OVERLAP_WARNING,
+                        Messages.formatOverlappingMeetings(List.of(hidden)))));
     }
 
     @Test

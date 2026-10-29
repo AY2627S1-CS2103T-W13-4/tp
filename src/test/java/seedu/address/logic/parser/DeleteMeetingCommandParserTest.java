@@ -7,7 +7,6 @@ import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSucces
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
-import seedu.address.logic.Messages;
 import seedu.address.logic.commands.DeleteMeetingCommand;
 
 public class DeleteMeetingCommandParserTest {
@@ -22,11 +21,16 @@ public class DeleteMeetingCommandParserTest {
 
     @Test
     public void parse_invalidArgs_throwsParseException() {
-        assertParseFailure(parser, "", Messages.MESSAGE_INVALID_MEETING_INDEX);
-        assertParseFailure(parser, "0", Messages.MESSAGE_INVALID_MEETING_INDEX);
-        assertParseFailure(parser, "-1", Messages.MESSAGE_INVALID_MEETING_INDEX);
-        assertParseFailure(parser, "1 2", Messages.MESSAGE_INVALID_MEETING_INDEX);
-        assertParseFailure(parser, "abc", Messages.MESSAGE_INVALID_MEETING_INDEX);
+        assertParseFailure(parser, "",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteMeetingCommand.MESSAGE_USAGE));
+        assertParseFailure(parser, "0",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteMeetingCommand.MESSAGE_USAGE));
+        assertParseFailure(parser, "-1",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteMeetingCommand.MESSAGE_USAGE));
+        assertParseFailure(parser, "1 2",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteMeetingCommand.MESSAGE_USAGE));
+        assertParseFailure(parser, "abc",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, DeleteMeetingCommand.MESSAGE_USAGE));
     }
 
     @Test
