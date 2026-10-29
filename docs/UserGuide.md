@@ -79,7 +79,7 @@ Field | Prefix | Used by | Accepted | Rejected examples
 Contact name | `n/` | `addc`, `editc`, `findc` | English letters, digits and spaces only, starting with a letter or digit. | `Anne-Marie Tan` (hyphen), `Ravi s/o Kumar` (`/`), `Dr. Lim` (full stop)
 Phone number | `p/` | `addc`, `editc` | Digits only, at least 3 digits long, with no upper limit. | `12` (too short), `+6591234567` (`+`), `9123 4567` (space), `9123-4567` (hyphen)
 Email | `e/` | `addc`, `editc` | `local-part@domain`. The local part uses letters, digits and the special characters `+`, `_`, `.`, `-`, and cannot start or end with a special character. The domain is made up of labels separated by periods; each label starts and ends with a letter or digit, and the last label is at least 2 characters long. | `john.example.com` (no `@`), `john@example.c` (last label too short), `-john@example.com` (starts with `-`), `john@exam_ple.com` (`_` in the domain)
-Address | `a/` | `addc`, `editc` | Any text, as long as it is not blank.<br>In `editc` only, a blank `a/` is also accepted and removes the address. | In `addc`, a blank `a/` (leave `a/` out to add a person with no address)
+Address | `a/` | `addc`, `editc` | Any text, as long as it is not blank.<br>In `editc` only, a blank `a/` is also accepted and removes the address. | In `addc`, a blank `a/` (leave `a/` out to add a contact with no address)
 Meeting name | `n/` | `addm`, `editm`, `findm` | English letters, spaces, hyphens (`-`) and apostrophes (`'`), with at least one letter. Repeated spaces are treated as one. | `Meeting123` (digits), `12345` (no letters), `Meeting!` (`!`)
 Date | `d/` | `addm`, `editm` | A real calendar date in `DD/MM/YYYY` format. | `31/04/2026` (no such date), `29/02/2025` (not a leap year), `1/1/2026` (not two digits), `15-10-2026` (wrong separator)
 Start time, end time | `st/`, `et/` | `addm`, `editm` | 24-hour `HHMM`, from `0000` to `2359`. The end time must be later than the start time. | `900` (three digits), `09:00` (colon), `2400` (no such time), `1260` (no such time)
@@ -105,23 +105,23 @@ Shows a message explaining how to access the help page.
 Format: `help`
 
 
-### Adding a person: `addc`
+### Adding a contact: `addc`
 
-Adds a person to PingBook.
+Adds a contact to PingBook.
 
 Format: `addc n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [t/TAG]... `
 
 * Each value must follow the [field formats](#field-formats).
-* A person is considered a duplicate if another person has exactly the same name. Name comparison is case-sensitive, so names with different capitalisation are treated as distinct.
-* For example, `John Doe` and `john doe` are treated as different names, while two persons named `John Doe` are considered duplicates.
+* A contact is considered a duplicate if another contact has exactly the same name. Name comparison is case-sensitive, so names with different capitalisation are treated as distinct.
+* For example, `John Doe` and `john doe` are treated as different names, while two contacts named `John Doe` are considered duplicates.
 
 <box type="tip" seamless>
 
-**Tip:** A person can have any number of tags, including zero. The address is optional and can be left out.
+**Tip:** A contact can have any number of tags, including zero. The address is optional and can be left out.
 </box>
 
-Any active `listc`/`findc` filter stays active after adding. If the new person does not match the filter, they are
-saved but hidden, and the success message ends with a note saying so; run `listc` to show all persons.
+Any active `listc`/`findc` filter stays active after adding. If the new contact does not match the filter, they are
+saved but hidden, and the success message ends with a note saying so; run `listc` to show all contacts.
 
 Examples:
 * `addc n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01`
@@ -153,31 +153,31 @@ Examples:
 * `addm n/Project Review d/25/10/2026 st/1400 et/1500 t/urgent t/work`
 * `addm n/Late Call d/08/10/2026 st/1430 et/1530 force/` adds the meeting even if it overlaps an existing one.
 
-### Editing a person: `editc`
+### Editing a contact: `editc`
 
-Edits an existing person in PingBook.
+Edits an existing contact in PingBook.
 
 Format: `editc INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [t/TAG]... `
 
-* Edits the person at the specified `INDEX`. The index refers to the index number shown in the displayed person list. The index **must be a positive integer** 1, 2, 3, ...
+* Edits the contact at the specified `INDEX`. The index refers to the index number shown in the displayed contact list. The index **must be a positive integer** 1, 2, 3, ...
 * The contacts panel must be active. If you are viewing meetings, run `listc` or `findc KEYWORD` first.
 * At least one of the optional fields must be provided.
 * Each value must follow the [field formats](#field-formats). For example, a phone number needs at least 3 digits and cannot contain `+`, spaces or hyphens, and a name cannot contain hyphens.
 * `n/`, `p/`, `e/` and `a/` can each be used at most once in the same command. Only `t/` can be repeated.
 * Existing values will be updated to the input values.
-* When editing tags, all of the person's existing tags are removed; adding tags is not cumulative.
-* To remove all of a person's tags, enter `t/` without a tag after it.
-* To remove a person's address, enter `a/` without an address after it. The person then has no address, as if they were added without one. Removing the address of a person who already has none has no effect.
+* When editing tags, all of the contact's existing tags are removed; adding tags is not cumulative.
+* To remove all of a contact's tags, enter `t/` without a tag after it.
+* To remove a contact's address, enter `a/` without an address after it. The contact then has no address, as if they were added without one. Removing the address of a contact who already has none has no effect.
 * Any active `listc`/`findc` filter stays active after editing, so the displayed row numbers do not change.
-  Editing a person so that they no longer match the filter hides them from the displayed list, and the success message
-  ends with a note saying so; run `listc` to show all persons again.
+  Editing a contact so that they no longer match the filter hides them from the displayed list, and the success message
+  ends with a note saying so; run `listc` to show all contacts again.
 
 Examples:
-*  `editc 1 p/91234567 e/johndoe@example.com` Edits the phone number and email address of the 1st person to be `91234567` and `johndoe@example.com` respectively.
-*  `editc 2 n/Betsy Crower t/` Edits the name of the 2nd person to be `Betsy Crower` and clears all existing tags.
-*  `editc 3 a/` Removes the address of the 3rd person.
+*  `editc 1 p/91234567 e/johndoe@example.com` Edits the phone number and email address of the 1st contact to be `91234567` and `johndoe@example.com` respectively.
+*  `editc 2 n/Betsy Crower t/` Edits the name of the 2nd contact to be `Betsy Crower` and clears all existing tags.
+*  `editc 3 a/` Removes the address of the 3rd contact.
 
-These commands are rejected and leave the person unchanged:
+These commands are rejected and leave the contact unchanged:
 
 *  `editc 1 p/12` (the phone number has fewer than 3 digits)
 *  `editc 1 p/+6591234567` (the phone number contains `+`)
@@ -213,7 +213,7 @@ Examples:
 
 ### Listing and filtering contacts: `listc`
 
-Shows a list of all persons in PingBook that match the given tags.
+Shows a list of all contacts in PingBook that match the given tags.
 
 Format: `listc [t/TAG]...`
 
@@ -222,9 +222,9 @@ Format: `listc [t/TAG]...`
 * Tags follow the [field formats](#field-formats), so empty tags (`listc t/`) are rejected.
 * The command will only accept `TAG` fields. Other fields such as `NAME`, `DATE` are rejected.
 * The command is case-sensitive. `listC` or `Listc` are considered invalid.
-* A person is shown only if they have all the tags given.
-* If there are no tags provided, PingBook will display all persons and a success message detailing the number of persons listed.
-* If there are tags provided, PingBook will display all matching persons and a success message detailing the number of persons listed and the tags given.
+* A contact is shown only if they have all the tags given.
+* If there are no tags provided, PingBook will display all contacts and a success message detailing the number of contacts listed.
+* If there are tags provided, PingBook will display all matching contacts and a success message detailing the number of contacts listed and the tags given.
 
 Examples:
 * `listc`
@@ -267,9 +267,9 @@ Examples:
 * `listm t/urgent t/work` displays meetings containing both tags.
 * `listm` returns to the complete meeting list.
 
-### Locating persons by name: `findc`
+### Locating contacts by name: `findc`
 
-Finds persons whose names contain any of the specified keywords.
+Finds contacts whose names contain any of the specified keywords.
 
 Format: `findc KEYWORD [MORE_KEYWORDS]`
 
@@ -277,7 +277,7 @@ Format: `findc KEYWORD [MORE_KEYWORDS]`
 * Keyword order does not matter; for example, `Hans Bo` matches `Bo Hans`.
 * The search considers only names.
 * Partial words match; for example, `Han` matches `Hans`.
-* Persons matching at least one keyword are returned (an `OR` search); for example, `Hans Bo` returns `Hans Gruber` and `Bo Yang`.
+* contacts matching at least one keyword are returned (an `OR` search); for example, `Hans Bo` returns `Hans Gruber` and `Bo Yang`.
 
 Examples:
 * `findc John` returns `john` and `John Doe`
@@ -298,20 +298,20 @@ Examples:
 * `findm project` — finds meetings with `project` in their names.
 * `findm project review` — finds meetings whose names contain either `project` or `review`.
 
-### Deleting a person: `deletec`
+### Deleting a contact: `deletec`
 
-Deletes the specified person from PingBook.
+Deletes the specified contact from PingBook.
 
 Format: `deletec INDEX`
 
-* Deletes the person at the specified `INDEX`.
-* The index refers to the index number shown in the displayed person list.
+* Deletes the contact at the specified `INDEX`.
+* The index refers to the index number shown in the displayed contact list.
 * The contacts panel must be active. If you are viewing meetings, run `listc` or `findc KEYWORD` first.
 * The index **must be a positive integer** 1, 2, 3, ...
 
 Examples:
-* `listc` followed by `deletec 2` deletes the 2nd person in PingBook.
-* `findc Betsy` followed by `deletec 1` deletes the 1st person in the results of the `findc` command.
+* `listc` followed by `deletec 2` deletes the 2nd contact in PingBook.
+* `findc Betsy` followed by `deletec 1` deletes the 1st contact in the results of the `findc` command.
 
 ### Deleting a meeting: `deletem`
 
