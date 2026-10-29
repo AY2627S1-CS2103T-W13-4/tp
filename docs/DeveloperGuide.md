@@ -181,27 +181,28 @@ Classes used by multiple components are in the `seedu.address.commons` package.
 
 Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unlikely to have) - `*`
 
-| Priority | As a …          | I want to …                                            | So that I can…                                                |
-|----------|-----------------|--------------------------------------------------------|---------------------------------------------------------------|
-| `* * *`  | secretary       | view a list of clients                                 | keep track of clients                                         |
-| `* * *`  | secretary       | add clients with their email, mobile number, and name  | record clients' information                                   |
-| `* * *`  | secretary       | delete clients                                         | keep the list free of information that is no longer useful    |
-| `* * *`  | secretary       | delete meetings                                        | remove canceled meetings                                      |
-| `* * *`  | secretary       | add meetings with their date and time                  | record meetings                                               |
-| `* * *`  | secretary       | view a list of meetings                                | focus entirely on immediate priorities                        |
-| `* * *`  | secretary       | edit client information                                | keep client details up to date                                |
-| `* * *`  | first-time user | see a help guide containing all commands               | know how to use the app                                       |
-| `* * *`  | first-time user | search for a client by name                            | find the clients I want                                       |
-| `* * *`  | first-time user | be warned when meeting schedules overlap, and override | know about clashes but still schedule when intended           |
-| `* *`    | first-time user | see a client's meeting history                         | know when we last met                                         |
-| `* *`    | first-time user | add command aliases                                    | type frequently used commands quickly                         |
-| `* *`    | first-time user | record meeting outcomes after a meeting                | remember what happened during the meeting                     |
-| `* *`    | secretary       | add tags to clients                                    | filter or search for groups of clients easily                 |
-| `* *`    | secretary       | view recently or frequently contacted clients          | easily find clients I am likely looking for                   |
-| `* *`    | secretary       | view when I am free                                    | know when to schedule a meeting                               |
-| `* *`    | secretary       | add multiple emails and mobile numbers for each client | track clients with multiple contact details                   |
-| `* *`    | secretary       | view tasks for the day                                 | focus on immediate priorities                                 |
-| `* *`    | secretary       | add recurring tasks                                    | avoid adding the same task every time                         |
+| Priority | As a …          | I want to …                                                          | So that I can…                                             |
+|----------|-----------------|----------------------------------------------------------------------|------------------------------------------------------------|
+| `* * *`  | secretary       | view a list of clients                                               | keep track of clients                                      |
+| `* * *`  | secretary       | add clients with their email, mobile number, and name                | record clients' information                                |
+| `* * *`  | secretary       | delete clients                                                       | keep the list free of information that is no longer useful |
+| `* * *`  | secretary       | view a list of meetings                                              | focus entirely on immediate priorities                     |
+| `* * *`  | secretary       | add meetings with their date and time                                | record meetings                                            |
+| `* * *`  | secretary       | delete meetings                                                      | remove canceled meetings                                   |
+| `* *`    | secretary       | edit client and meeting information                                  | keep client and meeting details up to date                 |
+| `* *`    | secretary       | search for a client or meeting by name                               | find the clients or meetings I want                        |
+| `* *`    | secretary       | add tags to clients and meetings                                     | filter or search for groups of clients or meetings easily  |
+| `* *`    | secretary       | be warned when meeting schedules overlap, and override               | know about clashes but still schedule when intended        |
+| `* *`    | secretary       | clear all clients and meetings                                       | remove outdated information quickly                        |
+| `* *`    | first-time user | see a help guide containing all commands                             | know how to use the app                                    |
+| `*`      | first-time user | **Proposed:** add command aliases                                    | type frequently used commands quickly                      |
+| `*`      | secretary       | **Proposed:** see a client's meeting history                         | know when we last met                                      |
+| `*`      | secretary       | **Proposed:** record meeting outcomes after a meeting                | remember what happened during the meeting                  |
+| `*`      | secretary       | **Proposed:** view recently or frequently contacted clients          | easily find clients I am likely looking for                |
+| `*`      | secretary       | **Proposed:** view when I am free                                    | know when to schedule a meeting                            |
+| `*`      | secretary       | **Proposed:** add multiple emails and mobile numbers for each client | track clients with multiple contact details                |
+| `*`      | secretary       | **Proposed:** view tasks for the day                                 | focus on immediate priorities                              |
+| `*`      | secretary       | **Proposed:** add recurring tasks                                    | avoid adding the same task every time                      |
 
 ### Use cases
 
