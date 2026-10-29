@@ -69,6 +69,28 @@ PingBook is a **desktop application for managing contacts, optimized for use thr
 * If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines as space characters surrounding line-breaks may be omitted when copied over to the application.
 </box>
 
+### Contact field formats
+
+The commands `addc` and `editc` check each value against the rules below. A value that breaks a rule is rejected and
+nothing is changed.
+
+Field | Prefix | Accepted | Rejected examples
+------|--------|----------|------------------
+`NAME` | `n/` | English letters, digits and spaces only, starting with a letter or digit. | `Anne-Marie Tan` (hyphen), `Ravi s/o Kumar` (`/`), `Dr. Lim` (full stop)
+`PHONE_NUMBER` | `p/` | Digits only, at least 3 digits long, with no upper limit. | `12` (too short), `+6591234567` (`+`), `9123 4567` (space), `9123-4567` (hyphen)
+`EMAIL` | `e/` | `local-part@domain`. The local part uses letters, digits and the special characters `+`, `_`, `.`, `-`, and cannot start or end with a special character. The domain is made up of labels separated by periods; each label starts and ends with a letter or digit, and the last label is at least 2 characters long. | `john.example.com` (no `@`), `john@example.c` (last label too short), `-john@example.com` (starts with `-`), `john@exam_ple.com` (`_` in the domain)
+`ADDRESS` | `a/` | Any text, as long as it is not blank.<br>In `editc` only, a blank `a/` is also accepted and removes the address. | In `addc`, a blank `a/` (leave `a/` out to add a person with no address)
+`TAG` | `t/` | Letters and digits only, with no spaces.<br>In `editc` only, a blank `t/` is also accepted and removes all tags. | `best friend` (space), `vip!` (`!`)
+
+* Spaces before and after a value are ignored.
+* Contact names are stricter than meeting names. `addm` and `editm` allow hyphens (`-`) and apostrophes (`'`) in a
+  meeting name, but `addc` and `editc` do not allow them in a contact name.
+* Each of `n/`, `p/`, `e/` and `a/` can be used **at most once** in a command. For example, `p/91234567 p/92345678` is
+  rejected with the message `Multiple values specified for the following single-valued field(s): p/`. Only `t/` can be
+  repeated.
+* PingBook reads a prefix such as `t/` or `p/` wherever it follows a space, so avoid typing a space followed by a
+  prefix inside a value (for example, an address containing ` t/`), because the value is split there.
+
 ### Viewing help: `help`
 
 Shows a message explaining how to access the help page.
@@ -83,6 +105,8 @@ Format: `help`
 Adds a person to PingBook.
 
 Format: `addc n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [t/TAG]... `
+
+* Each value must follow the [contact field formats](#contact-field-formats).
 
 <box type="tip" seamless>
 
@@ -211,6 +235,8 @@ Format: `editc INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [t/TAG]... `
 * Edits the person at the specified `INDEX`. The index refers to the index number shown in the displayed person list. The index **must be a positive integer** 1, 2, 3, ...
 * The contacts panel must be active. If you are viewing meetings, run `listc` or `findc KEYWORD` first.
 * At least one of the optional fields must be provided.
+* Each value must follow the [contact field formats](#contact-field-formats). For example, a phone number needs at least 3 digits and cannot contain `+`, spaces or hyphens, and a name cannot contain hyphens.
+* `n/`, `p/`, `e/` and `a/` can each be used at most once in the same command. Only `t/` can be repeated.
 * Existing values will be updated to the input values.
 * When editing tags, all of the person's existing tags are removed; adding tags is not cumulative.
 * To remove all of a person's tags, enter `t/` without a tag after it.
@@ -220,6 +246,13 @@ Examples:
 *  `editc 1 p/91234567 e/johndoe@example.com` Edits the phone number and email address of the 1st person to be `91234567` and `johndoe@example.com` respectively.
 *  `editc 2 n/Betsy Crower t/` Edits the name of the 2nd person to be `Betsy Crower` and clears all existing tags.
 *  `editc 3 a/` Removes the address of the 3rd person.
+
+These commands are rejected and leave the person unchanged:
+
+*  `editc 1 p/12` (the phone number has fewer than 3 digits)
+*  `editc 1 p/+6591234567` (the phone number contains `+`)
+*  `editc 1 n/Anne-Marie Tan` (the name contains a hyphen)
+*  `editc 1 p/91234567 p/92345678` (`p/` is used twice)
 
 ### Locating persons by name: `findc`
 

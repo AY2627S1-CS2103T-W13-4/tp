@@ -503,7 +503,8 @@ Use case ends.
 
       Use case ends.
 
-* 3a. The fields requested for edit are invalid or empty.
+* 3a. The fields requested for edit are invalid (they break the field rules in the User Guide's "Contact field
+  formats"), repeat a single-valued prefix, or are empty.
 
     * 3a1. PingBook shows an error message.
 
