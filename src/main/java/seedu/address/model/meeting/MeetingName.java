@@ -46,6 +46,13 @@ public class MeetingName {
         return s.trim().replaceAll("\\s+", " ");
     }
 
+    /**
+     * Returns true if the given keyword contains only characters allowed in a meeting name.
+     */
+    public static boolean isValidKeyword(String keyword) {
+        return keyword.matches(VALIDATION_REGEX);
+    }
+
     @Override
     public boolean equals(Object other) {
         if (other == this) {
