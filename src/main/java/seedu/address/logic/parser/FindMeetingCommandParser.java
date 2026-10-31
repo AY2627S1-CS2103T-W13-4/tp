@@ -34,7 +34,7 @@ public class FindMeetingCommandParser implements Parser<FindMeetingCommand> {
         String[] keywords = trimmedArgs.split("\\s+");
 
         for (String keyword : keywords) {
-            if (!MeetingName.isValidName(keyword)) {
+            if (!MeetingName.isValidKeyword(keyword)) {
                 throw new ParseException(MeetingName.MESSAGE_CONSTRAINTS);
             }
         }
