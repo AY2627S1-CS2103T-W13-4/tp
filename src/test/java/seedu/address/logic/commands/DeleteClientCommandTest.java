@@ -29,6 +29,7 @@ public class DeleteClientCommandTest {
 
     @Test
     public void execute_validIndexUnfilteredList_success() {
+        // EP: a valid index in the unfiltered displayed list deletes the corresponding contact.
         Person personToDelete = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
         DeleteClientCommand deleteClientCommand = new DeleteClientCommand(INDEX_FIRST_PERSON);
 
@@ -43,6 +44,7 @@ public class DeleteClientCommandTest {
 
     @Test
     public void execute_invalidIndexUnfilteredList_throwsCommandException() {
+        // BVA: the first index beyond the unfiltered list is invalid and must not delete any contact.
         Index outOfBoundIndex = Index.fromOneBased(model.getFilteredPersonList().size() + 1);
         DeleteClientCommand deleteClientCommand = new DeleteClientCommand(outOfBoundIndex);
 
@@ -52,6 +54,7 @@ public class DeleteClientCommandTest {
 
     @Test
     public void execute_validIndexFilteredList_success() {
+        // EP: a valid index is resolved against the filtered displayed list, not the underlying address book.
         showPersonAtIndex(model, INDEX_FIRST_PERSON);
 
         Person personToDelete = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
@@ -69,6 +72,7 @@ public class DeleteClientCommandTest {
 
     @Test
     public void execute_invalidIndexFilteredList_throwsCommandException() {
+        // EP: an index can be valid in the address book but invalid in the current filtered view.
         showPersonAtIndex(model, INDEX_FIRST_PERSON);
 
         Index outOfBoundIndex = INDEX_SECOND_PERSON;
@@ -83,6 +87,7 @@ public class DeleteClientCommandTest {
 
     @Test
     public void equals() {
+        // EP: equality depends on the target index; null and unrelated object types are separate partitions.
         DeleteClientCommand deleteFirstCommand = new DeleteClientCommand(INDEX_FIRST_PERSON);
         DeleteClientCommand deleteSecondCommand = new DeleteClientCommand(INDEX_SECOND_PERSON);
 
@@ -105,6 +110,7 @@ public class DeleteClientCommandTest {
 
     @Test
     public void toStringMethod() {
+        // EP: the command representation includes the only behavioral field, the target index.
         Index targetIndex = Index.fromOneBased(1);
         DeleteClientCommand deleteClientCommand = new DeleteClientCommand(targetIndex);
         String expected = DeleteClientCommand.class.getCanonicalName() + "{targetIndex=" + targetIndex + "}";
