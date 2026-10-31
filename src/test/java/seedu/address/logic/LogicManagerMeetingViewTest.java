@@ -33,6 +33,7 @@ import seedu.address.logic.commands.DeleteMeetingCommand;
 import seedu.address.logic.commands.EditClientCommand;
 import seedu.address.logic.commands.EditMeetingCommand;
 import seedu.address.logic.commands.FindClientCommand;
+import seedu.address.logic.commands.FindMeetingCommand;
 import seedu.address.logic.commands.HelpCommand;
 import seedu.address.logic.commands.ListClientCommand;
 import seedu.address.logic.commands.ListMeetingCommand;
@@ -81,6 +82,52 @@ public class LogicManagerMeetingViewTest {
         logic.execute(ListMeetingCommand.COMMAND_WORD);
 
         assertContactCommandRejected("  " + DeleteClientCommand.COMMAND_WORD + " 1  ");
+    }
+
+    @Test
+    public void execute_addMeetingBeforeListMeeting_ordersDisplayWithoutChangingStorageOrder() throws Exception {
+        // State transition: addm opens a sorted meeting panel even when listm has never run.
+        Meeting later = model.getMeetingList().get(0);
+        Meeting finished = taggedMeeting("Finished", "01/01/2000");
+        model.addMeeting(finished);
+
+        CommandResult result = logic.execute(AddMeetingCommand.COMMAND_WORD
+                + " n/Earlier meeting d/08/10/2099 st/1400 et/1500");
+        Meeting added = model.getAddressBook().getMeetingList().get(2);
+
+        assertTrue(result.isShowMeetings());
+        assertEquals(List.of(added, later, finished), logic.getMeetingList());
+        assertEquals(List.of(later, finished, added), model.getAddressBook().getMeetingList());
+        assertEquals(model.getAddressBook(), addressBookStorage.readAddressBook().orElseThrow());
+    }
+
+    @Test
+    public void execute_findMeetingBeforeListMeeting_editAndDeleteUseSortedDisplayedIndices() throws Exception {
+        // Error guessing: filtered display indices differ from stored indices before the first listm.
+        Meeting later = model.getMeetingList().get(0);
+        Meeting hidden = taggedMeeting("Hidden review", "06/10/2099");
+        Meeting earlier = taggedMeeting("Earlier meeting", "07/10/2099");
+        model.addMeeting(hidden);
+        model.addMeeting(earlier);
+        AddressBook original = new AddressBook(model.getAddressBook());
+
+        CommandResult result = logic.execute(FindMeetingCommand.COMMAND_WORD + " meeting");
+
+        assertTrue(result.isShowMeetings());
+        assertEquals(List.of(earlier, later), logic.getMeetingList());
+        assertEquals(original, addressBookStorage.readAddressBook().orElseThrow());
+
+        logic.execute(EditMeetingCommand.COMMAND_WORD + " 1 d/10/10/2099");
+        Meeting editedEarlier = new Meeting(earlier.getName(), new MeetingDate("10/10/2099"),
+                earlier.getStartTime(), earlier.getEndTime(), earlier.getTags());
+        assertEquals(List.of(later, editedEarlier), logic.getMeetingList());
+        assertEquals(List.of(later, hidden, editedEarlier), model.getAddressBook().getMeetingList());
+
+        logic.execute(DeleteMeetingCommand.COMMAND_WORD + " 1");
+        assertEquals(List.of(editedEarlier), logic.getMeetingList());
+        assertEquals(List.of(hidden, editedEarlier), model.getAddressBook().getMeetingList());
+        assertEquals(List.of(AMY, BOB), model.getFilteredPersonList());
+        assertEquals(model.getAddressBook(), addressBookStorage.readAddressBook().orElseThrow());
     }
 
     @Test

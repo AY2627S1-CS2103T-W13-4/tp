@@ -159,17 +159,12 @@ public class ListMeetingCommandTest {
         Meeting later = meeting("Later", "08/10/2026", "1500", "1600");
         List.of(later, earlier).forEach(model::addMeeting);
         AddressBook original = new AddressBook(model.getAddressBook());
+        command.execute(model);
         ObservableList<Meeting> displayedMeetings = model.getMeetingList();
         List<List<Meeting>> observedOrders = new ArrayList<>();
         displayedMeetings.addListener((ListChangeListener<Meeting>) change ->
                 observedOrders.add(List.copyOf(change.getList())));
-        assertEquals(List.of(later, earlier), displayedMeetings);
-
-        command.execute(model);
-
         assertEquals(List.of(earlier, later), displayedMeetings);
-        assertTrue(observedOrders.contains(List.of(earlier, later)));
-        observedOrders.clear();
 
         Clock twoPm = Clock.fixed(Instant.parse("2026-10-08T06:00:00Z"), NOON.getZone());
         new ListMeetingCommand(twoPm).execute(model);

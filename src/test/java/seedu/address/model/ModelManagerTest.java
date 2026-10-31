@@ -35,6 +35,22 @@ public class ModelManagerTest {
     }
 
     @Test
+    public void constructor_loadedMeetings_initializesDisplayOrderWithoutChangingStorage() {
+        // Error guessing: saved order differs from unfinished-first chronological display order.
+        Meeting finished = meeting("Finished", "01/01/2000", "0900", "1000");
+        Meeting later = meeting("Later", "09/10/2099", "1500", "1600");
+        Meeting earlier = meeting("Earlier", "08/10/2099", "1500", "1600");
+        AddressBook saved = new AddressBook();
+        List.of(finished, later, earlier).forEach(saved::addMeeting);
+
+        ModelManager restored = new ModelManager(saved, new UserPrefs());
+
+        assertEquals(List.of(earlier, later, finished), restored.getMeetingList());
+        assertEquals(List.of(finished, later, earlier), restored.getAddressBook().getMeetingList());
+        assertEquals(saved, restored.getAddressBook());
+    }
+
+    @Test
     public void constructor_validUserPrefs_copiesUserPrefs() {
         UserPrefs userPrefs = new UserPrefs();
         userPrefs.setGuiSettings(new GuiSettings(1, 2, 3, 4));
