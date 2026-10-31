@@ -67,6 +67,7 @@ public class LogicManagerTest {
 
     @Test
     public void execute_commandExecutionError_throwsCommandException() {
+        // BVA: a deletion index beyond the currently displayed contact list is rejected by the command layer.
         String deleteCommand = DeleteClientCommand.COMMAND_WORD + " 9";
         assertCommandException(deleteCommand,
                 String.format(MESSAGE_INVALID_PERSON_INDEX, DeleteClientCommand.MESSAGE_USAGE));
@@ -74,6 +75,7 @@ public class LogicManagerTest {
 
     @Test
     public void execute_validCommand_success() throws Exception {
+        // EP: a bare listc command selects the valid no-filter input partition and lists all displayed contacts.
         String listCommand = ListClientCommand.COMMAND_WORD;
         assertCommandSuccess(listCommand,
                 String.format(ListClientCommand.MESSAGE_SUCCESS_NO_TAGS, model.getFilteredPersonListSize()), model);
@@ -99,6 +101,7 @@ public class LogicManagerTest {
     @Test
     public void execute_listMeeting_sortsViewAndPreservesStoredOrder() throws Exception {
         // Error guessing: reverse insertion order exposes accidental sorting of stored data instead of only the view.
+        // EP: listm produces a sorted display while preserving the insertion order used for persistence.
         Meeting later = new Meeting(new MeetingName("Later"), new MeetingDate("09/10/2099"),
                 new MeetingTime("1500"), new MeetingTime("1600"));
         Meeting earlier = new Meeting(new MeetingName("Earlier"), new MeetingDate("08/10/2099"),
