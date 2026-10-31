@@ -58,29 +58,30 @@ public class PersonTest {
 
     @Test
     public void hasAllTags() {
-        // no requested tags -> returns true
+        // EP: the empty requested-tag set is the no-filter partition and vacuously matches the person.
         assertTrue(BOB.hasAllTags(Set.of()));
 
-        // person has all requested tags -> returns true
+        // EP: one requested tag and multiple requested tags are valid complete-match partitions.
         assertTrue(BOB.hasAllTags(Set.of(new Tag(VALID_TAG_FRIEND))));
         assertTrue(BOB.hasAllTags(Set.of(new Tag(VALID_TAG_FRIEND), new Tag(VALID_TAG_HUSBAND))));
 
-        // person is missing a requested tag -> returns false
+        // EP: a partial match is rejected because hasAllTags requires every requested tag.
         assertFalse(BOB.hasAllTags(Set.of(new Tag(VALID_TAG_FRIEND), new Tag("colleague"))));
     }
 
     @Test
     public void hasAllTags_ignoresTagNameCase() {
-        // requested tags differ in case -> returns true
+        // EP: tag names with different letter case belong to the same case-insensitive match partition.
         assertTrue(BOB.hasAllTags(Set.of(new Tag(VALID_TAG_FRIEND.toUpperCase()),
                 new Tag(VALID_TAG_HUSBAND.toLowerCase()))));
 
-        // one requested tag is missing, regardless of case -> returns false
+        // EP: case-insensitive matching does not make an absent requested tag valid.
         assertFalse(BOB.hasAllTags(Set.of(new Tag(VALID_TAG_FRIEND.toUpperCase()), new Tag("COLLEAGUE"))));
     }
 
     @Test
     public void hasAllTags_nullTags_throwsNullPointerException() {
+        // EP: null and a set containing null are invalid input partitions rejected by the precondition.
         assertThrows(NullPointerException.class, () -> BOB.hasAllTags(null));
 
         Set<Tag> tagsWithNull = new HashSet<>();

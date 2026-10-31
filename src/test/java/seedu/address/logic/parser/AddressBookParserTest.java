@@ -68,6 +68,7 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_deleteClient() throws Exception {
+        // EP: the canonical deletec command with one positive index dispatches to DeleteClientCommand.
         DeleteClientCommand command = (DeleteClientCommand) parser.parseCommand(
                 DeleteClientCommand.COMMAND_WORD + " " + INDEX_FIRST_PERSON.getOneBased());
         assertEquals(new DeleteClientCommand(INDEX_FIRST_PERSON), command);
@@ -75,6 +76,7 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_deleteMeeting() throws Exception {
+        // EP: deletem accepts a positive positional index, including surrounding whitespace.
         Index index = Index.fromOneBased(1);
         DeleteMeetingCommand command = (DeleteMeetingCommand) parser.parseCommand(
                 DeleteMeetingCommand.COMMAND_WORD + " " + index.getOneBased());
@@ -84,6 +86,7 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_deleteMeetingInvalidArguments_throwsParseException() {
+        // EP: missing and multiple indices are invalid deletem argument partitions.
         assertThrows(ParseException.class,
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT,
                         DeleteMeetingCommand.MESSAGE_USAGE), () -> parser.parseCommand(
@@ -96,6 +99,7 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_deleteMeetingWrongCase_throwsParseException() {
+        // EP: command words are case-sensitive; mixed-case DeleteM is not the valid deletem partition.
         assertThrows(ParseException.class,
                 MESSAGE_UNKNOWN_COMMAND, () -> parser.parseCommand("DeleteM 1"));
     }
@@ -152,6 +156,7 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_listClient() throws Exception {
+        // EP: the bare listc command dispatches to the valid no-filter client-list partition.
         assertTrue(parser.parseCommand(ListClientCommand.COMMAND_WORD) instanceof ListClientCommand);
     }
 
@@ -179,6 +184,7 @@ public class AddressBookParserTest {
     @Test
     public void parseCommand_listCommandsWithTabBeforeTag_throwsParseException() {
         // EP: a tab before the first tag is an invalid separator for both listc and listm.
+        // The parser therefore rejects these inputs before constructing either list command.
         String clientMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, ListClientCommand.MESSAGE_USAGE);
         String meetingMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, ListMeetingCommand.MESSAGE_USAGE);
 

@@ -39,6 +39,7 @@ public class DeleteMeetingCommandTest {
 
     @Test
     public void execute_validIndex_success() {
+        // EP: a positive index within the displayed meeting list selects exactly one meeting for deletion.
         DeleteMeetingCommand command = new DeleteMeetingCommand(Index.fromOneBased(1));
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
         expectedModel.deleteMeeting(firstMeeting);
@@ -49,6 +50,7 @@ public class DeleteMeetingCommandTest {
 
     @Test
     public void execute_invalidIndex_throwsCommandException() {
+        // BVA: an index immediately beyond the two-item displayed list is rejected.
         DeleteMeetingCommand command = new DeleteMeetingCommand(Index.fromOneBased(3));
 
         assertCommandFailure(command, model,
@@ -57,6 +59,7 @@ public class DeleteMeetingCommandTest {
 
     @Test
     public void execute_emptyList_throwsCommandException() {
+        // BVA: index 1 is invalid at the zero-item boundary; deletion must fail without a target.
         Model emptyModel = new ModelManager();
         DeleteMeetingCommand command = new DeleteMeetingCommand(Index.fromOneBased(1));
 
@@ -66,6 +69,7 @@ public class DeleteMeetingCommandTest {
 
     @Test
     public void equals() {
+        // EP: commands are equal when their target indices match, and unequal for different types or indices.
         DeleteMeetingCommand deleteFirstCommand = new DeleteMeetingCommand(Index.fromOneBased(1));
         DeleteMeetingCommand deleteSecondCommand = new DeleteMeetingCommand(Index.fromOneBased(2));
 
@@ -78,6 +82,7 @@ public class DeleteMeetingCommandTest {
 
     @Test
     public void toStringMethod() {
+        // EP: the command representation includes the only behavioral field, the target index.
         Index targetIndex = Index.fromOneBased(1);
         DeleteMeetingCommand command = new DeleteMeetingCommand(targetIndex);
         String expected = DeleteMeetingCommand.class.getCanonicalName() + "{targetIndex=" + targetIndex + "}";
