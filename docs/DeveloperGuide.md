@@ -121,11 +121,21 @@ The sequence diagram below illustrates the interactions within the `Logic` compo
 How the `Logic` component works:
 
 1. When `Logic` is called upon to execute a command, the command text is passed to an `AddressBookParser` object, which creates a parser that matches the command (e.g., `DeleteClientCommandParser`) and uses it to parse the command.
-1. This results in a `Command` object (more precisely, an object of one of its subclasses e.g., `DeleteClientCommand`) which is executed by the `LogicManager`.
-   Before executing the command, `LogicManager` checks whether the command is compatible with the currently displayed panel. For example, if the meetings panel is displayed, attempting to execute a client command such as `deletec` will result in a `CommandException`.
-1. The command can communicate with the `Model` when it is executed (e.g. to delete a person).<br>
-   Note that the code can require several interactions between the command object and the `Model` to complete the operation. For example, in the sequence diagram above, the command retrieves the filtered person list from `Model`, selects the person at the requested index, and then asks `Model` to delete that person.
-1. The result of the command execution is encapsulated as a `CommandResult` object which is returned from `Logic`.
+1. This results in a `Command` object (more precisely, an object of one of its subclasses e.g., `DeleteClientCommand`).
+   `LogicManager` checks whether the command is compatible with the currently displayed panel. For example, if
+   the meetings panel is displayed, attempting to execute `deletec` will result in a `CommandException`.
+1. Before execution, `LogicManager` obtains a rollback action from `Model.createRollbackAction()`. It captures
+   a copy of the contacts and meetings, both active filter predicates, and the meeting comparator. The existing
+   observable lists are retained when restoring these values.
+1. `LogicManager` executes the command, which can communicate with the `Model` (e.g. to delete a person).<br>
+   The code can require several interactions between the command object and the `Model` to complete the operation.
+   For example, the command retrieves the filtered person list from `Model`, selects the person at the requested
+   index, and then asks `Model` to delete that person.
+1. After execution, `LogicManager` saves the address book. If storage throws `AccessDeniedException` or another
+   `IOException`, it runs the rollback action and throws a `CommandException` explaining recovery. The selected
+   panel is updated only after saving succeeds, so failed commands preserve the displayed indices and panel.
+1. The result of the command execution is encapsulated as a `CommandResult` object which is returned from `Logic`
+   only after saving succeeds. The partial sequence diagram above omits saving and rollback.
 
 Here are the other classes in `Logic` (omitted from the class diagram above) that are used for parsing a user command:
 
@@ -164,6 +174,11 @@ The `Storage` component,
 * can save both address book data and user preference data in JSON format, and read them back into corresponding objects.
 * saves contacts and meetings (including their tags) together in the address book JSON file, as the `persons` and `meetings` arrays. Data files without `meetings` or meeting `tags` still load.
 * is implemented by `StorageManager`, which delegates the actual JSON file access to `JsonAddressBookStorage` and `JsonUserPrefsStorage` (one class per data file).
+* writes address book data to a temporary file in the destination directory before atomically replacing the
+  destination. A failed write or replacement leaves the previous data file intact and attempts to remove the
+  temporary file. An unsupported atomic replacement is reported as a save failure; there is no non-atomic fallback.
+  This protects against partial writes during a reported save failure; it does not guarantee durability through
+  power loss. User preference saving uses its existing separate path.
 * depends on some classes in the `Model` component (because the `Storage` component's job is to save/retrieve objects that belong to the `Model`)
 
 ### Common classes
@@ -563,6 +578,20 @@ testers are expected to do more *exploratory* testing.
 
    1. Resize and move the window, then close and relaunch PingBook.<br>
       Expected: The latest window size and position are restored.
+
+### Recovering from a failed save
+
+1. Use a disposable data file containing contacts Alice and Bob, in that displayed order, then run `listc`.
+1. While PingBook is open, mark `data/addressbook.json` as read-only and run `deletec 1`.<br>
+   Expected: A save error explains that the command was rolled back. Alice and Bob remain in their original rows,
+   the JSON file is unchanged, and `deletec 1` remains in the command box.
+1. Repeat the command while the file is still read-only.<br>
+   Expected: The same failure leaves both records unchanged.
+1. Restore write permission and retry `deletec 1`.<br>
+   Expected: Only Alice is deleted. Bob remains and reloading the application confirms the saved result.
+1. Repeat with disposable meetings using `listm t/work`, `editm 1 n/Updated review` and `deletem 1`.<br>
+   Expected: Failed saves preserve the filtered rows and their order. Retrying after restoring permission applies
+   the edit or deletion to the original displayed meeting.
 
 ### Adding a contact
 
