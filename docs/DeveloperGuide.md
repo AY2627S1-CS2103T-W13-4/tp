@@ -292,7 +292,7 @@ Use case ends.
 
       Use case ends.
 
-* 1c. No field is provided, a supplied field is invalid (see [field formats](UserGuide.md#field-formats) in the User Guide), or a single-valued prefix is repeated.
+* 1c. No field is provided, a supplied field is invalid (see [Field formats](UserGuide.md#field-formats) in the User Guide), or a single-valued prefix is repeated.
 
     * 1c1. PingBook shows an error message.
 
