@@ -8,7 +8,7 @@
 It is optimised for use via a Command Line Interface (CLI), while still having the benefits of a Graphical User Interface (GUI).
 
 Secretaries juggle many contacts at once, and those contacts are often scattered across spreadsheets, notebooks and memory.
-PingBook gives them a fast, reliable place to find the right contact in seconds and keep track of who they are meeting and when.
+PingBook gives them a fast, reliable place to find the right contact in seconds and keep track of when they are meeting.
 
 ## Target user
 
@@ -20,7 +20,7 @@ PingBook is designed for secretaries and sales representatives who:
 
 ## Features
 
-The 1.5 version of PingBook will support:
+The 1.6 version of PingBook supports:
 
 | Feature           | Command                                                                  |
 |-------------------|--------------------------------------------------------------------------|
