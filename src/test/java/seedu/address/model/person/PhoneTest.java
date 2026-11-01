@@ -41,6 +41,39 @@ public class PhoneTest {
     }
 
     @Test
+    public void isValidPhone_allowsFormattingCharacters() {
+        // plus sign
+        assertTrue(Phone.isValidPhone("+6591234567"));
+        // hyphens
+        assertTrue(Phone.isValidPhone("9123-4567"));
+        // parentheses
+        assertTrue(Phone.isValidPhone("(9123)4567"));
+        // spaces within the phone number
+        assertTrue(Phone.isValidPhone("9123 4567"));
+        // multiple formatting characters
+        assertTrue(Phone.isValidPhone("+65 (9123) 4567"));
+    }
+
+    @Test
+    public void isValidPhone_requiresAtLeastThreeDigits() {
+        // formatting characters without digits
+        assertFalse(Phone.isValidPhone("+() -"));
+        // fewer than 3 digits
+        assertFalse(Phone.isValidPhone("+12"));
+        // formatting characters do not count as digits
+        assertFalse(Phone.isValidPhone("()- 12"));
+        // exactly 3 digits with formatting characters
+        assertTrue(Phone.isValidPhone("+1-23"));
+    }
+
+    @Test
+    public void isValidPhone_rejectsUnsupportedCharacters() {
+        assertFalse(Phone.isValidPhone("+65.91234567")); // full stop
+        assertFalse(Phone.isValidPhone("9123/4567")); // slash
+        assertFalse(Phone.isValidPhone("9123a4567")); // alphabetic character
+    }
+
+    @Test
     public void equals() {
         Phone phone = new Phone("999");
 
