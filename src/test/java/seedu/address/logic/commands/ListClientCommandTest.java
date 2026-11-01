@@ -42,17 +42,15 @@ public class ListClientCommandTest {
 
     @Test
     public void execute_listIsNotFiltered_showsSameList() {
-        assertCommandSuccess(new ListClientCommand(new HashSet<>()), model,
-                String.format(ListClientCommand.MESSAGE_SUCCESS_NO_TAGS, model.getFilteredPersonListSize()),
-                expectedModel);
+        assertCommandSuccess(new ListClientCommand(
+                new HashSet<>()), model, ListClientCommand.MESSAGE_SUCCESS_NO_TAGS, expectedModel);
     }
 
     @Test
     public void execute_listIsFiltered_showsEverything() {
         showPersonAtIndex(model, INDEX_FIRST_PERSON);
-        assertCommandSuccess(new ListClientCommand(new HashSet<>()), model,
-                String.format(ListClientCommand.MESSAGE_SUCCESS_NO_TAGS, expectedModel.getFilteredPersonListSize()),
-                expectedModel);
+        assertCommandSuccess(new ListClientCommand(
+                new HashSet<>()), model, ListClientCommand.MESSAGE_SUCCESS_NO_TAGS, expectedModel);
     }
 
     @Test
@@ -75,8 +73,7 @@ public class ListClientCommandTest {
 
         CommandResult result = command.execute(model);
 
-        String expectedMessage = String.format(ListClientCommand.MESSAGE_SUCCESS_NO_TAGS,
-                model.getFilteredPersonListSize());
+        String expectedMessage = ListClientCommand.MESSAGE_SUCCESS_NO_TAGS;
         assertEquals(new CommandResult(expectedMessage), result);
         assertEquals(getTypicalPersons(), model.getFilteredPersonList());
     }

@@ -223,7 +223,7 @@ Format: `listc [t/TAG]...`
 * The command will only accept `TAG` fields. Other fields such as `NAME`, `DATE` are rejected.
 * The command is case-sensitive. `listC` or `Listc` are considered invalid.
 * A contact is shown only if they have all the tags given.
-* If there are no tags provided, PingBook will display all contacts and a success message detailing the number of contacts listed.
+* If there are no tags provided, PingBook will display all contacts.
 * If there are tags provided, PingBook will display all matching contacts and a success message detailing the number of contacts listed and the tags given.
 
 Examples:
