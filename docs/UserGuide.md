@@ -18,15 +18,15 @@ PingBook is a **desktop application for managing contacts, optimized for use thr
 1. Ensure that Java `25` or later is installed on your computer.<br>
    **Mac users:** Ensure you have the precise JDK version prescribed [here](https://se-education.org/guides/tutorials/javaInstallationMac.html).
 
-1. Download the latest `.jar` file from [here](https://github.com/AY2627S1-CS2103T-W13-4/tp/releases).
+2. Download the latest `.jar` file from [here](https://github.com/AY2627S1-CS2103T-W13-4/tp/releases).
 
-1. Copy the file to the folder you want to use as the _home folder_ for your PingBook.
+3. Copy the file to the folder you want to use as the _home folder_ for your PingBook.
 
-1. Open a terminal, `cd` to the folder containing the JAR file, and run `java -jar pingbook.jar`.<br>
+4. Open a terminal, `cd` to the folder containing the JAR file, and run `java -jar pingbook.jar`.<br>
    A GUI similar to the one below should appear in a few seconds. Note how the app contains some sample data.<br>
    ![Ui](images/Ui.png)
 
-1. Type a command in the command box and press Enter to execute it. For example, type **`help`** and press Enter to open the help window.<br>
+5. Type a command in the command box and press Enter to execute it. For example, type **`help`** and press Enter to open the help window.<br>
    Some example commands you can try:
 
    * `listc t/colleague` : Lists all contacts that have the tag `colleague`.
@@ -39,7 +39,15 @@ PingBook is a **desktop application for managing contacts, optimized for use thr
 
    * `exit` : Exits the app.
 
-1. Refer to the [Features](#features) section below for details of each command.
+6. Refer to the [Features](#features) section below for details of each command.
+
+<box type="warning" seamless>
+
+**You should run only one instance of PingBook at any time.**<br>
+
+If multiple instances are run at the same time, the behavior is undefined and possibly incorrect.
+
+</box>
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -323,7 +331,7 @@ Format: `deletem INDEX`
 * The command is case-sensitive. Only `deletem` in lowercase is accepted. `DeleteM` and other variations show `Unknown command.`.
 * The index refers to the index number shown in the displayed meeting list.
 * The index **must be a positive integer** 1, 2, 3, ...
-* Invalid indexes display `Invalid command format!` followed by the usage instructions for the command.
+* Malformed indexes display `Invalid command format!` while out-of-range ones display `The meeting index provided is invalid!`.<br>Both messages are followed by the usage instructions for the command.
 * `deletem` can only be executed when the meeting list is shown. Run `listm` before attempting to delete meetings.
 
 Examples:
@@ -347,7 +355,9 @@ PingBook automatically saves data after every command. You do not need to save m
 
 ### Editing the data file
 
-PingBook data is saved automatically as a JSON file `[JAR file location]/data/addressbook.json`. Advanced users are welcome to update data directly by editing that data file.
+PingBook saves data automatically to `data/addressbook.json`, relative to the directory from which you launch the JAR file (the current working directory), not necessarily the directory containing the JAR. Advanced users are welcome to update data directly by editing that data file.<br>
+
+To keep the data in a predictable location, run the JAR from its own directory.
 
 <box type="warning" seamless>
 
