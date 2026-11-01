@@ -241,8 +241,12 @@ Format: `listm [t/TAG]...`
   Matching uses complete tag names and ignores case: `t/urgent` matches `Urgent`, but does not match `urgentMeeting`.
 * Each invocation replaces the previous filter. Repeated tags do not change the results.
 * Tags follow the [field formats](#field-formats), so empty tags (`listm t/`) are rejected.
-* Use spaces before each `t/TAG` argument. A tab alone cannot separate the arguments.
-* Leading and trailing whitespace is ignored. Other arguments such as `listm 1` and `listm --all` are rejected.
+* Use an ordinary space (the Space key, `U+0020`) immediately before each `t/TAG` argument.
+  A tab alone cannot separate the arguments.
+* Leading and trailing ordinary spaces and tabs are ignored.
+* Other Unicode space characters, such as EM SPACE (`U+2003`) and non-breaking space (`U+00A0`),
+  are not supported for command spacing. If a pasted command contains these characters, replace them with ordinary spaces.
+* Other arguments such as `listm 1` and `listm --all` are rejected.
 * The command is case-sensitive. `Listm` and `LISTM` show `Unknown command. Did you mean "listm"?`.
 * Ongoing and upcoming meetings appear first, ordered by date and start time.
   Finished meetings follow, also ordered from earliest to latest.
