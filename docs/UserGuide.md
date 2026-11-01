@@ -107,7 +107,7 @@ Format: `help`
 
 ### Adding a contact: `addc`
 
-Adds a contact to PingBook.
+Adds a contact to PingBook and displays the Contacts panel.
 
 Format: `addc n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [t/TAG]... `
 
@@ -188,9 +188,9 @@ These commands are rejected and leave the contact unchanged:
 
 Edits an existing meeting in PingBook.
 
-Format: `editm MEETING_INDEX [n/NAME] [d/DATE] [st/START_TIME] [et/END_TIME] [t/TAG]... [force/]`
+Format: `editm INDEX [n/NAME] [d/DATE] [st/START_TIME] [et/END_TIME] [t/TAG]... [force/]`
 
-* Edits the meeting at the specified `MEETING_INDEX` in the displayed meeting list.
+* Edits the meeting at the specified `INDEX` in the displayed meeting list.
 * The Meetings panel must be active. Run `listm` before editing a meeting.
 * The index must be a positive integer: 1, 2, 3, ...
 * At least one field must be provided.
@@ -227,8 +227,8 @@ Format: `listc [t/TAG]...`
 * If there are tags provided, PingBook will display all matching contacts and a success message detailing the number of contacts listed and the tags given.
 
 Examples:
-* `listc`
-* `listc t/friend t/colleagues`
+* `listc` displays all contacts saved in PingBook.
+* `listc t/friend t/colleagues` displays all contacts containing both tags.
 
 ### Listing and filtering meetings: `listm`
 
@@ -317,9 +317,9 @@ Examples:
 
 Deletes the specified meeting from PingBook.
 
-Format: `deletem MEETING_INDEX`
+Format: `deletem INDEX`
 
-* Deletes the meeting at the specified `MEETING_INDEX`.
+* Deletes the meeting at the specified `INDEX`.
 * The command is case-sensitive. Only `deletem` in lowercase is accepted. `DeleteM` and other variations show `Unknown command.`.
 * The index refers to the index number shown in the displayed meeting list.
 * The index **must be a positive integer** 1, 2, 3, ...
