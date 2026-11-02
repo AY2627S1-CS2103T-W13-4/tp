@@ -24,7 +24,7 @@ import seedu.address.testutil.EditMeetingDescriptorBuilder;
 
 public class EditMeetingCommandParserTest {
 
-    private static final String VALID_NAME = "Project Review";
+    private static final String VALID_NAME = "Q4 Review/Planning";
     private static final String VALID_DATE = "08/10/2026";
     private static final String VALID_START_TIME = "1400";
     private static final String VALID_END_TIME = "1500";
@@ -64,7 +64,7 @@ public class EditMeetingCommandParserTest {
 
     @Test
     public void parse_invalidValue_failure() {
-        assertParseFailure(parser, "1 " + PREFIX_NAME + "Project 2", MeetingName.MESSAGE_CONSTRAINTS);
+        assertParseFailure(parser, "1 " + PREFIX_NAME + "Caf\u00e9 Review", MeetingName.MESSAGE_CONSTRAINTS);
         assertParseFailure(parser, "1 " + PREFIX_DATE + "31/02/2026", MeetingDate.MESSAGE_CONSTRAINTS);
         assertParseFailure(parser, "1 " + PREFIX_START_TIME + "2500", MeetingTime.MESSAGE_CONSTRAINTS);
         assertParseFailure(parser, "1 " + PREFIX_END_TIME, MeetingTime.MESSAGE_CONSTRAINTS);
@@ -86,6 +86,16 @@ public class EditMeetingCommandParserTest {
                 .build();
 
         assertParseSuccess(parser, userInput, new EditMeetingCommand(targetIndex, descriptor));
+    }
+
+    @Test
+    public void parse_printableAsciiName_success() {
+        String[] names = {"Q4 Review", "1-on-1", "Budget 2027", "12345", "/", "\"Q4 Review\"", "C:\\Planning"};
+        for (String name : names) {
+            EditMeetingDescriptor descriptor = new EditMeetingDescriptorBuilder().withName(name).build();
+            assertParseSuccess(parser, "1 n/" + name,
+                    new EditMeetingCommand(Index.fromOneBased(1), descriptor));
+        }
     }
 
     @Test

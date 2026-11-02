@@ -88,21 +88,28 @@ rule is rejected and nothing is changed.
 | Phone number         | `p/`         | `addc`, `editc`                                    | Digits, `+`, `-`, `(`, `)`, and spaces, with at least 3 digits and no upper limit. Spaces at the beginning and end are ignored.                                                                                                                                                                                      | `12` (too short), `+65.91234567` (full stop), `9123/4567` (slash), `9123a4567` (letter)                                                              |
 | Email                | `e/`         | `addc`, `editc`                                    | `local-part@domain`. The local part uses letters, digits and any of these special characters: `!` `#` `$` `%` `&` `'` `*` `+` `=` `?` `^` `_` `` ` `` `{` `\|` `}` `~` `-`. These may appear anywhere in the local part, including at the start or end and several times in a row (e.g. `o'connor`, `alice++sales`, `john__doe`). A period (`.`) is also allowed, but not at the start or end of the local part, and not two or more in a row. The slash (`/`) is not allowed because it is used by command prefixes such as `a/`. The domain is made up of labels separated by periods; each label starts and ends with a letter or digit, and the last label is at least 2 characters long. | `john.example.com` (no `@`), `john@example.c` (last label too short), `.john@example.com` (starts with `.`), `john..doe@example.com` (two or more periods in a row), `a/b@example.com` (`/`), `john@exam_ple.com` (`_` in the domain) |
 | Address              | `a/`         | `addc`, `editc`                                    | Any text, as long as it is not blank.<br>In `editc` only, a blank `a/` is also accepted and removes the address.                                                                                                                                                                                                     | In `addc`, a blank `a/` (leave `a/` out to add a contact with no address)                                                                            |
-| Meeting name         | `n/`         | `addm`, `editm`, `findm`                           | English letters, spaces, hyphens (`-`) and apostrophes (`'`), with at least one letter. Repeated spaces are treated as one.                                                                                                                                                                                          | `Meeting123` (digits), `12345` (no letters), `Meeting!` (`!`)                                                                                        |
+| Meeting name         | `n/`         | `addm`, `editm`, `findm`                           | Any nonblank text using printable ASCII characters: English letters, digits, spaces and punctuation, including `/`. Numeric-only names such as `2027` and punctuation-only names such as `/` are accepted. Spaces and tabs at the ends are ignored; repeated spaces and tabs within a name become one space. | Blank names, non-ASCII characters such as `é`, line breaks and other control characters (except tabs) |
 | Date                 | `d/`         | `addm`, `editm`                                    | A real calendar date in `DD/MM/YYYY` format.                                                                                                                                                                                                                                                                         | `31/04/2026` (no such date), `29/02/2025` (not a leap year), `1/1/2026` (not two digits), `15-10-2026` (wrong separator)                             |
 | Start time, end time | `st/`, `et/` | `addm`, `editm`                                    | 24-hour `HHMM`, from `0000` to `2359`. The end time must be later than the start time.                                                                                                                                                                                                                               | `900` (three digits), `09:00` (colon), `2400` (no such time), `1260` (no such time)                                                                  |
 | Tag                  | `t/`         | `addc`, `editc`, `addm`, `editm`, `listc`, `listm` | Letters and digits only, with no spaces. Tags are case-sensitive when stored, but `listc` and `listm` ignore case when filtering.<br>In `editc` and `editm` only, a blank `t/` is also accepted and removes all tags.                                                                                                | `best friend` (space), `vip!` (`!`), and a blank `t/` in `addc`, `addm`, `listc` or `listm`                                                          |
 
 * Spaces before and after a value are ignored.
-* `findc` and `findm` check every keyword against the name rule above, so `findc Anne-Marie` and `findm 2026` are rejected.
-* Contact names are stricter than meeting names. A meeting name allows hyphens (`-`) and apostrophes (`'`) but no
-  digits, while a contact name allows digits but no hyphens or apostrophes.
+* `findc` and `findm` check every keyword against the corresponding name rule above, so `findc Anne-Marie` is rejected,
+  while `findm 2026` is accepted.
+* Contact names allow letters, digits and spaces. Meeting names also allow printable ASCII punctuation, so titles
+  such as `Q4 Review`, `1-on-1` and `Budget/Planning 2027` are valid.
 * Each prefix can be used **at most once** in a command, except `t/`, which can be repeated. For example,
   `p/91234567 p/92345678` is rejected with the message
   `Multiple values specified for the following single-valued field(s): p/`.
 * `force/` is a flag that takes no value, and it can be used at most once.
 * PingBook reads a prefix such as `t/` or `p/` wherever it follows a space, so avoid typing a space followed by a
   prefix inside a value (for example, an address containing ` t/`), because the value is split there.
+  This also applies to meeting names: `n/Review t/work` sets the name to `Review` and adds the tag `work`;
+  `n/Review force/` sets the name to `Review` and enables the overlap override. Other prefixes may cause an error.
+  A slash within a name, as in `n/Budget/Planning`, does not split the value.
+* Double quotes and backslashes in meeting names are stored literally; they do not escape prefixes or group words.
+  For example, `n/"Q4 Review"` stores the quotation marks as part of the name. Putting quotes around a name does not
+  protect any command prefixes inside it.
 
 ### Viewing help: `help`
 
@@ -157,6 +164,7 @@ Format: `addm n/NAME d/DATE st/START_TIME et/END_TIME [t/TAG]... [force/]`
 
 Examples:
 * `addm n/Project Review d/08/10/2026 st/1400 et/1500`
+* `addm n/Q4 Budget/Planning 2027 d/08/10/2026 st/1600 et/1700`
 * `addm d/14/10/2026 n/Client Check-in et/1030 st/0930`
 * `addm n/Project Review d/25/10/2026 st/1400 et/1500 t/urgent t/work`
 * `addm n/Late Call d/08/10/2026 st/1430 et/1530 force/` adds the meeting even if it overlaps an existing one.
@@ -215,6 +223,7 @@ Format: `editm INDEX [n/NAME] [d/DATE] [st/START_TIME] [et/END_TIME] [t/TAG]... 
 Examples:
 * `editm 1 d/25/10/2026` changes only the date of the 1st displayed meeting.
 * `editm 2 n/Client Review st/1500 et/1600` changes the name and times of the 2nd displayed meeting.
+* `editm 1 n/1-on-1 / Budget 2027` changes the meeting name to a title containing digits and punctuation.
 * `editm 3 t/urgent t/work` replaces all tags of the 3rd displayed meeting with `urgent` and `work`.
 * `editm 1 t/` removes all tags from the 1st displayed meeting.
 
