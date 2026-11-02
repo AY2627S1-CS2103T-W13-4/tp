@@ -140,6 +140,14 @@ public class ParserUtilTest {
     }
 
     @Test
+    public void parseEmail_validValueWithSpecialCharacters_returnsEmail() throws Exception {
+        String[] emails = {"o'connor@example.com", "alice++sales@example.com", "john__doe@example.com"};
+        for (String email : emails) {
+            assertEquals(new Email(email), ParserUtil.parseEmail(email));
+        }
+    }
+
+    @Test
     public void parseEmail_validValueWithWhitespace_returnsTrimmedEmail() throws Exception {
         String emailWithWhitespace = WHITESPACE + VALID_EMAIL + WHITESPACE;
         Email expectedEmail = new Email(VALID_EMAIL);
