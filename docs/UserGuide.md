@@ -97,7 +97,7 @@ rule is rejected and nothing is changed.
 
 * Spaces before and after a value are ignored.
 * `findc` and `findm` validate their keywords according to their respective keyword validation rules.
-* Contact names allow letters, digits spaces, apostrophes, hyphens, and slashes. Meeting names also allow printable ASCII punctuation, so titles
+* Contact names allow letters, digits, spaces, apostrophes, hyphens, and slashes. Meeting names also allow printable ASCII punctuation, so titles
   such as `Q4 Review`, `1-on-1` and `Budget/Planning 2027` are valid.
 * Each prefix can be used **at most once** in a command, except `t/`, which can be repeated. For example,
   `p/91234567 p/92345678` is rejected with the message
