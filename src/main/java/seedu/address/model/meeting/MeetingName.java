@@ -15,9 +15,10 @@ public class MeetingName {
             + "(letters, digits, spaces or punctuation). Tabs are treated as spaces.";
 
     public static final String MESSAGE_KEYWORD_CONSTRAINTS =
-            "Invalid keyword. Keywords may only contain alphabetic characters, hyphens or apostrophes.";
+            "Invalid keyword. Keywords must not be blank and may only contain printable ASCII characters "
+                    + "(letters, digits, spaces or punctuation). Tabs are treated as spaces.";
 
-    private static final String VALIDATION_REGEX = "[A-Za-z' -]+";
+    private static final String VALIDATION_REGEX = "[\\x20-\\x7E\\t]+";
 
     public final String name;
 
