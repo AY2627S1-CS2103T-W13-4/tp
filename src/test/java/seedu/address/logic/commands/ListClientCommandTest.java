@@ -43,18 +43,16 @@ public class ListClientCommandTest {
     @Test
     public void execute_listIsNotFiltered_showsSameList() {
         // EP: an empty tag set on an already unfiltered list preserves all contacts.
-        assertCommandSuccess(new ListClientCommand(new HashSet<>()), model,
-                String.format(ListClientCommand.MESSAGE_SUCCESS_NO_TAGS, model.getFilteredPersonListSize()),
-                expectedModel);
+        assertCommandSuccess(new ListClientCommand(
+                new HashSet<>()), model, ListClientCommand.MESSAGE_SUCCESS_NO_TAGS, expectedModel);
     }
 
     @Test
     public void execute_listIsFiltered_showsEverything() {
         // State transition: an empty tag filter clears the current restriction and restores every contact.
         showPersonAtIndex(model, INDEX_FIRST_PERSON);
-        assertCommandSuccess(new ListClientCommand(new HashSet<>()), model,
-                String.format(ListClientCommand.MESSAGE_SUCCESS_NO_TAGS, expectedModel.getFilteredPersonListSize()),
-                expectedModel);
+        assertCommandSuccess(new ListClientCommand(
+                new HashSet<>()), model, ListClientCommand.MESSAGE_SUCCESS_NO_TAGS, expectedModel);
     }
 
     @Test
@@ -79,8 +77,7 @@ public class ListClientCommandTest {
 
         CommandResult result = command.execute(model);
 
-        String expectedMessage = String.format(ListClientCommand.MESSAGE_SUCCESS_NO_TAGS,
-                model.getFilteredPersonListSize());
+        String expectedMessage = ListClientCommand.MESSAGE_SUCCESS_NO_TAGS;
         assertEquals(new CommandResult(expectedMessage), result);
         assertEquals(getTypicalPersons(), model.getFilteredPersonList());
     }

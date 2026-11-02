@@ -78,7 +78,7 @@ public class LogicManagerTest {
         // EP: a bare listc command selects the valid no-filter input partition and lists all displayed contacts.
         String listCommand = ListClientCommand.COMMAND_WORD;
         assertCommandSuccess(listCommand,
-                String.format(ListClientCommand.MESSAGE_SUCCESS_NO_TAGS, model.getFilteredPersonListSize()), model);
+                ListClientCommand.MESSAGE_SUCCESS_NO_TAGS, model);
     }
 
     @Test

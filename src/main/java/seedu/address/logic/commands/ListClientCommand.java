@@ -20,8 +20,8 @@ import seedu.address.model.tag.Tag;
 public class ListClientCommand extends Command {
 
     public static final String COMMAND_WORD = "listc";
-    public static final String MESSAGE_SUCCESS = "Listed %1$d contacts matching the given tags: %2$s.";
-    public static final String MESSAGE_SUCCESS_NO_TAGS = "Listed all %1$d contacts.";
+    public static final String MESSAGE_SUCCESS = "Listed %1$d contact(s) matching the given tag(s): %2$s.";
+    public static final String MESSAGE_SUCCESS_NO_TAGS = "Listed all contacts.";
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": Lists all contacts matching the given tags. "
             + "Parameters: "
             + "[" + PREFIX_TAG + "TAG]...\n"
@@ -51,7 +51,7 @@ public class ListClientCommand extends Command {
 
         if (tags.isEmpty()) {
             logger.info(() -> "Listed clients: no tags applied, #displayed clients: " + numberOfDisplayedClients);
-            return new CommandResult(String.format(MESSAGE_SUCCESS_NO_TAGS, model.getFilteredPersonList().size()));
+            return new CommandResult(MESSAGE_SUCCESS_NO_TAGS);
         }
         String formattedTags = tags.stream()
                 .map(tag -> tag.tagName)

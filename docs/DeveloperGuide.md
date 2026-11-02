@@ -292,7 +292,7 @@ Use case ends.
 
       Use case ends.
 
-* 1c. No field is provided, a supplied field is invalid (see "Field formats" in the User Guide), or a single-valued prefix is repeated.
+* 1c. No field is provided, a supplied field is invalid (see [Field formats](UserGuide.md#field-formats) in the User Guide), or a single-valued prefix is repeated.
 
     * 1c1. PingBook shows an error message.
 
@@ -344,6 +344,12 @@ Use case ends.
 
       Use case ends.
 
+* 1b. A supplied name keyword is invalid.
+
+    * 1b1. PingBook shows an error message.
+
+      Use case ends.
+
 **Use case: UC6 - View and filter meetings**
 
 **MSS**
@@ -355,7 +361,7 @@ Use case ends.
 
 **Extensions**
 
-* 1a. A supplied tag is invalid.
+* 1a. A supplied tag is invalid or empty.
 
     * 1a1. PingBook shows an error message.
 
@@ -483,6 +489,12 @@ Use case ends.
 
       Use case ends.
 
+* 1b. A supplied name keyword is invalid.
+
+    * 1b1. PingBook shows an error message.
+
+      Use case ends.
+
 **Use case: UC11 - View user guide**
 
 **MSS**
@@ -569,7 +581,7 @@ testers are expected to do more *exploratory* testing.
 1. Adding a valid contact
 
    1. Test case: `addc n/Test contact p/91234567 e/test@example.com t/test`<br>
-      Expected: The contact is added and displayed with the supplied tag.
+      Expected: The contact is added and displayed with the supplied tag.<br><br>
 
 2. Rejecting invalid or duplicate contacts
 
@@ -609,7 +621,7 @@ testers are expected to do more *exploratory* testing.
 1. Validating and adding meetings
 
    1. Test cases: Add a valid meeting, then try a missing field, an invalid date, and an end time earlier than the start time.<br>
-      Expected: The valid meeting is added. Each invalid command is rejected with an error message.
+      Expected: The valid meeting is added. Each invalid command is rejected with an error message.<br><br>
 
 2. Detecting meeting overlaps
 
