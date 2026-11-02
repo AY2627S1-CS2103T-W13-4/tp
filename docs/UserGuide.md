@@ -76,7 +76,7 @@ rule is rejected and nothing is changed.
 
 Field | Prefix | Used by | Accepted | Rejected examples
 ------|--------|---------|----------|------------------
-Contact name | `n/` | `addc`, `editc`, `findc` | English letters, digits and spaces only, starting with a letter or digit. | `Anne-Marie Tan` (hyphen), `Ravi s/o Kumar` (`/`), `Dr. Lim` (full stop)
+Contact name | `n/` | `addc`, `editc`, `findc` | Letters, digits, spaces, apostrophes (`'`), hyphens (`-`) and forward slashes (`/`). Must start with a letter or digit. | `John@Smith` (`@`), `.John` (starts with a full stop)
 Phone number | `p/` | `addc`, `editc` | Digits only, at least 3 digits long, with no upper limit. | `12` (too short), `+6591234567` (`+`), `9123 4567` (space), `9123-4567` (hyphen)
 Email | `e/` | `addc`, `editc` | `local-part@domain`. The local part uses letters, digits and the special characters `+`, `_`, `.`, `-`, and cannot start or end with a special character. The domain is made up of labels separated by periods; each label starts and ends with a letter or digit, and the last label is at least 2 characters long. | `john.example.com` (no `@`), `john@example.c` (last label too short), `-john@example.com` (starts with `-`), `john@exam_ple.com` (`_` in the domain)
 Address | `a/` | `addc`, `editc` | Any text, as long as it is not blank.<br>In `editc` only, a blank `a/` is also accepted and removes the address. | In `addc`, a blank `a/` (leave `a/` out to add a contact with no address)
@@ -124,7 +124,9 @@ Any active `listc`/`findc` filter stays active after adding. If the new contact 
 saved but hidden, and the success message ends with a note saying so; run `listc` to show all contacts.
 
 Examples:
-* `addc n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01`
+* `addc n/Anne-Marie p/91234567 e/anne@example.com a/Anne street, block 123, #01-01`
+* `addc n/O'Connor p/91234568 e/oconnor@example.com`
+* `addc n/Ravi s/o Kumar p/91234569 e/ravi@example.com`
 * `addc n/Mary Lim p/87654321 e/marylim@example.com t/premium` (no address)
 * `addc n/Betsy Crowe t/friend e/betsycrowe@example.com a/Newgate Prison p/1234567 t/criminal`
 
@@ -162,7 +164,7 @@ Format: `editc INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [t/TAG]... `
 * Edits the contact at the specified `INDEX`. The index refers to the index number shown in the displayed contact list. The index **must be a positive integer** 1, 2, 3, ...
 * The contacts panel must be active. If you are viewing meetings, run `listc` or `findc KEYWORD` first.
 * At least one of the optional fields must be provided.
-* Each value must follow the [field formats](#field-formats). For example, a phone number needs at least 3 digits and cannot contain `+`, spaces or hyphens, and a name cannot contain hyphens.
+* Each value must follow the [field formats](#field-formats). For example, a phone number needs at least 3 digits and cannot contain `+`, spaces or hyphens.
 * `n/`, `p/`, `e/` and `a/` can each be used at most once in the same command. Only `t/` can be repeated.
 * Existing values will be updated to the input values.
 * When editing tags, all of the contact's existing tags are removed; adding tags is not cumulative.
@@ -181,7 +183,7 @@ These commands are rejected and leave the contact unchanged:
 
 *  `editc 1 p/12` (the phone number has fewer than 3 digits)
 *  `editc 1 p/+6591234567` (the phone number contains `+`)
-*  `editc 1 n/Anne-Marie Tan` (the name contains a hyphen)
+* `editc 1 n/John@Smith` (the name contains an unsupported character)
 *  `editc 1 p/91234567 p/92345678` (`p/` is used twice)
 
 ### Editing a meeting: `editm`
