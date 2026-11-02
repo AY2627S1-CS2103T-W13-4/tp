@@ -18,19 +18,37 @@ public class MeetingNameTest {
     }
 
     @Test
+    public void constructor_printableAsciiNames_success() {
+        String[] names = {"Q4 Review", "1-on-1", "Budget 2027", "12345", "Design/Review", "/",
+            "Meeting!", "Meeting@Client", "R&D ($100): #1_~", "\"Q4 Review\"", "C:\\Planning"};
+        for (String name : names) {
+            assertTrue(MeetingName.isValidName(name));
+            assertEquals(name, new MeetingName(name).toString());
+        }
+    }
+
+    @Test
     public void constructor_normalisesSpaces_success() {
         assertEquals("Client Meeting", new MeetingName("  Client   Meeting  ").toString());
         assertEquals("Client Meeting", new MeetingName("Client\tMeeting").toString());
+        assertEquals("Q4 Review/Planning", new MeetingName(" \tQ4  \t Review/Planning\t ").toString());
     }
 
     @Test
     public void constructor_invalidName_throwsIllegalArgumentException() {
         assertThrows(IllegalArgumentException.class, () -> new MeetingName(""));
         assertThrows(IllegalArgumentException.class, () -> new MeetingName("   "));
-        assertThrows(IllegalArgumentException.class, () -> new MeetingName("12345"));
-        assertThrows(IllegalArgumentException.class, () -> new MeetingName("Meeting123"));
-        assertThrows(IllegalArgumentException.class, () -> new MeetingName("Meeting!"));
-        assertThrows(IllegalArgumentException.class, () -> new MeetingName("Meeting@Client"));
+        assertThrows(IllegalArgumentException.class, () -> new MeetingName("\t \t"));
+    }
+
+    @Test
+    public void constructor_nonPrintableOrNonAsciiName_throwsIllegalArgumentException() {
+        String[] names = {"Caf\u00e9", "Review\u00a0Meeting", "\u001bReview", "Review\u0000",
+            "Review\nMeeting", "Review\rMeeting", "Review\fMeeting", "Review\u000bMeeting", "Review\u007f"};
+        for (String name : names) {
+            assertFalse(MeetingName.isValidName(name));
+            assertThrows(IllegalArgumentException.class, () -> new MeetingName(name));
+        }
     }
 
     @Test
@@ -48,9 +66,7 @@ public class MeetingNameTest {
 
         assertFalse(MeetingName.isValidName(""));
         assertFalse(MeetingName.isValidName("   "));
-        assertFalse(MeetingName.isValidName("12345"));
-        assertFalse(MeetingName.isValidName("Meeting123"));
-        assertFalse(MeetingName.isValidName("Meeting!"));
+        assertFalse(MeetingName.isValidName("\t \t"));
     }
 
     @Test
@@ -74,5 +90,13 @@ public class MeetingNameTest {
     public void hashCode_caseInsensitiveNames_returnsSameHashCode() {
         assertEquals(new MeetingName("Client Meeting").hashCode(),
                 new MeetingName("CLIENT MEETING").hashCode());
+    }
+
+    @Test
+    public void equalsAndHashCode_asciiNamesWithDifferentCaseAndSpacing_match() {
+        MeetingName name = new MeetingName("Q4 Review/Planning!");
+        MeetingName equivalent = new MeetingName(" q4  REVIEW/planning! ");
+        assertEquals(name, equivalent);
+        assertEquals(name.hashCode(), equivalent.hashCode());
     }
 }

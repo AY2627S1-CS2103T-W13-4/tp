@@ -12,6 +12,7 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.meeting.MeetingName;
 import seedu.address.model.person.Address;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
@@ -20,7 +21,7 @@ import seedu.address.model.tag.Tag;
 
 public class ParserUtilTest {
     private static final String INVALID_NAME = "R@chel";
-    private static final String INVALID_PHONE = "+651234";
+    private static final String INVALID_PHONE = "+65a1234";
     private static final String INVALID_ADDRESS = " ";
     private static final String INVALID_EMAIL = "example.com";
     private static final String INVALID_TAG = "#friend";
@@ -75,6 +76,21 @@ public class ParserUtilTest {
         String nameWithWhitespace = WHITESPACE + VALID_NAME + WHITESPACE;
         Name expectedName = new Name(VALID_NAME);
         assertEquals(expectedName, ParserUtil.parseName(nameWithWhitespace));
+    }
+
+    @Test
+    public void parseMeetingName_asciiWithWhitespace_returnsNormalizedName() throws Exception {
+        assertEquals(new MeetingName("Q4 Review/Planning!"),
+                ParserUtil.parseMeetingName(" \tQ4  Review/Planning!\t "));
+    }
+
+    @Test
+    public void parseMeetingName_invalidValue_throwsParseException() {
+        String[] names = {"", " \t ", "Caf\u00e9", "\u0000Review", "Review\n", "Review\u007f"};
+        for (String name : names) {
+            assertThrows(ParseException.class, MeetingName.MESSAGE_CONSTRAINTS, ()
+                    -> ParserUtil.parseMeetingName(name));
+        }
     }
 
     @Test
@@ -137,6 +153,14 @@ public class ParserUtilTest {
     public void parseEmail_validValueWithoutWhitespace_returnsEmail() throws Exception {
         Email expectedEmail = new Email(VALID_EMAIL);
         assertEquals(expectedEmail, ParserUtil.parseEmail(VALID_EMAIL));
+    }
+
+    @Test
+    public void parseEmail_validValueWithSpecialCharacters_returnsEmail() throws Exception {
+        String[] emails = {"o'connor@example.com", "alice++sales@example.com", "john__doe@example.com"};
+        for (String email : emails) {
+            assertEquals(new Email(email), ParserUtil.parseEmail(email));
+        }
     }
 
     @Test

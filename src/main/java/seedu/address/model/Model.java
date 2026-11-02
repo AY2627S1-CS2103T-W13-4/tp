@@ -43,6 +43,11 @@ public interface Model {
     ReadOnlyAddressBook getAddressBook();
 
     /**
+     * Captures the current records, filters and meeting order in an action that restores them.
+     */
+    Runnable createRollbackAction();
+
+    /**
      * Returns true if a person with the same identity as {@code person} exists in the address book.
      */
     boolean hasPerson(Person person);

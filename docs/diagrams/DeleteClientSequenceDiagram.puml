@@ -16,6 +16,10 @@ box Model MODEL_COLOR_T1
 participant "m:Model" as Model MODEL_COLOR
 end box
 
+box Storage STORAGE_COLOR_T1
+participant ":Storage" as Storage STORAGE_COLOR
+end box
+
 [-> LogicManager : execute("deletec 1")
 activate LogicManager
 
@@ -53,6 +57,11 @@ alt showingMeetings
     [<--LogicManager
     deactivate LogicManager
 else else
+    LogicManager -> Model : createRollbackAction()
+    activate Model
+    Model --> LogicManager : rollback
+    deactivate Model
+
     LogicManager -> DeleteClientCommand : execute(m)
     activate DeleteClientCommand
 
@@ -80,7 +89,27 @@ else else
     DeleteClientCommand --> LogicManager : r
     deactivate DeleteClientCommand
 
-    [<--LogicManager
-    deactivate LogicManager
+    LogicManager -> Model : getAddressBook()
+    activate Model
+    Model --> LogicManager : a
+    deactivate Model
+    LogicManager -> Storage : saveAddressBook(a)
+    activate Storage
+
+    alt save fails
+        Storage --> LogicManager : IOException
+        deactivate Storage
+        LogicManager -> Model : rollback.run()
+        activate Model
+        deactivate Model
+        LogicManager -> LogicManager : throw CommandException
+        [<--LogicManager : error
+        deactivate LogicManager
+    else save succeeds
+        Storage --> LogicManager
+        deactivate Storage
+        [<--LogicManager : r
+        deactivate LogicManager
+    end
 end
 @enduml

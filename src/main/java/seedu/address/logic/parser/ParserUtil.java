@@ -143,18 +143,17 @@ public class ParserUtil {
 
     /**
      * Parses a {@code String meetingName} into a {@code MeetingName}.
-     * Leading and trailing whitespaces will be trimmed.
+     * Spaces and tabs are normalized by {@code MeetingName} after validation.
      *
      * @param meetingName The meeting name to parse.
      * @throws ParseException if the given {@code meetingName} is invalid.
      */
     public static MeetingName parseMeetingName(String meetingName) throws ParseException {
         requireNonNull(meetingName);
-        String trimmedMeetingName = meetingName.trim();
-        if (!MeetingName.isValidName(trimmedMeetingName)) {
+        if (!MeetingName.isValidName(meetingName)) {
             throw new ParseException(MeetingName.MESSAGE_CONSTRAINTS);
         }
-        return new MeetingName(trimmedMeetingName);
+        return new MeetingName(meetingName);
     }
 
     /**
