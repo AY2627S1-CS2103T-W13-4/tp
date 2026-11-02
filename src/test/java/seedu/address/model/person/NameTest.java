@@ -36,6 +36,10 @@ public class NameTest {
         assertTrue(Name.isValidName("peter the 2nd")); // alphanumeric characters
         assertTrue(Name.isValidName("Capital Tan")); // with capital letters
         assertTrue(Name.isValidName("David Roger Jackson Ray Jr 2nd")); // long names
+        assertTrue(Name.isValidName("Anne-Marie")); // hyphen
+        assertTrue(Name.isValidName("O'Connor")); // apostrophe 
+        assertTrue(Name.isValidName("Ravi s/o Kumar")); // slash
+        assertTrue(Name.isValidName("John d/o Kumar"));
     }
 
     @Test
