@@ -14,6 +14,9 @@ public class MeetingName {
             "Invalid name. Names must contain at least one alphabetic character "
             + "and may only contain alphabetic characters, spaces, hyphens or apostrophes.";
 
+    public static final String MESSAGE_KEYWORD_CONSTRAINTS =
+            "Invalid keyword. Keywords may only contain alphabetic characters, hyphens or apostrophes.";
+
     private static final String VALIDATION_REGEX = "[A-Za-z' -]+";
 
     public final String name;

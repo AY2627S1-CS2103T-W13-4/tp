@@ -35,7 +35,7 @@ public class FindMeetingCommandParser implements Parser<FindMeetingCommand> {
 
         for (String keyword : keywords) {
             if (!MeetingName.isValidKeyword(keyword)) {
-                throw new ParseException(MeetingName.MESSAGE_CONSTRAINTS);
+                throw new ParseException(MeetingName.MESSAGE_KEYWORD_CONSTRAINTS);
             }
         }
 
