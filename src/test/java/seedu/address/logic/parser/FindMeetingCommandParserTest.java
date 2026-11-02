@@ -56,7 +56,7 @@ public class FindMeetingCommandParserTest {
 
     @Test
     public void parse_invalidKeyword_throwsParseException() {
-        assertParseFailure(parser, "aa\u00e9",
-                seedu.address.model.meeting.MeetingName.MESSAGE_CONSTRAINTS);
+        assertParseFailure(parser, "aa@#",
+                seedu.address.model.meeting.MeetingName.MESSAGE_KEYWORD_CONSTRAINTS);
     }
 }

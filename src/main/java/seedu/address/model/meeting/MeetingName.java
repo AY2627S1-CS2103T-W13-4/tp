@@ -14,7 +14,10 @@ public class MeetingName {
             "Invalid name. Meeting names must not be blank and may only contain printable ASCII characters "
             + "(letters, digits, spaces or punctuation). Tabs are treated as spaces.";
 
-    private static final String VALIDATION_REGEX = "[\\x20-\\x7E\\t]+";
+    public static final String MESSAGE_KEYWORD_CONSTRAINTS =
+            "Invalid keyword. Keywords may only contain alphabetic characters, hyphens or apostrophes.";
+
+    private static final String VALIDATION_REGEX = "[A-Za-z' -]+";
 
     public final String name;
 
@@ -42,6 +45,13 @@ public class MeetingName {
 
     private static String normalise(String s) {
         return s.trim().replaceAll("\\s+", " ");
+    }
+
+    /**
+     * Returns true if the given keyword contains only characters allowed in a meeting name.
+     */
+    public static boolean isValidKeyword(String keyword) {
+        return keyword.matches(VALIDATION_REGEX);
     }
 
     @Override
