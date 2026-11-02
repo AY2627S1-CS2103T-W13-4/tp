@@ -1,5 +1,6 @@
 package seedu.address.model.person;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.testutil.Assert.assertThrows;
@@ -17,6 +18,11 @@ public class NameTest {
     public void constructor_invalidName_throwsIllegalArgumentException() {
         String invalidName = "";
         assertThrows(IllegalArgumentException.class, () -> new Name(invalidName));
+    }
+
+    @Test
+    public void constructor_singleCharacterName_success() {
+        assertDoesNotThrow(() -> new Name("A"));
     }
 
     @Test
