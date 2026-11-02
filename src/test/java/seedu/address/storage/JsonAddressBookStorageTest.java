@@ -2,6 +2,8 @@ package seedu.address.storage;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static seedu.address.testutil.Assert.assertThrows;
 import static seedu.address.testutil.TypicalMeetings.CLIENT_REVIEW;
 import static seedu.address.testutil.TypicalMeetings.getTypicalAddressBookWithMeetings;
@@ -11,11 +13,18 @@ import static seedu.address.testutil.TypicalPersons.IDA;
 import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
 
 import java.io.IOException;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.DosFileAttributeView;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 
 import seedu.address.commons.exceptions.DataLoadingException;
@@ -63,6 +72,18 @@ public class JsonAddressBookStorageTest {
     @Test
     public void readAddressBook_invalidAndValidPersonAddressBook_throwDataLoadingException() {
         assertThrows(DataLoadingException.class, () -> readAddressBook("invalidAndValidPersonAddressBook.json"));
+    }
+
+    @Test
+    public void readAddressBook_nullLiteralFile_throwDataLoadingException() {
+        assertThrows(DataLoadingException.class, () -> readAddressBook("nullAddressBook.json"));
+    }
+
+    @Test
+    public void readAddressBook_nullEntries_throwDataLoadingException() {
+        assertThrows(DataLoadingException.class, () -> readAddressBook("nullPersonAddressBook.json"));
+        assertThrows(DataLoadingException.class, () -> readAddressBook("nullMeetingAddressBook.json"));
+        assertThrows(DataLoadingException.class, () -> readAddressBook("nullPersonTagAddressBook.json"));
     }
 
     @Test
@@ -152,5 +173,112 @@ public class JsonAddressBookStorageTest {
     @Test
     public void saveAddressBook_nullFilePath_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> saveAddressBook(new AddressBook(), null));
+    }
+
+    @Test
+    public void saveAddressBook_partialTemporaryWriteFails_preservesOriginalAndRemovesTemporaryFile() throws Exception {
+        // Error guessing: an IOException after writing some bytes must not truncate the real data file.
+        Path target = testFolder.resolve("addressbook.json");
+        JsonAddressBookStorage failingStorage = new JsonAddressBookStorage(target) {
+            @Override
+            void writeAddressBook(ReadOnlyAddressBook addressBook, Path temporaryFile) throws IOException {
+                Files.writeString(temporaryFile, "partial JSON");
+                throw new IOException("Interrupted write");
+            }
+        };
+
+        assertFailedSavePreservesOriginal(failingStorage);
+    }
+
+    @Test
+    public void saveAddressBook_atomicMoveUnsupported_preservesOriginalAndRemovesTemporaryFile() throws Exception {
+        Path target = testFolder.resolve("addressbook.json");
+        JsonAddressBookStorage failingStorage = new JsonAddressBookStorage(target) {
+            @Override
+            void replaceAddressBook(Path temporaryFile, Path destination) throws IOException {
+                throw new AtomicMoveNotSupportedException(temporaryFile.toString(), destination.toString(),
+                        "Atomic replacement unavailable");
+            }
+        };
+
+        assertFailedSavePreservesOriginal(failingStorage);
+    }
+
+    @Test
+    public void saveAddressBook_failedFirstWrite_doesNotCreateTargetOrLeaveTemporaryFile() throws Exception {
+        Path target = testFolder.resolve("addressbook.json");
+        JsonAddressBookStorage failingStorage = new JsonAddressBookStorage(target) {
+            @Override
+            void writeAddressBook(ReadOnlyAddressBook addressBook, Path temporaryFile) throws IOException {
+                Files.writeString(temporaryFile, "partial JSON");
+                throw new IOException("Interrupted first write");
+            }
+        };
+
+        assertThrows(IOException.class, () -> failingStorage.saveAddressBook(getTypicalAddressBook()));
+        assertFalse(Files.exists(target));
+        try (Stream<Path> files = Files.list(testFolder)) {
+            assertEquals(0, files.count());
+        }
+    }
+
+    @Test
+    public void saveAddressBook_missingParentDirectories_createsParentsAndPublishesCompleteFile() throws Exception {
+        Path target = testFolder.resolve("nested").resolve("data").resolve("addressbook.json");
+        JsonAddressBookStorage storage = new JsonAddressBookStorage(target);
+        AddressBook original = getTypicalAddressBookWithMeetings();
+
+        storage.saveAddressBook(original);
+
+        assertEquals(original, storage.readAddressBook().orElseThrow());
+        try (Stream<Path> files = Files.list(target.getParent())) {
+            assertEquals(List.of(target), files.toList());
+        }
+    }
+
+    @Test
+    @EnabledOnOs(OS.WINDOWS)
+    public void saveAddressBook_readOnlyTarget_preservesFileAndAllowsRetryAfterPermissionRestored() throws Exception {
+        Path target = testFolder.resolve("addressbook.json");
+        JsonAddressBookStorage storage = new JsonAddressBookStorage(target);
+        AddressBook original = getTypicalAddressBook();
+        storage.saveAddressBook(original);
+        String saved = Files.readString(target);
+        DosFileAttributeView attributes = Files.getFileAttributeView(target, DosFileAttributeView.class);
+        assumeTrue(attributes != null, "Requires DOS read-only file attributes");
+        AddressBook edited = new AddressBook(original);
+        edited.removePerson(ALICE);
+
+        attributes.setReadOnly(true);
+        try {
+            assertTrue(attributes.readAttributes().isReadOnly());
+            assertThrows(IOException.class, () -> storage.saveAddressBook(edited));
+            assertEquals(saved, Files.readString(target));
+            try (Stream<Path> files = Files.list(testFolder)) {
+                assertEquals(List.of(target), files.toList());
+            }
+        } finally {
+            attributes.setReadOnly(false);
+        }
+
+        storage.saveAddressBook(edited);
+        assertEquals(edited, storage.readAddressBook().orElseThrow());
+    }
+
+    private void assertFailedSavePreservesOriginal(JsonAddressBookStorage failingStorage) throws Exception {
+        Path target = failingStorage.getAddressBookFilePath();
+        AddressBook original = getTypicalAddressBookWithMeetings();
+        new JsonAddressBookStorage(target).saveAddressBook(original);
+        String saved = Files.readString(target);
+        AddressBook edited = new AddressBook(original);
+        edited.removePerson(ALICE);
+
+        assertThrows(IOException.class, () -> failingStorage.saveAddressBook(edited));
+
+        assertEquals(saved, Files.readString(target));
+        assertEquals(original, new JsonAddressBookStorage(target).readAddressBook().orElseThrow());
+        try (Stream<Path> files = Files.list(testFolder)) {
+            assertEquals(List.of(target), files.toList());
+        }
     }
 }

@@ -9,22 +9,24 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
  */
 public class Email {
 
-    private static final String SPECIAL_CHARACTERS = "+_.-";
+    // '/' is excluded as it is the command delimiter (e.g. "a/"), and '.' has its own placement rules
+    private static final String SPECIAL_CHARACTERS = "!#$%&'*+=?^_`{|}~-";
     public static final String MESSAGE_CONSTRAINTS = "Emails should be of the format local-part@domain "
             + "and adhere to the following constraints:\n"
-            + "1. The local-part should only contain alphanumeric characters and these special characters, excluding "
-            + "the parentheses, (" + SPECIAL_CHARACTERS + "). The local-part may not start or end with any special "
-            + "characters.\n"
+            + "1. The local-part should only contain alphanumeric characters and these special characters: "
+            + SPECIAL_CHARACTERS + "\n"
+            + "   Periods ('.') are also allowed, but may not be at the start or end of the local-part, "
+            + "or appear consecutively. The '/' character is not allowed.\n"
             + "2. The local-part is followed by an '@' and then a domain name. The domain name is made up of domain "
             + "labels separated by periods.\n"
             + "The domain name must:\n"
             + "    - end with a domain label at least 2 characters long\n"
             + "    - have each domain label start and end with alphanumeric characters\n"
             + "    - have each domain label consist of alphanumeric characters, separated only by hyphens, if any.";
-    // alphanumeric and special characters
     private static final String ALPHANUMERIC_NO_UNDERSCORE = "[^\\W_]+"; // alphanumeric characters except underscore
-    private static final String LOCAL_PART_REGEX = "^" + ALPHANUMERIC_NO_UNDERSCORE + "([" + SPECIAL_CHARACTERS + "]"
-            + ALPHANUMERIC_NO_UNDERSCORE + ")*";
+    private static final String LOCAL_PART_RUN = "[A-Za-z0-9" + SPECIAL_CHARACTERS + "]+";
+    // runs of allowed characters, joined by single periods
+    private static final String LOCAL_PART_REGEX = "^" + LOCAL_PART_RUN + "(\\." + LOCAL_PART_RUN + ")*";
     private static final String DOMAIN_PART_REGEX = ALPHANUMERIC_NO_UNDERSCORE
             + "(-" + ALPHANUMERIC_NO_UNDERSCORE + ")*";
     private static final String DOMAIN_LAST_PART_REGEX = "(" + DOMAIN_PART_REGEX + "){2,}$"; // At least two chars

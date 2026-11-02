@@ -44,6 +44,7 @@ public class ModelManager implements Model {
         filteredPersons = new FilteredList<>(this.addressBook.getPersonList());
         filteredMeetings = new FilteredList<>(this.addressBook.getMeetingList());
         sortedMeetings = new SortedList<>(filteredMeetings);
+        updateMeetingListOrder(LocalDateTime.now());
     }
 
     public ModelManager() {
@@ -78,6 +79,20 @@ public class ModelManager implements Model {
     @Override
     public ReadOnlyAddressBook getAddressBook() {
         return addressBook;
+    }
+
+    @Override
+    public Runnable createRollbackAction() {
+        AddressBook original = new AddressBook(addressBook);
+        Predicate<? super Person> personFilter = filteredPersons.getPredicate();
+        Predicate<? super Meeting> meetingFilter = filteredMeetings.getPredicate();
+        Comparator<? super Meeting> meetingOrder = sortedMeetings.getComparator();
+        return () -> {
+            addressBook.resetData(original);
+            filteredPersons.setPredicate(personFilter);
+            filteredMeetings.setPredicate(meetingFilter);
+            sortedMeetings.setComparator(meetingOrder);
+        };
     }
 
     @Override

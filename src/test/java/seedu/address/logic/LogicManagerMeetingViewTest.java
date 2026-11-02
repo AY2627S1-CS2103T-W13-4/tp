@@ -33,6 +33,7 @@ import seedu.address.logic.commands.DeleteMeetingCommand;
 import seedu.address.logic.commands.EditClientCommand;
 import seedu.address.logic.commands.EditMeetingCommand;
 import seedu.address.logic.commands.FindClientCommand;
+import seedu.address.logic.commands.FindMeetingCommand;
 import seedu.address.logic.commands.HelpCommand;
 import seedu.address.logic.commands.ListClientCommand;
 import seedu.address.logic.commands.ListMeetingCommand;
@@ -78,9 +79,56 @@ public class LogicManagerMeetingViewTest {
     @Test
     public void execute_deleteWhileShowingMeetings_rejectsWithoutChangingDataOrSaving() throws Exception {
         // State transition: listing meetings hides contacts, so deleting a contact must be rejected without saving.
+        // EP: a syntactically valid deletec index is still invalid when the contact view is not visible.
         logic.execute(ListMeetingCommand.COMMAND_WORD);
 
         assertContactCommandRejected("  " + DeleteClientCommand.COMMAND_WORD + " 1  ");
+    }
+
+    @Test
+    public void execute_addMeetingBeforeListMeeting_ordersDisplayWithoutChangingStorageOrder() throws Exception {
+        // State transition: addm opens a sorted meeting panel even when listm has never run.
+        Meeting later = model.getMeetingList().get(0);
+        Meeting finished = taggedMeeting("Finished", "01/01/2000");
+        model.addMeeting(finished);
+
+        CommandResult result = logic.execute(AddMeetingCommand.COMMAND_WORD
+                + " n/Earlier meeting d/08/10/2099 st/1400 et/1500");
+        Meeting added = model.getAddressBook().getMeetingList().get(2);
+
+        assertTrue(result.isShowMeetings());
+        assertEquals(List.of(added, later, finished), logic.getMeetingList());
+        assertEquals(List.of(later, finished, added), model.getAddressBook().getMeetingList());
+        assertEquals(model.getAddressBook(), addressBookStorage.readAddressBook().orElseThrow());
+    }
+
+    @Test
+    public void execute_findMeetingBeforeListMeeting_editAndDeleteUseSortedDisplayedIndices() throws Exception {
+        // Error guessing: filtered display indices differ from stored indices before the first listm.
+        Meeting later = model.getMeetingList().get(0);
+        Meeting hidden = taggedMeeting("Hidden review", "06/10/2099");
+        Meeting earlier = taggedMeeting("Earlier meeting", "07/10/2099");
+        model.addMeeting(hidden);
+        model.addMeeting(earlier);
+        AddressBook original = new AddressBook(model.getAddressBook());
+
+        CommandResult result = logic.execute(FindMeetingCommand.COMMAND_WORD + " meeting");
+
+        assertTrue(result.isShowMeetings());
+        assertEquals(List.of(earlier, later), logic.getMeetingList());
+        assertEquals(original, addressBookStorage.readAddressBook().orElseThrow());
+
+        logic.execute(EditMeetingCommand.COMMAND_WORD + " 1 d/10/10/2099");
+        Meeting editedEarlier = new Meeting(earlier.getName(), new MeetingDate("10/10/2099"),
+                earlier.getStartTime(), earlier.getEndTime(), earlier.getTags());
+        assertEquals(List.of(later, editedEarlier), logic.getMeetingList());
+        assertEquals(List.of(later, hidden, editedEarlier), model.getAddressBook().getMeetingList());
+
+        logic.execute(DeleteMeetingCommand.COMMAND_WORD + " 1");
+        assertEquals(List.of(editedEarlier), logic.getMeetingList());
+        assertEquals(List.of(hidden, editedEarlier), model.getAddressBook().getMeetingList());
+        assertEquals(List.of(AMY, BOB), model.getFilteredPersonList());
+        assertEquals(model.getAddressBook(), addressBookStorage.readAddressBook().orElseThrow());
     }
 
     @Test
@@ -106,6 +154,7 @@ public class LogicManagerMeetingViewTest {
     @Test
     public void execute_filteredDeletion_usesDisplayedOrderAndKeepsHiddenMeetings() throws Exception {
         // State transition: repeated deletion empties the filtered view while hidden meetings remain stored.
+        // EP: deletion indices refer to the active filtered meeting view, not hidden meetings in the address book.
         Meeting hidden = model.getMeetingList().get(0);
         Meeting later = taggedMeeting("Later", "10/10/2099");
         Meeting earlier = taggedMeeting("Earlier", "08/10/2099");
@@ -195,6 +244,7 @@ public class LogicManagerMeetingViewTest {
     @Test
     public void execute_deleteAfterListMeeting_usesSortedDisplayIndex() throws Exception {
         // Error guessing: insertion order differs from display order, exposing deletion through the wrong index.
+        // EP: index 1 denotes the earliest displayed meeting after listm sorts the view.
         Meeting later = model.getMeetingList().get(0);
         Meeting earlier = new Meeting(new MeetingName("Earlier meeting"), new MeetingDate("07/10/2099"),
                 new MeetingTime("1500"), new MeetingTime("1600"));
@@ -268,6 +318,8 @@ public class LogicManagerMeetingViewTest {
 
     @Test
     public void execute_deleteWhileShowingClients_rejectsWithoutChangingDataOrSaving() throws Exception {
+        // State transition: listing contacts hides meetings, so deleting a meeting must be rejected without saving.
+        // EP: a syntactically valid deletem index is invalid when the meeting view is not visible.
         logic.execute(ListClientCommand.COMMAND_WORD);
 
         assertMeetingCommandRejected("  " + DeleteMeetingCommand.COMMAND_WORD + " 1  ");

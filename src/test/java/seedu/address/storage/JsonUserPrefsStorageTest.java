@@ -50,6 +50,11 @@ public class JsonUserPrefsStorageTest {
     }
 
     @Test
+    public void readUserPrefs_nullLiteralFile_exceptionThrown() {
+        assertThrows(DataLoadingException.class, () -> readUserPrefs("NullUserPrefs.json"));
+    }
+
+    @Test
     public void readUserPrefs_fileInOrder_successfullyRead() throws DataLoadingException {
         UserPrefs expected = getTypicalUserPrefs();
         UserPrefs actual = readUserPrefs("TypicalUserPref.json").get();

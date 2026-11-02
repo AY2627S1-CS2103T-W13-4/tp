@@ -11,8 +11,8 @@ import java.util.Locale;
 public class MeetingName {
 
     public static final String MESSAGE_CONSTRAINTS =
-            "Invalid name. Names must contain at least one alphabetic character "
-            + "and may only contain alphabetic characters, spaces, hyphens or apostrophes.";
+            "Invalid name. Meeting names must not be blank and may only contain printable ASCII characters "
+            + "(letters, digits, spaces or punctuation). Tabs are treated as spaces.";
 
     public static final String MESSAGE_KEYWORD_CONSTRAINTS =
             "Invalid keyword. Keywords may only contain alphabetic characters, hyphens or apostrophes.";
@@ -23,17 +23,16 @@ public class MeetingName {
 
     /**
      * Creates a meeting name. Leading/trailing spaces are removed and
-     * repeated spaces are collapsed into one.
+     * repeated spaces and tabs are collapsed into one space.
      *
      * @param name A valid meeting name.
      */
     public MeetingName(String name) {
         requireNonNull(name);
-        String normalised = normalise(name);
-        if (!isValidName(normalised)) {
+        if (!isValidName(name)) {
             throw new IllegalArgumentException(MESSAGE_CONSTRAINTS);
         }
-        this.name = normalised;
+        this.name = normalise(name);
     }
 
     /**
@@ -41,8 +40,7 @@ public class MeetingName {
      */
     public static boolean isValidName(String test) {
         requireNonNull(test);
-        String normalised = normalise(test);
-        return normalised.matches(VALIDATION_REGEX) && normalised.matches(".*[A-Za-z].*");
+        return test.matches(VALIDATION_REGEX) && !normalise(test).isEmpty();
     }
 
     private static String normalise(String s) {

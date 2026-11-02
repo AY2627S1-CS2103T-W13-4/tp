@@ -22,6 +22,8 @@ class JsonSerializableAddressBook {
 
     public static final String MESSAGE_DUPLICATE_PERSON = "Persons list contains duplicate person(s).";
     public static final String MESSAGE_DUPLICATE_MEETING = "Meetings list contains duplicate meeting(s).";
+    public static final String MESSAGE_NULL_PERSON = "Persons list contains a null person.";
+    public static final String MESSAGE_NULL_MEETING = "Meetings list contains a null meeting.";
 
     private final List<JsonAdaptedPerson> persons = new ArrayList<>();
     private final List<JsonAdaptedMeeting> meetings = new ArrayList<>();
@@ -56,6 +58,9 @@ class JsonSerializableAddressBook {
     public AddressBook toModelType() throws IllegalValueException {
         AddressBook addressBook = new AddressBook();
         for (JsonAdaptedPerson jsonAdaptedPerson : persons) {
+            if (jsonAdaptedPerson == null) {
+                throw new IllegalValueException(MESSAGE_NULL_PERSON);
+            }
             Person person = jsonAdaptedPerson.toModelType();
             if (addressBook.hasPerson(person)) {
                 throw new IllegalValueException(MESSAGE_DUPLICATE_PERSON);
@@ -63,6 +68,9 @@ class JsonSerializableAddressBook {
             addressBook.addPerson(person);
         }
         for (JsonAdaptedMeeting jsonAdaptedMeeting : meetings) {
+            if (jsonAdaptedMeeting == null) {
+                throw new IllegalValueException(MESSAGE_NULL_MEETING);
+            }
             Meeting meeting = jsonAdaptedMeeting.toModelType();
             if (addressBook.hasMeeting(meeting)) {
                 throw new IllegalValueException(MESSAGE_DUPLICATE_MEETING);
