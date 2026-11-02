@@ -21,7 +21,7 @@ import seedu.address.model.meeting.MeetingTime;
 import seedu.address.model.tag.Tag;
 
 public class JsonAdaptedMeetingTest {
-    private static final String INVALID_NAME = "R@chel";
+    private static final String INVALID_NAME = "Caf\u00e9";
     private static final String INVALID_DATE = "31/02/2026";
     private static final String INVALID_TIME = "2400";
 
@@ -34,6 +34,17 @@ public class JsonAdaptedMeetingTest {
     public void toModelType_validMeetingDetails_returnsMeeting() throws Exception {
         JsonAdaptedMeeting meeting = new JsonAdaptedMeeting(CLIENT_REVIEW);
         assertEquals(CLIENT_REVIEW, meeting.toModelType());
+    }
+
+    @Test
+    public void toModelType_asciiName_preservesNameThroughJson() throws Exception {
+        String name = "Q4 \"Review\" / Budget 2027 @ C:\\Planning!";
+        Meeting meeting = new Meeting(new MeetingName(name), CLIENT_REVIEW.getDate(),
+                CLIENT_REVIEW.getStartTime(), CLIENT_REVIEW.getEndTime());
+        String json = JsonUtil.toJsonString(new JsonAdaptedMeeting(meeting));
+        Meeting restored = JsonUtil.fromJsonString(json, JsonAdaptedMeeting.class).toModelType();
+        assertEquals(meeting, restored);
+        assertEquals(name, restored.getName().toString());
     }
 
     @Test

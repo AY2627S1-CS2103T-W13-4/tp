@@ -12,6 +12,7 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.meeting.MeetingName;
 import seedu.address.model.person.Address;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
@@ -75,6 +76,21 @@ public class ParserUtilTest {
         String nameWithWhitespace = WHITESPACE + VALID_NAME + WHITESPACE;
         Name expectedName = new Name(VALID_NAME);
         assertEquals(expectedName, ParserUtil.parseName(nameWithWhitespace));
+    }
+
+    @Test
+    public void parseMeetingName_asciiWithWhitespace_returnsNormalizedName() throws Exception {
+        assertEquals(new MeetingName("Q4 Review/Planning!"),
+                ParserUtil.parseMeetingName(" \tQ4  Review/Planning!\t "));
+    }
+
+    @Test
+    public void parseMeetingName_invalidValue_throwsParseException() {
+        String[] names = {"", " \t ", "Caf\u00e9", "\u0000Review", "Review\n", "Review\u007f"};
+        for (String name : names) {
+            assertThrows(ParseException.class, MeetingName.MESSAGE_CONSTRAINTS, ()
+                    -> ParserUtil.parseMeetingName(name));
+        }
     }
 
     @Test
