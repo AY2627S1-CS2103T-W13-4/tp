@@ -354,13 +354,26 @@ Format: `exit`
 
 ### Saving the data
 
-PingBook automatically saves data after every command. You do not need to save manually.
+PingBook automatically saves data after each command that executes successfully. You do not need to save manually.
+
+If saving fails, PingBook shows an error and rolls back that command. Your contacts, meetings, filters and meeting
+ordering return to their state before the command, and the previously saved data file is kept. The command remains
+in the command box. Resolve the reported storage problem (for example, restore write permission to the data file
+and its folder, or free disk space), then retry the same command. A failed deletion does not change which record
+its displayed index refers to.
 
 ### Editing the data file
 
 PingBook saves data automatically to `data/addressbook.json`, relative to the directory from which you launch the JAR file (the current working directory), not necessarily the directory containing the JAR. Advanced users are welcome to update data directly by editing that data file.<br>
 
 To keep the data in a predictable location, run the JAR from its own directory.
+
+Close PingBook before manually editing this file, and reopen it afterwards to load your changes. When using
+PingBook, ensure your account can read the data file and create and replace files in its containing folder.
+
+Marking only the data file as read-only does not reliably prevent saving across operating systems. On Linux and
+macOS, PingBook may still replace a read-only file when its containing folder permits replacement. Close PingBook
+and make a separate backup before making manual edits.
 
 <box type="warning" seamless>
 

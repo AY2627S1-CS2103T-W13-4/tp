@@ -25,10 +25,14 @@ import seedu.address.storage.Storage;
  * The main LogicManager of the app.
  */
 public class LogicManager implements Logic {
-    public static final String FILE_OPS_ERROR_FORMAT = "Could not save data due to the following error: %s";
+    public static final String SAVE_RECOVERY_MESSAGE =
+            "\nThe command was rolled back. Resolve the storage problem, then retry the command.";
+    public static final String FILE_OPS_ERROR_FORMAT =
+            "Could not save data due to the following error: %s" + SAVE_RECOVERY_MESSAGE;
 
     public static final String FILE_OPS_PERMISSION_ERROR_FORMAT =
-            "Could not save data to file %s due to insufficient permissions to write to the file or the folder.";
+            "Could not save data to file %s due to insufficient permissions to write to the file or the folder."
+                    + SAVE_RECOVERY_MESSAGE;
 
     private final Logger logger = LogsCenter.getLogger(LogicManager.class);
 
@@ -60,13 +64,16 @@ public class LogicManager implements Logic {
                 && (command instanceof DeleteMeetingCommand || command instanceof EditMeetingCommand)) {
             throw new CommandException(Messages.MESSAGE_MEETING_LIST_NOT_VISIBLE);
         }
+        Runnable rollback = model.createRollbackAction();
         commandResult = command.execute(model);
 
         try {
             storage.saveAddressBook(model.getAddressBook());
         } catch (AccessDeniedException e) {
+            rollback.run();
             throw new CommandException(String.format(FILE_OPS_PERMISSION_ERROR_FORMAT, e.getMessage()), e);
         } catch (IOException ioe) {
+            rollback.run();
             throw new CommandException(String.format(FILE_OPS_ERROR_FORMAT, ioe.getMessage()), ioe);
         }
 
