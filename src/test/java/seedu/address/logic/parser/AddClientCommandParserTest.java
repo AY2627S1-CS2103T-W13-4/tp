@@ -182,6 +182,32 @@ public class AddClientCommandParserTest {
     }
 
     @Test
+    public void parse_emailWithSpecialCharacters_success() {
+        Person expectedPerson = new PersonBuilder(BOB).withEmail("o'connor@example.com")
+                .withTags(VALID_TAG_FRIEND).build();
+
+        assertParseSuccess(parser, NAME_DESC_BOB + PHONE_DESC_BOB + " " + PREFIX_EMAIL + "o'connor@example.com"
+                + ADDRESS_DESC_BOB + TAG_DESC_FRIEND, new AddClientCommand(expectedPerson));
+
+        expectedPerson = new PersonBuilder(BOB).withEmail("alice++sales@example.com")
+                .withTags(VALID_TAG_FRIEND).build();
+
+        assertParseSuccess(parser, NAME_DESC_BOB + PHONE_DESC_BOB + " " + PREFIX_EMAIL + "alice++sales@example.com"
+                + ADDRESS_DESC_BOB + TAG_DESC_FRIEND, new AddClientCommand(expectedPerson));
+    }
+
+    @Test
+    public void parse_emailWithSlash_failure() {
+        // '/' is the command delimiter, so it is rejected in emails
+        assertParseFailure(parser, NAME_DESC_BOB + PHONE_DESC_BOB + " " + PREFIX_EMAIL + "a/b@example.com"
+                + ADDRESS_DESC_BOB, Email.MESSAGE_CONSTRAINTS);
+
+        // space after the email prefix makes "a/" a separate prefix, leaving the email empty
+        assertParseFailure(parser, NAME_DESC_BOB + PHONE_DESC_BOB + " " + PREFIX_EMAIL + " a/b@example.com",
+                Email.MESSAGE_CONSTRAINTS);
+    }
+
+    @Test
     public void parse_invalidValue_failure() {
         // invalid name
         assertParseFailure(parser, INVALID_NAME_DESC + PHONE_DESC_BOB + EMAIL_DESC_BOB + ADDRESS_DESC_BOB

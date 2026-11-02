@@ -92,6 +92,11 @@ public class AddClientCommandTest {
      */
     private class ModelStub implements Model {
         @Override
+        public Runnable createRollbackAction() {
+            throw new AssertionError("This method should not be called.");
+        }
+
+        @Override
         public ReadOnlyUserPrefs getUserPrefs() {
             throw new AssertionError("This method should not be called.");
         }

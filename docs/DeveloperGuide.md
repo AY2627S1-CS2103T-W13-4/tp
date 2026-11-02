@@ -15,6 +15,8 @@
 
 This project is based on the AddressBook-Level3 project created by the [SE-EDU initiative](https://se-education.org).
 
+Codex and Claude were used to generate, refine, and review content with human oversight. The use includes functional code, testing, and documentation.
+
 --------------------------------------------------------------------------------------------------------------------
 
 ## **Setting up, getting started**
@@ -121,11 +123,21 @@ The sequence diagram below illustrates the interactions within the `Logic` compo
 How the `Logic` component works:
 
 1. When `Logic` is called upon to execute a command, the command text is passed to an `AddressBookParser` object, which creates a parser that matches the command (e.g., `DeleteClientCommandParser`) and uses it to parse the command.
-1. This results in a `Command` object (more precisely, an object of one of its subclasses e.g., `DeleteClientCommand`) which is executed by the `LogicManager`.
-   Before executing the command, `LogicManager` checks whether the command is compatible with the currently displayed panel. For example, if the meetings panel is displayed, attempting to execute a client command such as `deletec` will result in a `CommandException`.
-1. The command can communicate with the `Model` when it is executed (e.g. to delete a person).<br>
-   Note that the code can require several interactions between the command object and the `Model` to complete the operation. For example, in the sequence diagram above, the command retrieves the filtered person list from `Model`, selects the person at the requested index, and then asks `Model` to delete that person.
-1. The result of the command execution is encapsulated as a `CommandResult` object which is returned from `Logic`.
+1. This results in a `Command` object (more precisely, an object of one of its subclasses e.g., `DeleteClientCommand`).
+   `LogicManager` checks whether the command is compatible with the currently displayed panel. For example, if
+   the meetings panel is displayed, attempting to execute `deletec` will result in a `CommandException`.
+1. Before execution, `LogicManager` obtains a rollback action from `Model.createRollbackAction()`. It captures
+   a copy of the contacts and meetings, both active filter predicates, and the meeting comparator. The existing
+   observable lists are retained when restoring these values.
+1. `LogicManager` executes the command, which can communicate with the `Model` (e.g. to delete a person).<br>
+   The code can require several interactions between the command object and the `Model` to complete the operation.
+   For example, the command retrieves the filtered person list from `Model`, selects the person at the requested
+   index, and then asks `Model` to delete that person.
+1. After execution, `LogicManager` saves the address book. If storage throws `AccessDeniedException` or another
+   `IOException`, it runs the rollback action and throws a `CommandException` explaining recovery. The selected
+   panel is updated only after saving succeeds, so failed commands preserve the displayed indices and panel.
+1. The result of the command execution is encapsulated as a `CommandResult` object which is returned from `Logic`
+   only after saving succeeds. The partial sequence diagram above omits saving and rollback.
 
 Here are the other classes in `Logic` (omitted from the class diagram above) that are used for parsing a user command:
 
@@ -164,7 +176,16 @@ The `Storage` component,
 * can save both address book data and user preference data in JSON format, and read them back into corresponding objects.
 * saves contacts and meetings (including their tags) together in the address book JSON file, as the `persons` and `meetings` arrays. Data files without `meetings` or meeting `tags` still load.
 * is implemented by `StorageManager`, which delegates the actual JSON file access to `JsonAddressBookStorage` and `JsonUserPrefsStorage` (one class per data file).
+* writes address book data to a temporary file in the destination directory before atomically replacing the
+  destination. A failed write or replacement leaves the previous data file intact and attempts to remove the
+  temporary file. An unsupported atomic replacement is reported as a save failure; there is no non-atomic fallback.
+  This protects against partial writes during a reported save failure; it does not guarantee durability through
+  power loss. User preference saving uses its existing separate path.
 * depends on some classes in the `Model` component (because the `Storage` component's job is to save/retrieve objects that belong to the `Model`)
+
+Saving replaces the existing address book file with a newly created file. Existing custom file permissions and
+access-control settings are not explicitly preserved and may change after saving. Permission-dependent sharing
+of the data file between operating-system accounts is therefore not guaranteed.
 
 ### Common classes
 
@@ -292,7 +313,7 @@ Use case ends.
 
       Use case ends.
 
-* 1c. No field is provided, a supplied field is invalid (see "Field formats" in the User Guide), or a single-valued prefix is repeated.
+* 1c. No field is provided, a supplied field is invalid (see [Field formats](UserGuide.md#field-formats) in the User Guide), or a single-valued prefix is repeated.
 
     * 1c1. PingBook shows an error message.
 
@@ -344,6 +365,12 @@ Use case ends.
 
       Use case ends.
 
+* 1b. A supplied name keyword is invalid.
+
+    * 1b1. PingBook shows an error message.
+
+      Use case ends.
+
 **Use case: UC6 - View and filter meetings**
 
 **MSS**
@@ -355,7 +382,7 @@ Use case ends.
 
 **Extensions**
 
-* 1a. A supplied tag is invalid.
+* 1a. A supplied tag is invalid or empty.
 
     * 1a1. PingBook shows an error message.
 
@@ -483,6 +510,12 @@ Use case ends.
 
       Use case ends.
 
+* 1b. A supplied name keyword is invalid.
+
+    * 1b1. PingBook shows an error message.
+
+      Use case ends.
+
 **Use case: UC11 - View user guide**
 
 **MSS**
@@ -564,12 +597,33 @@ testers are expected to do more *exploratory* testing.
    1. Resize and move the window, then close and relaunch PingBook.<br>
       Expected: The latest window size and position are restored.
 
+### Recovering from a failed save
+
+1. Use a disposable copy of PingBook and its data, containing contacts Alice and Bob in that displayed order.
+   Run `listc`.
+1. While PingBook is open, temporarily prevent saving:
+   * Windows: enable the Read-only attribute on `data/addressbook.json`. This is the file attribute, not the
+     folder's Read-only checkbox.
+   * Linux/macOS: remove write permission from the containing `data` directory for the account running PingBook,
+     while retaining read and directory search/access permissions. Use an account without privileges that bypass
+     these restrictions.
+1. Run `deletec 1`.<br>
+   Expected: A save error explains that the command was rolled back. Alice and Bob remain in their original rows,
+   the JSON file is unchanged, and `deletec 1` remains in the command box.
+1. Repeat the command while saving remains blocked.<br>
+   Expected: The same failure leaves both records unchanged.
+1. Restore the original file attribute or directory permissions and retry `deletec 1`.<br>
+   Expected: Only Alice is deleted. Bob remains and reloading the application confirms the saved result.
+1. Repeat with disposable meetings using `listm t/work`, `editm 1 n/Updated review` and `deletem 1`.<br>
+   Expected: Failed saves preserve the filtered rows and their order. Retrying after restoring permission applies
+   the edit or deletion to the original displayed meeting.
+
 ### Adding a contact
 
 1. Adding a valid contact
 
    1. Test case: `addc n/Test contact p/91234567 e/test@example.com t/test`<br>
-      Expected: The contact is added and displayed with the supplied tag.
+      Expected: The contact is added and displayed with the supplied tag.<br><br>
 
 2. Rejecting invalid or duplicate contacts
 
@@ -609,7 +663,7 @@ testers are expected to do more *exploratory* testing.
 1. Validating and adding meetings
 
    1. Test cases: Add a valid meeting, then try a missing field, an invalid date, and an end time earlier than the start time.<br>
-      Expected: The valid meeting is added. Each invalid command is rejected with an error message.
+      Expected: The valid meeting is added. Each invalid command is rejected with an error message.<br><br>
 
 2. Detecting meeting overlaps
 

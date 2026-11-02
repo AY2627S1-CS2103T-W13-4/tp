@@ -22,7 +22,7 @@ import seedu.address.model.tag.Tag;
 
 public class AddMeetingCommandParserTest {
 
-    private static final String VALID_NAME = "Project Review";
+    private static final String VALID_NAME = "Q4 Review/Planning";
     private static final String VALID_DATE = "08/10/2026";
     private static final String VALID_START_TIME = "1400";
     private static final String VALID_END_TIME = "1500";
@@ -45,6 +45,17 @@ public class AddMeetingCommandParserTest {
 
         assertParseSuccess(parser, END_TIME_DESC + START_TIME_DESC + DATE_DESC + NAME_DESC,
                 new AddMeetingCommand(VALID_MEETING));
+    }
+
+    @Test
+    public void parse_printableAsciiName_success() {
+        String[] names = {"Q4 Review", "1-on-1", "Budget 2027", "12345", "/", "\"Q4 Review\"", "C:\\Planning"};
+        for (String name : names) {
+            Meeting expected = new Meeting(new MeetingName(name), VALID_MEETING.getDate(),
+                    VALID_MEETING.getStartTime(), VALID_MEETING.getEndTime());
+            assertParseSuccess(parser, " n/" + name + DATE_DESC + START_TIME_DESC + END_TIME_DESC,
+                    new AddMeetingCommand(expected));
+        }
     }
 
     @Test
@@ -113,7 +124,7 @@ public class AddMeetingCommandParserTest {
     @Test
     public void parse_invalidValue_failure() {
         assertParseFailure(parser,
-                " " + PREFIX_NAME + "Project 2" + DATE_DESC + START_TIME_DESC + END_TIME_DESC,
+                " " + PREFIX_NAME + "Caf\u00e9 Review" + DATE_DESC + START_TIME_DESC + END_TIME_DESC,
                 MeetingName.MESSAGE_CONSTRAINTS);
         assertParseFailure(parser,
                 NAME_DESC + " " + PREFIX_DATE + "31/02/2026" + START_TIME_DESC + END_TIME_DESC,
@@ -134,13 +145,10 @@ public class AddMeetingCommandParserTest {
 
     @Test
     public void parse_forceFlag_success() {
-        Meeting expected = new Meeting(new MeetingName("Project Review"), new MeetingDate("08/10/2026"),
-                new MeetingTime("1400"), new MeetingTime("1500"));
-
         assertParseSuccess(parser, NAME_DESC + DATE_DESC + START_TIME_DESC + END_TIME_DESC + " force/",
-                new AddMeetingCommand(expected, true));
+                new AddMeetingCommand(VALID_MEETING, true));
         assertParseSuccess(parser, " force/" + NAME_DESC + DATE_DESC + START_TIME_DESC + END_TIME_DESC,
-                new AddMeetingCommand(expected, true));
+                new AddMeetingCommand(VALID_MEETING, true));
     }
 
     @Test

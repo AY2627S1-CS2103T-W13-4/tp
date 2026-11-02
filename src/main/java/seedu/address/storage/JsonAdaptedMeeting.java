@@ -108,6 +108,10 @@ class JsonAdaptedMeeting {
         }
         final MeetingTime modelEndTime = new MeetingTime(endTime);
 
+        if (!Meeting.isValidTimeRange(modelStartTime, modelEndTime)) {
+            throw new IllegalValueException(Meeting.MESSAGE_INVALID_TIME_RANGE);
+        }
+
         final Set<Tag> modelTags = new HashSet<>();
         for (JsonAdaptedTag tag : tags) {
             if (tag == null || tag.getTagName() == null) {
