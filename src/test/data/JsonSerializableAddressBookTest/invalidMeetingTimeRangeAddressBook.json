@@ -1,0 +1,9 @@
+{
+  "persons": [ ],
+  "meetings": [ {
+    "name": "Alice Pauline",
+    "date": "15/10/2026",
+    "startTime": "1600",
+    "endTime": "1500"
+  } ]
+}

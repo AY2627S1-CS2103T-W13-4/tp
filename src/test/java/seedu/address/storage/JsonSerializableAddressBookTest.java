@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.commons.util.JsonUtil;
 import seedu.address.model.AddressBook;
+import seedu.address.model.meeting.Meeting;
 import seedu.address.testutil.TypicalMeetings;
 import seedu.address.testutil.TypicalPersons;
 
@@ -24,6 +25,8 @@ public class JsonSerializableAddressBookTest {
     private static final Path DUPLICATE_PERSON_FILE = TEST_DATA_FOLDER.resolve("duplicatePersonAddressBook.json");
     private static final Path TYPICAL_MEETINGS_FILE = TEST_DATA_FOLDER.resolve("typicalMeetingsAddressBook.json");
     private static final Path INVALID_MEETING_FILE = TEST_DATA_FOLDER.resolve("invalidMeetingAddressBook.json");
+    private static final Path INVALID_MEETING_TIME_RANGE_FILE =
+            TEST_DATA_FOLDER.resolve("invalidMeetingTimeRangeAddressBook.json");
     private static final Path DUPLICATE_MEETING_FILE = TEST_DATA_FOLDER.resolve("duplicateMeetingAddressBook.json");
 
     @Test
@@ -89,6 +92,13 @@ public class JsonSerializableAddressBookTest {
         JsonSerializableAddressBook dataFromFile = JsonUtil.readJsonFile(INVALID_MEETING_FILE,
                 JsonSerializableAddressBook.class).get();
         assertThrows(IllegalValueException.class, dataFromFile::toModelType);
+    }
+
+    @Test
+    public void toModelType_meetingEndBeforeStart_throwsIllegalValueException() throws Exception {
+        JsonSerializableAddressBook dataFromFile = JsonUtil.readJsonFile(INVALID_MEETING_TIME_RANGE_FILE,
+                JsonSerializableAddressBook.class).get();
+        assertThrows(IllegalValueException.class, Meeting.MESSAGE_INVALID_TIME_RANGE, dataFromFile::toModelType);
     }
 
     @Test
