@@ -153,4 +153,21 @@ public class JsonAdaptedMeetingTest {
         assertThrows(IllegalValueException.class, expectedMessage, meeting::toModelType);
     }
 
+    @Test
+    public void toModelType_endNotAfterStart_throwsIllegalValueException() {
+        // EP: end before start, and end equal to start (boundary), are both invalid stored time ranges.
+        JsonAdaptedMeeting endBeforeStart = new JsonAdaptedMeeting(VALID_NAME, VALID_DATE, "1600", "1500");
+        assertThrows(IllegalValueException.class, Meeting.MESSAGE_INVALID_TIME_RANGE, endBeforeStart::toModelType);
+
+        JsonAdaptedMeeting endEqualsStart = new JsonAdaptedMeeting(VALID_NAME, VALID_DATE, "1500", "1500");
+        assertThrows(IllegalValueException.class, Meeting.MESSAGE_INVALID_TIME_RANGE, endEqualsStart::toModelType);
+    }
+
+    @Test
+    public void toModelType_endOneMinuteAfterStart_returnsMeeting() throws Exception {
+        // Boundary: the smallest valid range is accepted.
+        JsonAdaptedMeeting meeting = new JsonAdaptedMeeting(VALID_NAME, VALID_DATE, "1500", "1501");
+        assertEquals("1501", meeting.toModelType().getEndTime().toString());
+    }
+
 }
