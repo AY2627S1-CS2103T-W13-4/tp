@@ -14,7 +14,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.logging.Logger;
 
+import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.CollectionUtil;
 import seedu.address.commons.util.ToStringBuilder;
@@ -55,6 +57,7 @@ public class EditMeetingCommand extends Command {
     public static final String MESSAGE_NOT_EDITED = "At least one field to edit must be provided.";
     public static final String MESSAGE_DUPLICATE_MEETING = "This meeting already exists in PingBook.";
 
+    private final Logger logger = LogsCenter.getLogger(EditMeetingCommand.class);
     private final Index index;
     private final EditMeetingDescriptor editMeetingDescriptor;
     private final boolean isForced;
@@ -73,6 +76,7 @@ public class EditMeetingCommand extends Command {
     public EditMeetingCommand(Index index, EditMeetingDescriptor editMeetingDescriptor, boolean isForced) {
         requireNonNull(index);
         requireNonNull(editMeetingDescriptor);
+        assert editMeetingDescriptor.isAnyFieldEdited() : "An edit must specify at least one field";
 
         this.index = index;
         this.editMeetingDescriptor = new EditMeetingDescriptor(editMeetingDescriptor);
@@ -85,6 +89,8 @@ public class EditMeetingCommand extends Command {
         List<Meeting> lastShownList = model.getMeetingList();
 
         if (index.getZeroBased() >= lastShownList.size()) {
+            logger.fine("editm rejected: requested index=" + index.getOneBased()
+                    + ", displayed meeting count=" + lastShownList.size());
             throw new CommandException(String.format(Messages.MESSAGE_INVALID_MEETING_INDEX, MESSAGE_USAGE));
         }
 
@@ -96,24 +102,32 @@ public class EditMeetingCommand extends Command {
         }
 
         if (!meetingToEdit.isSameMeeting(editedMeeting) && model.hasMeeting(editedMeeting)) {
+            logger.fine("editm rejected: duplicate meeting");
             throw new CommandException(MESSAGE_DUPLICATE_MEETING);
         }
 
         List<Meeting> overlaps = model.getOverlappingMeetings(editedMeeting, meetingToEdit);
+        assert !overlaps.contains(meetingToEdit) : "Overlap results must exclude the meeting being edited";
         if (!overlaps.isEmpty() && !isForced) {
+            logger.fine("editm rejected: overlap count=" + overlaps.size());
             throw new CommandException(String.format(Messages.MESSAGE_MEETING_OVERLAP,
                     Messages.formatOverlappingMeetings(overlaps)));
         }
 
         model.setMeeting(meetingToEdit, editedMeeting);
+        assert model.getAddressBook().getMeetingList().contains(editedMeeting)
+                : "Edited meeting must be present with all updated fields in the full meeting list";
         String feedback = String.format(MESSAGE_EDIT_MEETING_SUCCESS, editedMeeting);
         if (!overlaps.isEmpty()) {
+            logger.info("editm applied with forced overlap: conflict count=" + overlaps.size());
             feedback += "\n" + String.format(Messages.MESSAGE_MEETING_OVERLAP_WARNING,
                     Messages.formatOverlappingMeetings(overlaps));
         }
-        if (!model.getMeetingList().contains(editedMeeting)) {
+        boolean isHiddenByFilter = !model.getMeetingList().contains(editedMeeting);
+        if (isHiddenByFilter) {
             feedback += "\n" + Messages.MESSAGE_MEETING_HIDDEN_BY_FILTER;
         }
+        logger.fine("editm model update completed: hidden by filter=" + isHiddenByFilter);
         return new CommandResult(feedback, true);
     }
 

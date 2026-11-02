@@ -9,7 +9,9 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_START_TIME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
 import java.util.List;
+import java.util.logging.Logger;
 
+import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -43,6 +45,7 @@ public class AddMeetingCommand extends Command {
     public static final String MESSAGE_SUCCESS = "New meeting added: %1$s";
     public static final String MESSAGE_DUPLICATE_MEETING = "This meeting already exists in PingBook.";
 
+    private final Logger logger = LogsCenter.getLogger(AddMeetingCommand.class);
     private final Meeting toAdd;
     private final boolean isForced;
 
@@ -66,27 +69,35 @@ public class AddMeetingCommand extends Command {
     @Override
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
-        assert Meeting.isValidTimeRange(toAdd.getStartTime(), toAdd.getEndTime());
+        assert Meeting.isValidTimeRange(toAdd.getStartTime(), toAdd.getEndTime())
+                : "Meeting time range must be validated before adding";
 
         if (model.hasMeeting(toAdd)) {
+            logger.fine("addm rejected: duplicate meeting");
             throw new CommandException(MESSAGE_DUPLICATE_MEETING);
         }
 
         List<Meeting> overlaps = model.getOverlappingMeetings(toAdd, null);
         if (!overlaps.isEmpty() && !isForced) {
+            logger.fine("addm rejected: overlap count=" + overlaps.size());
             throw new CommandException(String.format(Messages.MESSAGE_MEETING_OVERLAP,
                     Messages.formatOverlappingMeetings(overlaps)));
         }
 
         model.addMeeting(toAdd);
+        assert model.getAddressBook().getMeetingList().contains(toAdd)
+                : "Added meeting must be present in the full meeting list";
         String feedback = String.format(MESSAGE_SUCCESS, toAdd);
         if (!overlaps.isEmpty()) {
+            logger.info("addm applied with forced overlap: conflict count=" + overlaps.size());
             feedback += "\n" + String.format(Messages.MESSAGE_MEETING_OVERLAP_WARNING,
                     Messages.formatOverlappingMeetings(overlaps));
         }
-        if (!model.getMeetingList().contains(toAdd)) {
+        boolean isHiddenByFilter = !model.getMeetingList().contains(toAdd);
+        if (isHiddenByFilter) {
             feedback += "\n" + Messages.MESSAGE_MEETING_HIDDEN_BY_FILTER;
         }
+        logger.fine("addm model update completed: hidden by filter=" + isHiddenByFilter);
         return new CommandResult(feedback, true);
     }
 
