@@ -42,21 +42,22 @@ public class ListClientCommandTest {
 
     @Test
     public void execute_listIsNotFiltered_showsSameList() {
-        assertCommandSuccess(new ListClientCommand(new HashSet<>()), model,
-                String.format(ListClientCommand.MESSAGE_SUCCESS_NO_TAGS, model.getFilteredPersonListSize()),
-                expectedModel);
+        // EP: an empty tag set on an already unfiltered list preserves all contacts.
+        assertCommandSuccess(new ListClientCommand(
+                new HashSet<>()), model, ListClientCommand.MESSAGE_SUCCESS_NO_TAGS, expectedModel);
     }
 
     @Test
     public void execute_listIsFiltered_showsEverything() {
+        // State transition: an empty tag filter clears the current restriction and restores every contact.
         showPersonAtIndex(model, INDEX_FIRST_PERSON);
-        assertCommandSuccess(new ListClientCommand(new HashSet<>()), model,
-                String.format(ListClientCommand.MESSAGE_SUCCESS_NO_TAGS, expectedModel.getFilteredPersonListSize()),
-                expectedModel);
+        assertCommandSuccess(new ListClientCommand(
+                new HashSet<>()), model, ListClientCommand.MESSAGE_SUCCESS_NO_TAGS, expectedModel);
     }
 
     @Test
     public void execute_withTags_showsMatchingClients() throws Exception {
+        // EP: a non-empty tag set keeps contacts containing all requested tags and excludes partial matches.
         Set<Tag> tags = Set.of(new Tag("friends"));
         ListClientCommand command = new ListClientCommand(tags);
 
@@ -71,23 +72,25 @@ public class ListClientCommandTest {
 
     @Test
     public void execute_withEmptyTags_showsAllClients() throws Exception {
+        // EP: the empty tag partition is the explicit no-filter case and must display the complete list.
         ListClientCommand command = new ListClientCommand(Set.of());
 
         CommandResult result = command.execute(model);
 
-        String expectedMessage = String.format(ListClientCommand.MESSAGE_SUCCESS_NO_TAGS,
-                model.getFilteredPersonListSize());
+        String expectedMessage = ListClientCommand.MESSAGE_SUCCESS_NO_TAGS;
         assertEquals(new CommandResult(expectedMessage), result);
         assertEquals(getTypicalPersons(), model.getFilteredPersonList());
     }
 
     @Test
     public void constructor_nullTags_throwsAssertionError() {
+        // EP: null is outside the valid tag-set partition and is rejected at construction time.
         assertThrows(NullPointerException.class, () -> new ListClientCommand(null));
     }
 
     @Test
     public void equals() {
+        // EP: equality depends on the complete tag set; null and unrelated object types are separate partitions.
         Set<Tag> friendsTag = Set.of(new Tag("friends"));
         Set<Tag> colleaguesTag = Set.of(new Tag("colleagues"));
         ListClientCommand listFirstCommand = new ListClientCommand(friendsTag);
@@ -112,6 +115,7 @@ public class ListClientCommandTest {
 
     @Test
     public void toStringMethod() {
+        // EP: the command representation includes the tag set that determines filtering behavior.
         Set<Tag> tags = Set.of(new Tag("friends"));
         ListClientCommand listClientCommand = new ListClientCommand(tags);
         String expected = ListClientCommand.class.getCanonicalName() + "{tags=" + tags + "}";

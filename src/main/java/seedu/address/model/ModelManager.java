@@ -82,6 +82,20 @@ public class ModelManager implements Model {
     }
 
     @Override
+    public Runnable createRollbackAction() {
+        AddressBook original = new AddressBook(addressBook);
+        Predicate<? super Person> personFilter = filteredPersons.getPredicate();
+        Predicate<? super Meeting> meetingFilter = filteredMeetings.getPredicate();
+        Comparator<? super Meeting> meetingOrder = sortedMeetings.getComparator();
+        return () -> {
+            addressBook.resetData(original);
+            filteredPersons.setPredicate(personFilter);
+            filteredMeetings.setPredicate(meetingFilter);
+            sortedMeetings.setComparator(meetingOrder);
+        };
+    }
+
+    @Override
     public boolean hasPerson(Person person) {
         requireNonNull(person);
         return addressBook.hasPerson(person);

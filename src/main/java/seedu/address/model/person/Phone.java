@@ -5,14 +5,16 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
 
 /**
  * Represents a Person's phone number in the address book.
+ * A phone number must contain at least three digits and may contain digits,
+ * plus signs, hyphens, parentheses, and spaces.
  * Guarantees: immutable; is valid as declared in {@link #isValidPhone(String)}
  */
 public class Phone {
 
 
     public static final String MESSAGE_CONSTRAINTS =
-            "Phone numbers should only contain digits, and should be at least 3 digits long";
-    public static final String VALIDATION_REGEX = "\\d{3,}";
+            "Phone numbers should contain at least 3 digits and may contain digits, +, -, parentheses, and spaces";
+    public static final String VALIDATION_REGEX = "(?=(?:.*\\d){3})[\\d+()\\- ]+";
     public final String value;
 
     /**
@@ -27,7 +29,8 @@ public class Phone {
     }
 
     /**
-     * Returns true if a given string is a valid phone number.
+     * Returns true if a given string contains only valid phone-number characters
+     * and at least three digits.
      */
     public static boolean isValidPhone(String test) {
         return test.matches(VALIDATION_REGEX);

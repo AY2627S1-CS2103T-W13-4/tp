@@ -9,7 +9,6 @@ import static seedu.address.logic.commands.CommandTestUtil.EMAIL_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.NAME_DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.PHONE_DESC_AMY;
 import static seedu.address.testutil.Assert.assertThrows;
-import static seedu.address.testutil.TypicalPersons.AMY;
 
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
@@ -34,11 +33,9 @@ import seedu.address.model.meeting.Meeting;
 import seedu.address.model.meeting.MeetingDate;
 import seedu.address.model.meeting.MeetingName;
 import seedu.address.model.meeting.MeetingTime;
-import seedu.address.model.person.Person;
 import seedu.address.storage.JsonAddressBookStorage;
 import seedu.address.storage.JsonUserPrefsStorage;
 import seedu.address.storage.StorageManager;
-import seedu.address.testutil.PersonBuilder;
 
 public class LogicManagerTest {
     private static final IOException DUMMY_IO_EXCEPTION = new IOException("dummy IO exception");
@@ -67,6 +64,7 @@ public class LogicManagerTest {
 
     @Test
     public void execute_commandExecutionError_throwsCommandException() {
+        // BVA: a deletion index beyond the currently displayed contact list is rejected by the command layer.
         String deleteCommand = DeleteClientCommand.COMMAND_WORD + " 9";
         assertCommandException(deleteCommand,
                 String.format(MESSAGE_INVALID_PERSON_INDEX, DeleteClientCommand.MESSAGE_USAGE));
@@ -74,9 +72,10 @@ public class LogicManagerTest {
 
     @Test
     public void execute_validCommand_success() throws Exception {
+        // EP: a bare listc command selects the valid no-filter input partition and lists all displayed contacts.
         String listCommand = ListClientCommand.COMMAND_WORD;
         assertCommandSuccess(listCommand,
-                String.format(ListClientCommand.MESSAGE_SUCCESS_NO_TAGS, model.getFilteredPersonListSize()), model);
+                ListClientCommand.MESSAGE_SUCCESS_NO_TAGS, model);
     }
 
     @Test
@@ -99,6 +98,7 @@ public class LogicManagerTest {
     @Test
     public void execute_listMeeting_sortsViewAndPreservesStoredOrder() throws Exception {
         // Error guessing: reverse insertion order exposes accidental sorting of stored data instead of only the view.
+        // EP: listm produces a sorted display while preserving the insertion order used for persistence.
         Meeting later = new Meeting(new MeetingName("Later"), new MeetingDate("09/10/2099"),
                 new MeetingTime("1500"), new MeetingTime("1600"));
         Meeting earlier = new Meeting(new MeetingName("Earlier"), new MeetingDate("08/10/2099"),
@@ -194,9 +194,7 @@ public class LogicManagerTest {
         // Triggers the saveAddressBook method by executing an add command
         String addCommand = AddClientCommand.COMMAND_WORD + NAME_DESC_AMY + PHONE_DESC_AMY
                 + EMAIL_DESC_AMY + ADDRESS_DESC_AMY;
-        Person expectedPerson = new PersonBuilder(AMY).withTags().build();
         ModelManager expectedModel = new ModelManager();
-        expectedModel.addPerson(expectedPerson);
         assertCommandFailure(addCommand, CommandException.class, expectedMessage, expectedModel);
     }
 }

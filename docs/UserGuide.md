@@ -18,15 +18,15 @@ PingBook is a **desktop application for managing contacts, optimized for use thr
 1. Ensure that Java `25` or later is installed on your computer.<br>
    **Mac users:** Ensure you have the precise JDK version prescribed [here](https://se-education.org/guides/tutorials/javaInstallationMac.html).
 
-1. Download the latest `.jar` file from [here](https://github.com/AY2627S1-CS2103T-W13-4/tp/releases).
+2. Download the latest `.jar` file from [here](https://github.com/AY2627S1-CS2103T-W13-4/tp/releases).
 
-1. Copy the file to the folder you want to use as the _home folder_ for your PingBook.
+3. Copy the file to the folder you want to use as the _home folder_ for your PingBook.
 
-1. Open a terminal, `cd` to the folder containing the JAR file, and run `java -jar pingbook.jar`.<br>
+4. Open a terminal, `cd` to the folder containing the JAR file, and run `java -jar pingbook.jar`.<br>
    A GUI similar to the one below should appear in a few seconds. Note how the app contains some sample data.<br>
    ![Ui](images/Ui.png)
 
-1. Type a command in the command box and press Enter to execute it. For example, type **`help`** and press Enter to open the help window.<br>
+5. Type a command in the command box and press Enter to execute it. For example, type **`help`** and press Enter to open the help window.<br>
    Some example commands you can try:
 
    * `listc t/colleague` : Lists all contacts that have the tag `colleague`.
@@ -39,7 +39,15 @@ PingBook is a **desktop application for managing contacts, optimized for use thr
 
    * `exit` : Exits the app.
 
-1. Refer to the [Features](#features) section below for details of each command.
+6. Refer to the [Features](#features) section below for details of each command.
+
+<box type="warning" seamless>
+
+**You should run only one instance of PingBook at any time.**<br>
+
+If multiple instances are run at the same time, the behavior is undefined and possibly incorrect.
+
+</box>
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -74,16 +82,16 @@ PingBook is a **desktop application for managing contacts, optimized for use thr
 Every command that adds, edits or filters by a field checks the value against the rules below. A value that breaks a
 rule is rejected and nothing is changed.
 
-Field | Prefix | Used by | Accepted | Rejected examples
-------|--------|---------|----------|------------------
-Contact name | `n/` | `addc`, `editc`, `findc` | English letters, digits and spaces only, starting with a letter or digit. | `Anne-Marie Tan` (hyphen), `Ravi s/o Kumar` (`/`), `Dr. Lim` (full stop)
-Phone number | `p/` | `addc`, `editc` | Digits only, at least 3 digits long, with no upper limit. | `12` (too short), `+6591234567` (`+`), `9123 4567` (space), `9123-4567` (hyphen)
-Email | `e/` | `addc`, `editc` | `local-part@domain`. The local part uses letters, digits and any of these special characters: `!` `#` `$` `%` `&` `'` `*` `+` `=` `?` `^` `_` `` ` `` `{` `\|` `}` `~` `-`. These may appear anywhere in the local part, including at the start or end and several times in a row (e.g. `o'connor`, `alice++sales`, `john__doe`). A period (`.`) is also allowed, but not at the start or end of the local part, and not two or more in a row. The slash (`/`) is not allowed because it is used by command prefixes such as `a/`. The domain is made up of labels separated by periods; each label starts and ends with a letter or digit, and the last label is at least 2 characters long. | `john.example.com` (no `@`), `john@example.c` (last label too short), `.john@example.com` (starts with `.`), `john..doe@example.com` (two or more periods in a row), `a/b@example.com` (`/`), `john@exam_ple.com` (`_` in the domain)
-Address | `a/` | `addc`, `editc` | Any text, as long as it is not blank.<br>In `editc` only, a blank `a/` is also accepted and removes the address. | In `addc`, a blank `a/` (leave `a/` out to add a contact with no address)
-Meeting name | `n/` | `addm`, `editm`, `findm` | English letters, spaces, hyphens (`-`) and apostrophes (`'`), with at least one letter. Repeated spaces are treated as one. | `Meeting123` (digits), `12345` (no letters), `Meeting!` (`!`)
-Date | `d/` | `addm`, `editm` | A real calendar date in `DD/MM/YYYY` format. | `31/04/2026` (no such date), `29/02/2025` (not a leap year), `1/1/2026` (not two digits), `15-10-2026` (wrong separator)
-Start time, end time | `st/`, `et/` | `addm`, `editm` | 24-hour `HHMM`, from `0000` to `2359`. The end time must be later than the start time. | `900` (three digits), `09:00` (colon), `2400` (no such time), `1260` (no such time)
-Tag | `t/` | `addc`, `editc`, `addm`, `editm`, `listc`, `listm` | Letters and digits only, with no spaces. Tags are case-sensitive when stored, but `listc` and `listm` ignore case when filtering.<br>In `editc` and `editm` only, a blank `t/` is also accepted and removes all tags. | `best friend` (space), `vip!` (`!`), and a blank `t/` in `addc`, `addm`, `listc` or `listm`
+| Field                | Prefix       | Used by                                            | Accepted                                                                                                                                                                                                                                                                                                             | Rejected examples                                                                                                                                    |
+|----------------------|--------------|----------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Contact name         | `n/`         | `addc`, `editc`, `findc`                           | English letters, digits and spaces only, starting with a letter or digit.                                                                                                                                                                                                                                            | `Anne-Marie Tan` (hyphen), `Ravi s/o Kumar` (`/`), `Dr. Lim` (full stop)                                                                             |
+| Phone number         | `p/`         | `addc`, `editc`                                    | Digits, `+`, `-`, `(`, `)`, and spaces, with at least 3 digits and no upper limit. Spaces at the beginning and end are ignored.                                                                                                                                                                                      | `12` (too short), `+65.91234567` (full stop), `9123/4567` (slash), `9123a4567` (letter)                                                              |
+| Email                | `e/`         | `addc`, `editc`                                    | `local-part@domain`. The local part uses letters, digits and any of these special characters: `!` `#` `$` `%` `&` `'` `*` `+` `=` `?` `^` `_` `` ` `` `{` `\|` `}` `~` `-`. These may appear anywhere in the local part, including at the start or end and several times in a row (e.g. `o'connor`, `alice++sales`, `john__doe`). A period (`.`) is also allowed, but not at the start or end of the local part, and not two or more in a row. The slash (`/`) is not allowed because it is used by command prefixes such as `a/`. The domain is made up of labels separated by periods; each label starts and ends with a letter or digit, and the last label is at least 2 characters long. | `john.example.com` (no `@`), `john@example.c` (last label too short), `.john@example.com` (starts with `.`), `john..doe@example.com` (two or more periods in a row), `a/b@example.com` (`/`), `john@exam_ple.com` (`_` in the domain) |
+| Address              | `a/`         | `addc`, `editc`                                    | Any text, as long as it is not blank.<br>In `editc` only, a blank `a/` is also accepted and removes the address.                                                                                                                                                                                                     | In `addc`, a blank `a/` (leave `a/` out to add a contact with no address)                                                                            |
+| Meeting name         | `n/`         | `addm`, `editm`, `findm`                           | English letters, spaces, hyphens (`-`) and apostrophes (`'`), with at least one letter. Repeated spaces are treated as one.                                                                                                                                                                                          | `Meeting123` (digits), `12345` (no letters), `Meeting!` (`!`)                                                                                        |
+| Date                 | `d/`         | `addm`, `editm`                                    | A real calendar date in `DD/MM/YYYY` format.                                                                                                                                                                                                                                                                         | `31/04/2026` (no such date), `29/02/2025` (not a leap year), `1/1/2026` (not two digits), `15-10-2026` (wrong separator)                             |
+| Start time, end time | `st/`, `et/` | `addm`, `editm`                                    | 24-hour `HHMM`, from `0000` to `2359`. The end time must be later than the start time.                                                                                                                                                                                                                               | `900` (three digits), `09:00` (colon), `2400` (no such time), `1260` (no such time)                                                                  |
+| Tag                  | `t/`         | `addc`, `editc`, `addm`, `editm`, `listc`, `listm` | Letters and digits only, with no spaces. Tags are case-sensitive when stored, but `listc` and `listm` ignore case when filtering.<br>In `editc` and `editm` only, a blank `t/` is also accepted and removes all tags.                                                                                                | `best friend` (space), `vip!` (`!`), and a blank `t/` in `addc`, `addm`, `listc` or `listm`                                                          |
 
 * Spaces before and after a value are ignored.
 * `findc` and `findm` check every keyword against the name rule above, so `findc Anne-Marie` and `findm 2026` are rejected.
@@ -107,7 +115,7 @@ Format: `help`
 
 ### Adding a contact: `addc`
 
-Adds a contact to PingBook.
+Adds a contact to PingBook and displays the Contacts panel.
 
 Format: `addc n/NAME p/PHONE_NUMBER e/EMAIL [a/ADDRESS] [t/TAG]... `
 
@@ -162,7 +170,7 @@ Format: `editc INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [t/TAG]... `
 * Edits the contact at the specified `INDEX`. The index refers to the index number shown in the displayed contact list. The index **must be a positive integer** 1, 2, 3, ...
 * The contacts panel must be active. If you are viewing meetings, run `listc` or `findc KEYWORD` first.
 * At least one of the optional fields must be provided.
-* Each value must follow the [field formats](#field-formats). For example, a phone number needs at least 3 digits and cannot contain `+`, spaces or hyphens, and a name cannot contain hyphens.
+* Each value must follow the [field formats](#field-formats). For example, a phone number needs at least 3 digits and can contain `+`, `-`, `(`, `)`, and spaces, while a name cannot contain hyphens.
 * `n/`, `p/`, `e/` and `a/` can each be used at most once in the same command. Only `t/` can be repeated.
 * Existing values will be updated to the input values.
 * When editing tags, all of the contact's existing tags are removed; adding tags is not cumulative.
@@ -180,7 +188,6 @@ Examples:
 These commands are rejected and leave the contact unchanged:
 
 *  `editc 1 p/12` (the phone number has fewer than 3 digits)
-*  `editc 1 p/+6591234567` (the phone number contains `+`)
 *  `editc 1 n/Anne-Marie Tan` (the name contains a hyphen)
 *  `editc 1 p/91234567 p/92345678` (`p/` is used twice)
 
@@ -188,9 +195,9 @@ These commands are rejected and leave the contact unchanged:
 
 Edits an existing meeting in PingBook.
 
-Format: `editm MEETING_INDEX [n/NAME] [d/DATE] [st/START_TIME] [et/END_TIME] [t/TAG]... [force/]`
+Format: `editm INDEX [n/NAME] [d/DATE] [st/START_TIME] [et/END_TIME] [t/TAG]... [force/]`
 
-* Edits the meeting at the specified `MEETING_INDEX` in the displayed meeting list.
+* Edits the meeting at the specified `INDEX` in the displayed meeting list.
 * The Meetings panel must be active. Run `listm` before editing a meeting.
 * The index must be a positive integer: 1, 2, 3, ...
 * At least one field must be provided.
@@ -223,12 +230,12 @@ Format: `listc [t/TAG]...`
 * The command will only accept `TAG` fields. Other fields such as `NAME`, `DATE` are rejected.
 * The command is case-sensitive. `listC` or `Listc` are considered invalid.
 * A contact is shown only if they have all the tags given.
-* If there are no tags provided, PingBook will display all contacts and a success message detailing the number of contacts listed.
+* If there are no tags provided, PingBook will display all contacts.
 * If there are tags provided, PingBook will display all matching contacts and a success message detailing the number of contacts listed and the tags given.
 
 Examples:
-* `listc`
-* `listc t/friend t/colleagues`
+* `listc` displays all contacts saved in PingBook.
+* `listc t/friend t/colleagues` displays all contacts containing both tags.
 
 ### Listing and filtering meetings: `listm`
 
@@ -321,13 +328,13 @@ Examples:
 
 Deletes the specified meeting from PingBook.
 
-Format: `deletem MEETING_INDEX`
+Format: `deletem INDEX`
 
-* Deletes the meeting at the specified `MEETING_INDEX`.
+* Deletes the meeting at the specified `INDEX`.
 * The command is case-sensitive. Only `deletem` in lowercase is accepted. `DeleteM` and other variations show `Unknown command.`.
 * The index refers to the index number shown in the displayed meeting list.
 * The index **must be a positive integer** 1, 2, 3, ...
-* Invalid indexes display `Invalid command format!` followed by the usage instructions for the command.
+* Malformed indexes display `Invalid command format!` while out-of-range ones display `The meeting index provided is invalid!`.<br>Both messages are followed by the usage instructions for the command.
 * `deletem` can only be executed when the meeting list is shown. Run `listm` before attempting to delete meetings.
 
 Examples:
@@ -347,11 +354,26 @@ Format: `exit`
 
 ### Saving the data
 
-PingBook automatically saves data after every command. You do not need to save manually.
+PingBook automatically saves data after each command that executes successfully. You do not need to save manually.
+
+If saving fails, PingBook shows an error and rolls back that command. Your contacts, meetings, filters and meeting
+ordering return to their state before the command, and the previously saved data file is kept. The command remains
+in the command box. Resolve the reported storage problem (for example, restore write permission to the data file
+and its folder, or free disk space), then retry the same command. A failed deletion does not change which record
+its displayed index refers to.
 
 ### Editing the data file
 
-PingBook data is saved automatically as a JSON file `[JAR file location]/data/addressbook.json`. Advanced users are welcome to update data directly by editing that data file.
+PingBook saves data automatically to `data/addressbook.json`, relative to the directory from which you launch the JAR file (the current working directory), not necessarily the directory containing the JAR. Advanced users are welcome to update data directly by editing that data file.<br>
+
+To keep the data in a predictable location, run the JAR from its own directory.
+
+Close PingBook before manually editing this file, and reopen it afterwards to load your changes. When using
+PingBook, ensure your account can read the data file and create and replace files in its containing folder.
+
+Marking only the data file as read-only does not reliably prevent saving across operating systems. On Linux and
+macOS, PingBook may still replace a read-only file when its containing folder permits replacement. Close PingBook
+and make a separate backup before making manual edits.
 
 <box type="warning" seamless>
 
