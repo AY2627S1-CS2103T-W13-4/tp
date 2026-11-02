@@ -15,9 +15,10 @@ public class MeetingName {
             + "(letters, digits, spaces or punctuation). Tabs are treated as spaces.";
 
     public static final String MESSAGE_KEYWORD_CONSTRAINTS =
-            "Invalid keyword. Keywords may only contain alphabetic characters, hyphens or apostrophes.";
+            "Invalid keyword. Keywords may only contain printable ASCII characters.";
 
     private static final String VALIDATION_REGEX = "[A-Za-z' -]+";
+    private static final String KEYWORD_VALIDATION_REGEX = "[\\x20-\\x7E]+";
 
     public final String name;
 
@@ -51,7 +52,7 @@ public class MeetingName {
      * Returns true if the given keyword contains only characters allowed in a meeting name.
      */
     public static boolean isValidKeyword(String keyword) {
-        return keyword.matches(VALIDATION_REGEX);
+        return keyword.matches(KEYWORD_VALIDATION_REGEX);
     }
 
     @Override
