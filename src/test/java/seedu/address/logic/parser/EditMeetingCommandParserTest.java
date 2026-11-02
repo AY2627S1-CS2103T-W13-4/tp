@@ -73,6 +73,14 @@ public class EditMeetingCommandParserTest {
     }
 
     @Test
+    public void parse_invalidYear_failure() {
+        String[] dates = {"01/01/+10000", "01/01/-0001", "01/01/10000", "01/01/999", "01/01/0000"};
+        for (String date : dates) {
+            assertParseFailure(parser, "1 d/" + date, MeetingDate.MESSAGE_CONSTRAINTS);
+        }
+    }
+
+    @Test
     public void parse_allFieldsSpecified_success() {
         Index targetIndex = Index.fromOneBased(2);
         String userInput = targetIndex.getOneBased() + END_TIME_DESC + NAME_DESC

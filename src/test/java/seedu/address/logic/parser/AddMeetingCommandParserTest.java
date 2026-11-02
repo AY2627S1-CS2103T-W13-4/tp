@@ -136,6 +136,15 @@ public class AddMeetingCommandParserTest {
     }
 
     @Test
+    public void parse_invalidYear_failure() {
+        String[] dates = {"01/01/+10000", "01/01/-0001", "01/01/10000", "01/01/999", "01/01/0000"};
+        for (String date : dates) {
+            assertParseFailure(parser, " n/Review d/" + date + " st/0900 et/1000",
+                    MeetingDate.MESSAGE_CONSTRAINTS);
+        }
+    }
+
+    @Test
     public void parse_nonEmptyPreamble_failure() {
         String expectedMessage = String.format(
                 MESSAGE_INVALID_COMMAND_FORMAT, AddMeetingCommand.MESSAGE_USAGE);

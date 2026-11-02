@@ -13,7 +13,10 @@ import java.util.Objects;
  */
 public class MeetingDate {
 
-    public static final String MESSAGE_CONSTRAINTS = "Invalid date. Please use DD/MM/YYYY.";
+    public static final String MESSAGE_CONSTRAINTS =
+            "Invalid date. Please use DD/MM/YYYY with a four-digit year from 0001 to 9999.";
+
+    private static final String VALIDATION_REGEX = "[0-9]{2}/[0-9]{2}/[0-9]{4}";
 
     private static final DateTimeFormatter FORMATTER =
             DateTimeFormatter.ofPattern("dd/MM/uuuu")
@@ -24,7 +27,7 @@ public class MeetingDate {
     /**
      * Creates a meeting date from the given date string.
      *
-     * @param date The date in DD/MM/YYYY format.
+     * @param date The date in DD/MM/YYYY format with a year from 0001 to 9999.
      * @throws IllegalArgumentException if the date is not valid.
      */
     public MeetingDate(String date) {
@@ -36,13 +39,17 @@ public class MeetingDate {
     }
 
     /**
-     * Returns true if the given string is a valid calendar date in DD/MM/YYYY format.
+     * Returns true if the given string is a valid calendar date in DD/MM/YYYY format
+     * with a four-digit year from 0001 to 9999.
      */
     public static boolean isValidDate(String test) {
         requireNonNull(test);
+        String trimmedDate = test.trim();
+        if (!trimmedDate.matches(VALIDATION_REGEX)) {
+            return false;
+        }
         try {
-            LocalDate.parse(test.trim(), FORMATTER);
-            return true;
+            return LocalDate.parse(trimmedDate, FORMATTER).getYear() > 0;
         } catch (DateTimeParseException e) {
             return false;
         }
