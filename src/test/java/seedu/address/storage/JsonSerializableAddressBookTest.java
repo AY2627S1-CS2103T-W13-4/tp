@@ -14,6 +14,7 @@ import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.commons.util.JsonUtil;
 import seedu.address.model.AddressBook;
 import seedu.address.model.meeting.Meeting;
+import seedu.address.model.tag.Tag;
 import seedu.address.testutil.TypicalMeetings;
 import seedu.address.testutil.TypicalPersons;
 
@@ -28,6 +29,9 @@ public class JsonSerializableAddressBookTest {
     private static final Path INVALID_MEETING_TIME_RANGE_FILE =
             TEST_DATA_FOLDER.resolve("invalidMeetingTimeRangeAddressBook.json");
     private static final Path DUPLICATE_MEETING_FILE = TEST_DATA_FOLDER.resolve("duplicateMeetingAddressBook.json");
+    private static final Path NULL_PERSON_FILE = TEST_DATA_FOLDER.resolve("nullPersonAddressBook.json");
+    private static final Path NULL_PERSON_TAG_FILE = TEST_DATA_FOLDER.resolve("nullPersonTagAddressBook.json");
+    private static final Path NULL_MEETING_FILE = TEST_DATA_FOLDER.resolve("nullMeetingAddressBook.json");
 
     @Test
     public void toModelType_typicalPersonsFile_success() throws Exception {
@@ -50,6 +54,29 @@ public class JsonSerializableAddressBookTest {
         JsonSerializableAddressBook dataFromFile = JsonUtil.readJsonFile(DUPLICATE_PERSON_FILE,
                 JsonSerializableAddressBook.class).get();
         assertThrows(IllegalValueException.class, JsonSerializableAddressBook.MESSAGE_DUPLICATE_PERSON,
+                dataFromFile::toModelType);
+    }
+
+    @Test
+    public void toModelType_nullPersonFile_throwsIllegalValueException() throws Exception {
+        JsonSerializableAddressBook dataFromFile = JsonUtil.readJsonFile(NULL_PERSON_FILE,
+                JsonSerializableAddressBook.class).get();
+        assertThrows(IllegalValueException.class, JsonSerializableAddressBook.MESSAGE_NULL_PERSON,
+                dataFromFile::toModelType);
+    }
+
+    @Test
+    public void toModelType_nullPersonTagFile_throwsIllegalValueException() throws Exception {
+        JsonSerializableAddressBook dataFromFile = JsonUtil.readJsonFile(NULL_PERSON_TAG_FILE,
+                JsonSerializableAddressBook.class).get();
+        assertThrows(IllegalValueException.class, Tag.MESSAGE_CONSTRAINTS, dataFromFile::toModelType);
+    }
+
+    @Test
+    public void toModelType_nullMeetingFile_throwsIllegalValueException() throws Exception {
+        JsonSerializableAddressBook dataFromFile = JsonUtil.readJsonFile(NULL_MEETING_FILE,
+                JsonSerializableAddressBook.class).get();
+        assertThrows(IllegalValueException.class, JsonSerializableAddressBook.MESSAGE_NULL_MEETING,
                 dataFromFile::toModelType);
     }
 
