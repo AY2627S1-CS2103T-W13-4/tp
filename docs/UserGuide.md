@@ -86,7 +86,7 @@ Start time, end time | `st/`, `et/` | `addm`, `editm` | 24-hour `HHMM`, from `00
 Tag | `t/` | `addc`, `editc`, `addm`, `editm`, `listc`, `listm` | Letters and digits only, with no spaces. Tags are case-sensitive when stored, but `listc` and `listm` ignore case when filtering.<br>In `editc` and `editm` only, a blank `t/` is also accepted and removes all tags. | `best friend` (space), `vip!` (`!`), and a blank `t/` in `addc`, `addm`, `listc` or `listm`
 
 * Spaces before and after a value are ignored.
-* `findc` and `findm` check every keyword against the name rule above, so `findc Anne-Marie` and `findm 2026` are rejected.
+* `findc` and `findm` validate their keywords according to their respective keyword validation rules.
 * Contact names are stricter than meeting names. A meeting name allows hyphens (`-`) and apostrophes (`'`) but no
   digits, while a contact name allows digits but no hyphens or apostrophes.
 * Each prefix can be used **at most once** in a command, except `t/`, which can be repeated. For example,
