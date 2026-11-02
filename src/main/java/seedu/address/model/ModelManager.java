@@ -44,6 +44,7 @@ public class ModelManager implements Model {
         filteredPersons = new FilteredList<>(this.addressBook.getPersonList());
         filteredMeetings = new FilteredList<>(this.addressBook.getMeetingList());
         sortedMeetings = new SortedList<>(filteredMeetings);
+        updateMeetingListOrder(LocalDateTime.now());
     }
 
     public ModelManager() {
