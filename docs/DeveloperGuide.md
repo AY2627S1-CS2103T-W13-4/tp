@@ -181,6 +181,10 @@ The `Storage` component,
   power loss. User preference saving uses its existing separate path.
 * depends on some classes in the `Model` component (because the `Storage` component's job is to save/retrieve objects that belong to the `Model`)
 
+Saving replaces the existing address book file with a newly created file. Existing custom file permissions and
+access-control settings are not explicitly preserved and may change after saving. Permission-dependent sharing
+of the data file between operating-system accounts is therefore not guaranteed.
+
 ### Common classes
 
 Classes used by multiple components are in the `seedu.address.commons` package.
@@ -581,13 +585,20 @@ testers are expected to do more *exploratory* testing.
 
 ### Recovering from a failed save
 
-1. Use a disposable data file containing contacts Alice and Bob, in that displayed order, then run `listc`.
-1. While PingBook is open, mark `data/addressbook.json` as read-only and run `deletec 1`.<br>
+1. Use a disposable copy of PingBook and its data, containing contacts Alice and Bob in that displayed order.
+   Run `listc`.
+1. While PingBook is open, temporarily prevent saving:
+   * Windows: enable the Read-only attribute on `data/addressbook.json`. This is the file attribute, not the
+     folder's Read-only checkbox.
+   * Linux/macOS: remove write permission from the containing `data` directory for the account running PingBook,
+     while retaining read and directory search/access permissions. Use an account without privileges that bypass
+     these restrictions.
+1. Run `deletec 1`.<br>
    Expected: A save error explains that the command was rolled back. Alice and Bob remain in their original rows,
    the JSON file is unchanged, and `deletec 1` remains in the command box.
-1. Repeat the command while the file is still read-only.<br>
+1. Repeat the command while saving remains blocked.<br>
    Expected: The same failure leaves both records unchanged.
-1. Restore write permission and retry `deletec 1`.<br>
+1. Restore the original file attribute or directory permissions and retry `deletec 1`.<br>
    Expected: Only Alice is deleted. Bob remains and reloading the application confirms the saved result.
 1. Repeat with disposable meetings using `listm t/work`, `editm 1 n/Updated review` and `deletem 1`.<br>
    Expected: Failed saves preserve the filtered rows and their order. Retrying after restoring permission applies

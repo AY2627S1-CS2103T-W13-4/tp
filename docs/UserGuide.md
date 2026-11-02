@@ -359,8 +359,12 @@ its displayed index refers to.
 
 PingBook data is saved automatically as a JSON file `[JAR file location]/data/addressbook.json`. Advanced users are welcome to update data directly by editing that data file.
 
-Close PingBook before editing this file. Keep both the file and its folder writable when using PingBook; marking
-the file as read-only prevents saving. Reopen PingBook after making manual edits so it loads the updated data.
+Close PingBook before manually editing this file, and reopen it afterwards to load your changes. When using
+PingBook, ensure your account can read the data file and create and replace files in its containing folder.
+
+Marking only the data file as read-only does not reliably prevent saving across operating systems. On Linux and
+macOS, PingBook may still replace a read-only file when its containing folder permits replacement. Close PingBook
+and make a separate backup before making manual edits.
 
 <box type="warning" seamless>
 

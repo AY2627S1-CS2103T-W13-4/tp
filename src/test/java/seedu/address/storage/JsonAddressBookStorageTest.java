@@ -23,6 +23,8 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 
 import seedu.address.commons.exceptions.DataLoadingException;
@@ -223,6 +225,7 @@ public class JsonAddressBookStorageTest {
     }
 
     @Test
+    @EnabledOnOs(OS.WINDOWS)
     public void saveAddressBook_readOnlyTarget_preservesFileAndAllowsRetryAfterPermissionRestored() throws Exception {
         Path target = testFolder.resolve("addressbook.json");
         JsonAddressBookStorage storage = new JsonAddressBookStorage(target);
