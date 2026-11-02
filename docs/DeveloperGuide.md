@@ -123,21 +123,21 @@ The sequence diagram below illustrates the interactions within the `Logic` compo
 How the `Logic` component works:
 
 1. When `Logic` is called upon to execute a command, the command text is passed to an `AddressBookParser` object, which creates a parser that matches the command (e.g., `DeleteClientCommandParser`) and uses it to parse the command.
-1. This results in a `Command` object (more precisely, an object of one of its subclasses e.g., `DeleteClientCommand`).
+2. This results in a `Command` object (more precisely, an object of one of its subclasses e.g., `DeleteClientCommand`).
    `LogicManager` checks whether the command is compatible with the currently displayed panel. For example, if
    the meetings panel is displayed, attempting to execute `deletec` will result in a `CommandException`.
-1. Before execution, `LogicManager` obtains a rollback action from `Model.createRollbackAction()`. It captures
+3. Before execution, `LogicManager` obtains a rollback action from `Model.createRollbackAction()`. It captures
    a copy of the contacts and meetings, both active filter predicates, and the meeting comparator. The existing
    observable lists are retained when restoring these values.
-1. `LogicManager` executes the command, which can communicate with the `Model` (e.g. to delete a person).<br>
+4. `LogicManager` executes the command, which can communicate with the `Model` (e.g. to delete a person).<br>
    The code can require several interactions between the command object and the `Model` to complete the operation.
    For example, the command retrieves the filtered person list from `Model`, selects the person at the requested
    index, and then asks `Model` to delete that person.
-1. After execution, `LogicManager` saves the address book. If storage throws `AccessDeniedException` or another
+5. After execution, `LogicManager` saves the address book. If storage throws `AccessDeniedException` or another
    `IOException`, it runs the rollback action and throws a `CommandException` explaining recovery. The selected
-   panel is updated only after saving succeeds, so failed commands preserve the displayed indices and panel.
-1. The result of the command execution is encapsulated as a `CommandResult` object which is returned from `Logic`
-   only after saving succeeds. The partial sequence diagram above omits saving and rollback.
+   panel is updated only after saving succeeds, so failed commands preserve the displayed indices and panel.<br>Note that in the partial sequence diagram, the rollback action is abstracted into `Model`, updating the selected panel is omitted, and both `AccessDeniedException` and other `IOException` save failures are represented as `IOException`.
+6. The result of the command execution is encapsulated as a `CommandResult` object which is returned from `Logic`
+   only after saving succeeds.
 
 Here are the other classes in `Logic` (omitted from the class diagram above) that are used for parsing a user command:
 
