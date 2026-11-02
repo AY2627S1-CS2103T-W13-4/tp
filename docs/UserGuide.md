@@ -77,7 +77,7 @@ rule is rejected and nothing is changed.
 Field | Prefix | Used by | Accepted | Rejected examples
 ------|--------|---------|----------|------------------
 Contact name | `n/` | `addc`, `editc` | Letters, digits, spaces, apostrophes (`'`), hyphens (`-`) and forward slashes (`/`). Must start with a letter or digit. | `John@Smith` (`@`), `.John` (starts with an unsupported character)
-Contact search keyword | None | `findc` | English letters, digits and spaces are allowed in the search input. Each keyword must start with a letter or digit. | `Anne-Marie` (hyphen), `Ravi s/o Kumar` (`/`), `Dr.` (full stop)
+Contact search keyword | None | `findc` | Each keyword must start with a letter or digit and may contain letters, digits, spaces, apostrophes (`'`), hyphens (`-`) and slashes (`/`). | `-John` (starts with a hyphen), `John@` (`@`)
 Phone number | `p/` | `addc`, `editc` | Digits only, at least 3 digits long, with no upper limit. | `12` (too short), `+6591234567` (`+`), `9123 4567` (space), `9123-4567` (hyphen)
 Email | `e/` | `addc`, `editc` | `local-part@domain`. The local part uses letters, digits and the special characters `+`, `_`, `.`, `-`, and cannot start or end with a special character. The domain is made up of labels separated by periods; each label starts and ends with a letter or digit, and the last label is at least 2 characters long. | `john.example.com` (no `@`), `john@example.c` (last label too short), `-john@example.com` (starts with `-`), `john@exam_ple.com` (`_` in the domain)
 Address | `a/` | `addc`, `editc` | Any text, as long as it is not blank.<br>In `editc` only, a blank `a/` is also accepted and removes the address. | In `addc`, a blank `a/` (leave `a/` out to add a contact with no address)
