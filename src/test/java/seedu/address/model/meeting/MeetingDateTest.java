@@ -30,6 +30,27 @@ public class MeetingDateTest {
     }
 
     @Test
+    public void constructor_fourDigitYear_success() {
+        String[] dates = {"01/01/0001", "01/01/0999", "01/01/1000", "31/12/9999"};
+        for (String date : dates) {
+            assertTrue(MeetingDate.isValidDate(date));
+            assertEquals(date, new MeetingDate(date).toString());
+        }
+        assertEquals(LocalDate.of(1, 1, 1), new MeetingDate("01/01/0001").getDate());
+        assertEquals(LocalDate.of(9999, 12, 31), new MeetingDate("31/12/9999").getDate());
+    }
+
+    @Test
+    public void constructor_invalidYear_throwsIllegalArgumentException() {
+        String[] dates = {"01/01/0000", "01/01/1", "01/01/999", "01/01/10000", "01/01/02026",
+            "01/01/+2026", "01/01/+10000", "01/01/-0001", "01/01/-2026", "01/01/-10000"};
+        for (String date : dates) {
+            assertFalse(MeetingDate.isValidDate(date));
+            assertThrows(IllegalArgumentException.class, MeetingDate.MESSAGE_CONSTRAINTS, () -> new MeetingDate(date));
+        }
+    }
+
+    @Test
     public void constructor_invalidDate_throwsIllegalArgumentException() {
         assertThrows(IllegalArgumentException.class, () -> new MeetingDate(""));
         assertThrows(IllegalArgumentException.class, () -> new MeetingDate("31/04/2026"));

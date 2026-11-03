@@ -117,6 +117,15 @@ public class JsonAdaptedMeetingTest {
     }
 
     @Test
+    public void toModelType_invalidYear_throwsIllegalValueException() {
+        String[] dates = {"01/01/+10000", "01/01/-0001", "01/01/10000", "01/01/999", "01/01/0000"};
+        for (String date : dates) {
+            JsonAdaptedMeeting meeting = new JsonAdaptedMeeting(VALID_NAME, date, VALID_START_TIME, VALID_END_TIME);
+            assertThrows(IllegalValueException.class, MeetingDate.MESSAGE_CONSTRAINTS, meeting::toModelType);
+        }
+    }
+
+    @Test
     public void toModelType_nullDate_throwsIllegalValueException() {
         JsonAdaptedMeeting meeting = new JsonAdaptedMeeting(VALID_NAME, null, VALID_START_TIME, VALID_END_TIME);
         String expectedMessage = String.format(MISSING_FIELD_MESSAGE_FORMAT, MeetingDate.class.getSimpleName());
